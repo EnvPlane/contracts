@@ -1461,6 +1461,42 @@
         "summary": "List jobs",
         "security": [{ "apiToken": [] }],
         "responses": { "200": { "description": "Jobs", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/EmptyObject" } } } } } }
+      },
+      "post": {
+        "summary": "Submit a normalized SCM event job",
+        "description": "Authenticated ingestion endpoint for the standalone webhook service.",
+        "security": [{ "apiToken": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["provider", "action", "repo", "changeId"],
+                "properties": {
+                  "provider": { "type": "string", "enum": ["github", "gitlab"] },
+                  "action": { "type": "string", "enum": ["open", "update", "close", "ignore"] },
+                  "repo": { "type": "string" },
+                  "branch": { "type": "string" },
+                  "changeId": { "type": "string" },
+                  "commitSha": { "type": "string" },
+                  "author": { "type": "string" },
+                  "url": { "type": "string" },
+                  "eventId": { "type": "string" },
+                  "installationId": { "type": "string" },
+                  "labels": { "type": "array", "items": { "type": "string" } },
+                  "draft": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Job accepted", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EmptyObject" } } } },
+          "400": { "description": "Invalid SCM event", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
       }
     },
     "/api/v1/jobs/{id}": {
