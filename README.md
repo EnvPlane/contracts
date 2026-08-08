@@ -17,6 +17,6 @@ This repository was split from:
 
 ## Notes
 
-The module is published under `github.com/envpilot/contracts`. The domain
-package still lives under `internal/domain`; a follow-up extraction will move
-it to a public `domain` package and update service dependencies.
+The module is published under `github.com/envpilot/contracts`. Consumers import
+the public domain API from `github.com/envpilot/contracts/domain`; service
+repositories must not keep private copies of these types.

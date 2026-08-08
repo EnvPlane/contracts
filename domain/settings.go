@@ -9,9 +9,41 @@ type ControlPlaneSettings struct {
 	Clusters        []ClusterTarget        `json:"clusters"`
 	Notifications   []NotificationTarget   `json:"notifications"`
 	Runtime         RuntimeSettings        `json:"runtime"`
-	UpdatedAt       time.Time              `json:"updated_at"`
-	UpdatedBy       string                 `json:"updated_by,omitempty"`
-	SchemaVersion   string                 `json:"schema_version"`
+	// ManagementEndpointProfile is the single, API-managed endpoint contract
+	// used by all remote clusters. It intentionally contains only safe URL and
+	// Secret-reference metadata; certificate, kubeconfig and token bytes never
+	// belong in settings or an API response.
+	ManagementEndpointProfile *ManagementEndpointProfile `json:"management_endpoint_profile,omitempty"`
+	UpdatedAt                 time.Time                  `json:"updated_at"`
+	UpdatedBy                 string                     `json:"updated_by,omitempty"`
+	SchemaVersion             string                     `json:"schema_version"`
+}
+
+// ManagementEndpointProfile describes the management control-plane HTTPS
+// address that remote Agent and Runner Pods use. It is deliberately separate
+// from RemoteCluster: a remote target selects this canonical profile instead
+// of storing an independently editable management endpoint.
+type ManagementEndpointProfile struct {
+	Endpoint           string                        `json:"endpoint"`
+	TLS                RemoteClusterTLS              `json:"tls,omitempty"`
+	Source             string                        `json:"source,omitempty"` // api|chart_bootstrap
+	DesiredGeneration  int64                         `json:"desired_generation,omitempty"`
+	ObservedGeneration int64                         `json:"observed_generation,omitempty"`
+	ObservedAt         *time.Time                    `json:"observed_at,omitempty"`
+	Conditions         []ManagementEndpointCondition `json:"conditions,omitempty"`
+	CreatedAt          time.Time                     `json:"created_at,omitempty"`
+	UpdatedAt          time.Time                     `json:"updated_at,omitempty"`
+}
+
+// ManagementEndpointCondition is a safe observed fact about the endpoint
+// profile. Reasons are intentionally bounded identifiers, never TLS or
+// network payloads that could disclose credential material.
+type ManagementEndpointCondition struct {
+	Type               string     `json:"type"`
+	Status             string     `json:"status"`
+	Reason             string     `json:"reason,omitempty"`
+	ObservedGeneration int64      `json:"observed_generation,omitempty"`
+	LastTransitionAt   *time.Time `json:"last_transition_at,omitempty"`
 }
 
 type ConfiguredRepository struct {
@@ -135,14 +167,17 @@ type AgentRegistrationResponse struct {
 }
 
 type AgentHeartbeatRequest struct {
-	ProjectID         string    `json:"projectId,omitempty"`
-	ClusterID         string    `json:"clusterId"`
-	AgentID           string    `json:"agentId"`
-	AgentAuthToken    string    `json:"agentAuthToken,omitempty"`
-	AgentVersion      string    `json:"agentVersion,omitempty"`
-	KubernetesVersion string    `json:"kubernetesVersion,omitempty"`
-	Capabilities      []string  `json:"capabilities,omitempty"`
-	Status            string    `json:"status,omitempty"`
-	Error             string    `json:"error,omitempty"`
-	ObservedAt        time.Time `json:"observedAt,omitempty"`
+	ProjectID                string                       `json:"projectId,omitempty"`
+	ClusterID                string                       `json:"clusterId"`
+	AgentID                  string                       `json:"agentId"`
+	AgentAuthToken           string                       `json:"agentAuthToken,omitempty"`
+	AgentVersion             string                       `json:"agentVersion,omitempty"`
+	KubernetesVersion        string                       `json:"kubernetesVersion,omitempty"`
+	Capabilities             []string                     `json:"capabilities,omitempty"`
+	CapabilityReport         *ClusterCapabilityReport     `json:"capabilityReport,omitempty"`
+	HeartbeatIntervalSeconds int                          `json:"heartbeatIntervalSeconds,omitempty"`
+	Status                   string                       `json:"status,omitempty"`
+	Error                    string                       `json:"error,omitempty"`
+	EndpointPreflight        *ManagementEndpointPreflight `json:"endpoint_preflight,omitempty"`
+	ObservedAt               time.Time                    `json:"observedAt,omitempty"`
 }

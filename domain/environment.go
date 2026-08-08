@@ -26,38 +26,41 @@ const (
 )
 
 type Environment struct {
-	ID                        string            `json:"id"`
-	Project                   string            `json:"project"`
-	Product                   string            `json:"product"`
-	ClusterID                 string            `json:"clusterId,omitempty"`
-	Namespace                 string            `json:"namespace"`
-	Mode                      EnvironmentMode   `json:"mode"`
-	Status                    EnvironmentStatus `json:"status"`
-	Domain                    string            `json:"domain"`
-	URL                       string            `json:"url"`
-	Source                    SCMSource         `json:"source"`
-	Base                      BaseEnvironment   `json:"base,omitempty"`
-	GitOps                    GitOpsTarget      `json:"gitops"`
-	Charts                    ChartVersions     `json:"charts"`
-	Infrastructure            Infrastructure    `json:"infrastructure"`
-	Services                  []ServiceOverride `json:"services"`
-	Overrides                 map[string]string `json:"overrides,omitempty"`
-	Pinned                    bool              `json:"pinned"`
-	PinnedUntil               *time.Time        `json:"pinnedUntil,omitempty"`
-	Idle                      bool              `json:"idle,omitempty"`
-	TTLHours                  int               `json:"ttlHours"`
-	CostEstimateDay           string            `json:"costEstimateDay,omitempty"`
-	IdleSince                 *time.Time        `json:"idleSince,omitempty"`
-	LastActivityAt            *time.Time        `json:"lastActivityAt,omitempty"`
-	ExpiresAt                 *time.Time        `json:"expiresAt,omitempty"`
-	CreatedAt                 time.Time         `json:"createdAt"`
-	UpdatedAt                 time.Time         `json:"updatedAt"`
-	ManifestPath              string            `json:"manifestPath"`
-	NamespaceManifestPath     string            `json:"namespaceManifestPath,omitempty"`
-	KustomizationManifestPath string            `json:"kustomizationManifestPath,omitempty"`
-	Events                    []KubernetesEvent `json:"events,omitempty"`
-	FluxStatus                *FluxStatus       `json:"fluxStatus,omitempty"`
-	LastError                 string            `json:"lastError,omitempty"`
+	ID                        string                 `json:"id"`
+	Project                   string                 `json:"project"`
+	Product                   string                 `json:"product"`
+	ClusterID                 string                 `json:"clusterId,omitempty"`
+	Namespace                 string                 `json:"namespace"`
+	TargetNamespace           string                 `json:"targetNamespace,omitempty"`
+	HelmReleaseName           string                 `json:"helmReleaseName,omitempty"`
+	Mode                      EnvironmentMode        `json:"mode"`
+	Status                    EnvironmentStatus      `json:"status"`
+	Domain                    string                 `json:"domain"`
+	URL                       string                 `json:"url"`
+	Source                    SCMSource              `json:"source"`
+	Base                      BaseEnvironment        `json:"base,omitempty"`
+	GitOps                    GitOpsTarget           `json:"gitops"`
+	Charts                    ChartVersions          `json:"charts"`
+	Infrastructure            Infrastructure         `json:"infrastructure"`
+	Services                  []ServiceOverride      `json:"services"`
+	Components                []EnvironmentComponent `json:"components,omitempty"`
+	Overrides                 map[string]string      `json:"overrides,omitempty"`
+	Pinned                    bool                   `json:"pinned"`
+	PinnedUntil               *time.Time             `json:"pinnedUntil,omitempty"`
+	Idle                      bool                   `json:"idle,omitempty"`
+	TTLHours                  int                    `json:"ttlHours"`
+	CostEstimateDay           string                 `json:"costEstimateDay,omitempty"`
+	IdleSince                 *time.Time             `json:"idleSince,omitempty"`
+	LastActivityAt            *time.Time             `json:"lastActivityAt,omitempty"`
+	ExpiresAt                 *time.Time             `json:"expiresAt,omitempty"`
+	CreatedAt                 time.Time              `json:"createdAt"`
+	UpdatedAt                 time.Time              `json:"updatedAt"`
+	ManifestPath              string                 `json:"manifestPath"`
+	NamespaceManifestPath     string                 `json:"namespaceManifestPath,omitempty"`
+	KustomizationManifestPath string                 `json:"kustomizationManifestPath,omitempty"`
+	Events                    []KubernetesEvent      `json:"events,omitempty"`
+	FluxStatus                *FluxStatus            `json:"fluxStatus,omitempty"`
+	LastError                 string                 `json:"lastError,omitempty"`
 }
 
 type EnvironmentRecord struct {
@@ -177,25 +180,50 @@ type Infrastructure struct {
 type ServiceOverride struct {
 	Name    string `json:"name"`
 	Tag     string `json:"tag"`
+	Image   string `json:"image,omitempty"`
 	Replace bool   `json:"replace,omitempty"`
 }
 
+// ComponentOverride selects one project component and pins the source used for
+// this environment. At least one ref (branch, MR/PR, commit, or image tag) is
+// required by the application service for component-catalog projects.
+type ComponentOverride struct {
+	ComponentID   string `json:"componentId"`
+	Branch        string `json:"branch,omitempty"`
+	PullRequestID string `json:"pullRequestId,omitempty"`
+	Commit        string `json:"commit,omitempty"`
+	ImageTag      string `json:"imageTag,omitempty"`
+}
+
+// EnvironmentComponent is the resolved, immutable component selection stored
+// with an environment. Repository details are copied from the project catalog
+// so later project edits do not change an already requested environment.
+type EnvironmentComponent struct {
+	ComponentID string    `json:"componentId"`
+	Name        string    `json:"name"`
+	Service     string    `json:"service"`
+	Source      SCMSource `json:"source"`
+	Image       string    `json:"image,omitempty"`
+	ImageTag    string    `json:"imageTag,omitempty"`
+}
+
 type CreateEnvironmentRequest struct {
-	ID             string            `json:"id"`
-	Project        string            `json:"project"`
-	Product        string            `json:"product"`
-	ClusterID      string            `json:"clusterId,omitempty"`
-	Namespace      string            `json:"namespace"`
-	Mode           EnvironmentMode   `json:"mode"`
-	Domain         string            `json:"domain"`
-	Source         SCMSource         `json:"source"`
-	Base           BaseEnvironment   `json:"base,omitempty"`
-	Charts         ChartVersions     `json:"charts"`
-	Infrastructure Infrastructure    `json:"infrastructure"`
-	Services       []ServiceOverride `json:"services"`
-	Overrides      map[string]string `json:"overrides,omitempty"`
-	TTLHours       int               `json:"ttlHours"`
-	Pinned         bool              `json:"pinned"`
+	ID             string              `json:"id"`
+	Project        string              `json:"project"`
+	Product        string              `json:"product"`
+	ClusterID      string              `json:"clusterId,omitempty"`
+	Namespace      string              `json:"namespace"`
+	Mode           EnvironmentMode     `json:"mode"`
+	Domain         string              `json:"domain"`
+	Source         SCMSource           `json:"source"`
+	Base           BaseEnvironment     `json:"base,omitempty"`
+	Charts         ChartVersions       `json:"charts"`
+	Infrastructure Infrastructure      `json:"infrastructure"`
+	Services       []ServiceOverride   `json:"services"`
+	Components     []ComponentOverride `json:"components,omitempty"`
+	Overrides      map[string]string   `json:"overrides,omitempty"`
+	TTLHours       int                 `json:"ttlHours"`
+	Pinned         bool                `json:"pinned"`
 }
 
 type RenderPreview struct {
