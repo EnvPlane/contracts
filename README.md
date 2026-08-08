@@ -17,4 +17,6 @@ This repository was split from:
 
 ## Notes
 
-The current Go package path is still `envpilot/internal/domain` from the monorepo. A follow-up migration should publish these contracts as a stable public module path and update service imports.
+The module is published under `github.com/envpilot/contracts`. The domain
+package still lives under `internal/domain`; a follow-up extraction will move
+it to a public `domain` package and update service dependencies.
