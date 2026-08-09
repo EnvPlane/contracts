@@ -1,22 +1,42 @@
-# EnvPilot Contracts
+# EnvPlane Contracts
 
-Shared API and domain contracts for EnvPilot services.
+Shared domain and API contracts for the [EnvPlane](https://envplane.dev)
+platform. This repository is the compatibility boundary between the control
+plane, frontend, agent, runner, webhook, and deployment components.
 
-## Scope
+## Contents
 
-- Environment, project, product, settings, bootstrap, runner, and agent domain types.
-- Shared status enums and request/response payloads.
-- OpenAPI specification under `openapi/openapi.json`.
+- Environment, project, product, settings, and remote-cluster models.
+- Bootstrap sessions and lifecycle status enums.
+- Shared request and response types.
+- Canonical OpenAPI specification at `openapi/openapi.json`.
 
-## Source Origin
+## Consumers
 
-This repository was split from:
+The Go module keeps its established path for compatibility:
 
-- `internal/domain`
-- `internal/server/openapi.json`
+```go
+import "github.com/envpilot/contracts/domain"
+```
 
-## Notes
+Service repositories should consume these types instead of maintaining private
+copies. Update the OpenAPI document and dependent clients together with model
+changes.
 
-The module is published under `github.com/envpilot/contracts`. Consumers import
-the public domain API from `github.com/envpilot/contracts/domain`; service
-repositories must not keep private copies of these types.
+## Development
+
+```bash
+go test ./...
+go vet ./...
+```
+
+## Related components
+
+- [Control Plane](https://github.com/EnvPlane/control-plane)
+- [Frontend](https://github.com/EnvPlane/frontend)
+- [Agent](https://github.com/EnvPlane/agent)
+- [Runner](https://github.com/EnvPlane/runner)
+
+## Status
+
+Private product contract under active development.
