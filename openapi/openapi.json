@@ -363,6 +363,15 @@
               "observed_at": { "type": "string", "format": "date-time" },
               "conditions": { "type": "array", "items": { "$ref": "#/components/schemas/Condition" } }
             }
+          },
+          "sameCluster": {
+            "type": "object",
+            "description": "Safe management-cluster target metadata. It never includes Kubernetes, OAuth, Agent, or Runner credentials.",
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "clusterId": { "type": "string" },
+              "projectExecutorsEnabled": { "type": "boolean" }
+            }
           }
         }
       },
