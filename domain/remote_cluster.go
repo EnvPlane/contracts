@@ -3,7 +3,7 @@ package domain
 import "time"
 
 // RemoteCluster is the safe desired-state record for a Kubernetes cluster
-// managed from the EnvPilot control plane. Secrets are always references to
+// managed from the EnvPlane control plane. Secrets are always references to
 // operator-managed Kubernetes Secrets; raw kubeconfig, token and CA data are
 // intentionally not part of this API model.
 type RemoteCluster struct {
