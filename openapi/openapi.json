@@ -6422,6 +6422,19 @@
         }
       }
     },
+    "/api/v1/me/tenants": {
+      "get": {
+        "summary": "List current user's tenant memberships",
+        "responses": {
+          "200": {
+            "description": "Current user tenant memberships"
+          },
+          "401": {
+            "description": "OAuth identity is required"
+          }
+        }
+      }
+    },
     "/api/v1/tenants/{tenantID}/memberships": {
       "get": {
         "summary": "List tenant memberships",
