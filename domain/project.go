@@ -3,6 +3,7 @@ package domain
 import "time"
 
 type Project struct {
+	TenantID              string             `json:"tenant_id,omitempty" db:"tenant_id"`
 	ID                    string             `json:"id" db:"id"`
 	Name                  string             `json:"name" db:"name"`
 	ProductID             string             `json:"product_id" db:"product_id"`

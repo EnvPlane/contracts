@@ -93,6 +93,7 @@ func asString(value any) string {
 }
 
 type ProjectConfig struct {
+	TenantID      string         `json:"tenant_id,omitempty" db:"tenant_id"`
 	ID            string         `json:"id" db:"id"`
 	ProjectID     string         `json:"project_id" db:"project_id"`
 	Version       int            `json:"version" db:"version"`
