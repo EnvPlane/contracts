@@ -9,6 +9,7 @@ import (
 // plane action. Payload must contain metadata only and must never contain raw
 // credentials.
 type AuditEntry struct {
+	TenantID   string          `json:"tenant_id,omitempty"`
 	ID         int64           `json:"id,omitempty"`
 	OccurredAt time.Time       `json:"occurredAt"`
 	Actor      string          `json:"actor"`

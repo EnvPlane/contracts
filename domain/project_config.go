@@ -10,6 +10,7 @@ const (
 	DeploymentBackendHelmDirect     = "helm_direct"
 	DeploymentBackendFluxCD         = "fluxcd"
 	DeploymentBackendGitOpsManifest = "gitops_manifest"
+	DeploymentBackendArgoCD         = "argocd"
 )
 
 type DeploymentBackend string
@@ -18,6 +19,12 @@ type ProjectDeploymentConfig struct {
 	Backend    DeploymentBackend        `json:"backend"`
 	HelmDirect *ProjectHelmDirectConfig `json:"helmDirect,omitempty"`
 	FluxCD     *ProjectFluxCDConfig     `json:"fluxcd,omitempty"`
+	ArgoCD     *ProjectArgoCDConfig     `json:"argocd,omitempty"`
+}
+
+type ProjectArgoCDConfig struct {
+	ServerURL            string `json:"serverUrl"`
+	CredentialsSecretRef string `json:"credentialsSecretRef"`
 }
 
 type ProjectHelmDirectConfig struct {
@@ -56,6 +63,8 @@ func InferDeploymentBackend(rawBackend any, rawDeployment map[string]any, legacy
 		return DeploymentBackendFluxCD
 	case string(DeploymentBackendGitOpsManifest), "gitops-manifest":
 		return DeploymentBackendGitOpsManifest
+	case string(DeploymentBackendArgoCD), "argo-cd":
+		return DeploymentBackendArgoCD
 	default:
 		return DeploymentBackend(value)
 	}
@@ -93,6 +102,7 @@ func asString(value any) string {
 }
 
 type ProjectConfig struct {
+	TenantID      string         `json:"tenant_id,omitempty" db:"tenant_id"`
 	ID            string         `json:"id" db:"id"`
 	ProjectID     string         `json:"project_id" db:"project_id"`
 	Version       int            `json:"version" db:"version"`
