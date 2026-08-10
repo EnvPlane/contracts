@@ -24,9 +24,9 @@ if command -v rg >/dev/null 2>&1; then
   if rg -n --glob 'go.mod' '^[[:space:]]*(require|replace)?[[:space:]]*[^[:space:]]*/(private|enterprise)([[:space:]/]|$)' "$root"; then failed=1; fi
   if rg -n --glob '*.{js,jsx,ts,tsx,mjs,cjs}' '(from[[:space:]]+|require\(|import\()["'\''][^"'\'']*/(private|enterprise)(/|["'\''])' "$root"; then failed=1; fi
 else
-  if find "$root" -type f -name '*.go' -not -path '*/.git/*' -exec grep -HnE '"[^" ]*/(private|enterprise)(/|")' {} +; then failed=1; fi
-  if find "$root" -type f -name 'go.mod' -not -path '*/.git/*' -exec grep -HnE '^[[:space:]]*(require|replace)?[[:space:]]*[^[:space:]]*/(private|enterprise)([[:space:]/]|$)' {} +; then failed=1; fi
-  if find "$root" -type f \( -name '*.js' -o -name '*.jsx' -o -name '*.ts' -o -name '*.tsx' -o -name '*.mjs' -o -name '*.cjs' \) -not -path '*/.git/*' -exec grep -HnE '(from[[:space:]]+|require\(|import\()["'\''][^"'\'']*/(private|enterprise)(/|["'\''])' {} +; then failed=1; fi
+	if grep -RInE --include='*.go' --exclude-dir=.git '"[^" ]*/(private|enterprise)(/|")' "$root"; then failed=1; fi
+	if grep -RInE --include='go.mod' --exclude-dir=.git '^[[:space:]]*(require|replace)?[[:space:]]*[^[:space:]]*/(private|enterprise)([[:space:]/]|$)' "$root"; then failed=1; fi
+	if grep -RInE --include='*.js' --include='*.jsx' --include='*.ts' --include='*.tsx' --include='*.mjs' --include='*.cjs' --exclude-dir=.git '(from[[:space:]]+|require\(|import\()["'\''][^"'\'']*/(private|enterprise)(/|["'\''])' "$root"; then failed=1; fi
 fi
 
 if [[ "$failed" -ne 0 ]]; then
