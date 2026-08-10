@@ -28,6 +28,9 @@ Legacy machine identifiers are catalogued in
 They are compatibility contracts rather than product branding and must follow
 the documented migration policy.
 
+The public and Enterprise module boundary is recorded in
+[`docs/adr/0001-open-core-and-enterprise-boundary.md`](docs/adr/0001-open-core-and-enterprise-boundary.md).
+
 ## Development
 
 ```bash
