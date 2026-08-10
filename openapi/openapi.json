@@ -18,6 +18,11 @@
         "name": "Authorization",
         "description": "Bearer <token> with optional ENVPILOT_API_READ_TOKEN / ENVPILOT_API_WRITE_TOKEN"
       },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Tenant-scoped SCIM bearer credential"
+      },
       "agentAuthToken": {
         "type": "http",
         "scheme": "bearer",
@@ -832,6 +837,15 @@
           "expiresAt": { "type": "string", "format": "date-time" },
           "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
           "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64" } }
+        }
+      },
+      "SignedLicense": {
+        "type": "object",
+        "required": ["keyId", "grant", "signature"],
+        "properties": {
+          "keyId": { "type": "string" },
+          "grant": { "$ref": "#/components/schemas/LicenseGrant" },
+          "signature": { "type": "string" }
         }
       },
       "OIDCProviderConfig": {
@@ -6610,6 +6624,38 @@
           "503": { "description": "Billing provider is unavailable" }
         }
       }
+    },
+    "/api/v1/license": {
+      "get": { "summary": "Inspect the current tenant offline license", "responses": { "200": { "description": "Installed license grant", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LicenseGrant" } } } }, "404": { "description": "License is not installed" } } },
+      "put": { "summary": "Install a signed offline license", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SignedLicense" } } } }, "responses": { "200": { "description": "Verified license grant", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LicenseGrant" } } } }, "400": { "description": "Invalid, expired, or cross-tenant license" } } }
+    },
+    "/api/v1/scim/{tenantID}/credential": {
+      "post": { "summary": "Rotate the tenant SCIM bearer credential", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "201": { "description": "Credential returned once" }, "403": { "description": "Tenant owner permission is required" } } }
+    },
+    "/scim/v2/{tenantID}/Users": {
+      "get": { "summary": "List tenant SCIM users", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "SCIM user list" }, "401": { "description": "Invalid SCIM credential" } } }
+    },
+    "/scim/v2/{tenantID}/Users/{id}": {
+      "put": { "summary": "Provision or update a tenant SCIM user", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMUser" } } } }, "responses": { "200": { "description": "Provisioned SCIM user", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMUser" } } } } } },
+      "delete": { "summary": "Deactivate a tenant SCIM user", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "204": { "description": "SCIM user deactivated" } } }
+    },
+    "/scim/v2/{tenantID}/Groups": {
+      "get": { "summary": "List tenant SCIM groups", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "SCIM group list" } } }
+    },
+    "/scim/v2/{tenantID}/Groups/{id}": {
+      "put": { "summary": "Provision or update a tenant SCIM group", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMGroup" } } } }, "responses": { "200": { "description": "Provisioned SCIM group", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMGroup" } } } } } }
+    },
+    "/api/v1/tenants/{tenantID}/jobs/{id}/approval": {
+      "post": { "summary": "Pause a tenant job pending an approval", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "201": { "description": "Approval request created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } } } }
+    },
+    "/api/v1/tenants/{tenantID}/approvals/{id}": {
+      "get": { "summary": "Inspect a tenant approval request", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Approval request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } } } }
+    },
+    "/api/v1/tenants/{tenantID}/approvals/{id}/approve": {
+      "post": { "summary": "Approve and resume a tenant job", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Approved request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } }, "409": { "description": "Self approval, expiry, or invalid state" } } }
+    },
+    "/api/v1/tenants/{tenantID}/approvals/{id}/reject": {
+      "post": { "summary": "Reject a tenant approval request", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Rejected request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } }, "409": { "description": "Self approval or invalid state" } } }
     },
     "/api/v1/tenants/{tenantID}/memberships": {
       "get": {
