@@ -765,6 +765,20 @@
           "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64", "minimum": 0 } }
         }
       },
+      "UsageAggregate": {
+        "type": "object",
+        "required": ["tenantId", "metric", "periodStart", "periodEnd", "quantity", "eventCount", "revision", "updatedAt"],
+        "properties": {
+          "tenantId": { "type": "string" },
+          "metric": { "type": "string" },
+          "periodStart": { "type": "string", "format": "date-time" },
+          "periodEnd": { "type": "string", "format": "date-time" },
+          "quantity": { "type": "integer", "format": "int64" },
+          "eventCount": { "type": "integer", "format": "int64" },
+          "revision": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
       "Capabilities": {
         "type": "object",
         "properties": {
