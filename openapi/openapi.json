@@ -830,6 +830,8 @@
       },
       "SCIMUser": { "type": "object", "required": ["id", "userName", "active"], "properties": { "id": { "type": "string" }, "externalId": { "type": "string" }, "userName": { "type": "string" }, "displayName": { "type": "string" }, "active": { "type": "boolean" } } },
       "SCIMGroup": { "type": "object", "required": ["id", "displayName"], "properties": { "id": { "type": "string" }, "displayName": { "type": "string" }, "members": { "type": "array", "items": { "type": "string" } }, "role": { "type": "string" } } },
+      "AuditRetentionPolicy": { "type": "object", "required": ["tenantId", "retentionDays", "legalHold"], "properties": { "tenantId": { "type": "string" }, "retentionDays": { "type": "integer", "format": "int64", "minimum": 1 }, "legalHold": { "type": "boolean" } } },
+      "AuditRetentionPlan": { "type": "object", "required": ["tenantId", "purgeBefore", "candidates", "bounded"], "properties": { "tenantId": { "type": "string" }, "purgeBefore": { "type": "string", "format": "date-time" }, "candidates": { "type": "array", "items": { "type": "integer", "format": "int64" } }, "bounded": { "type": "boolean" } } },
       "Capabilities": {
         "type": "object",
         "properties": {
