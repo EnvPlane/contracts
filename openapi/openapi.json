@@ -6408,6 +6408,102 @@
           }
         }
       }
+    },
+    "/api/v1/me": {
+      "get": {
+        "summary": "Get current EnvPlane identity",
+        "responses": {
+          "200": {
+            "description": "Current identity"
+          },
+          "401": {
+            "description": "OAuth identity is required"
+          }
+        }
+      }
+    },
+    "/api/v1/tenants/{tenantID}/memberships": {
+      "get": {
+        "summary": "List tenant memberships",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tenant memberships"
+          },
+          "403": {
+            "description": "Admin role is required"
+          }
+        }
+      }
+    },
+    "/api/v1/tenants/{tenantID}/memberships/{userID}": {
+      "put": {
+        "summary": "Create or update tenant membership",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membership saved"
+          },
+          "403": {
+            "description": "Admin role is required"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete tenant membership",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Membership deleted"
+          },
+          "403": {
+            "description": "Admin role is required"
+          }
+        }
+      }
     }
   }
 }
