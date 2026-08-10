@@ -798,6 +798,22 @@
           "expiresAt": { "type": "string", "format": "date-time" }
         }
       },
+      "LicenseGrant": {
+        "type": "object",
+        "required": ["schemaVersion", "licenseId", "customerId", "tenantId", "planId", "planVersion", "issuedAt", "expiresAt"],
+        "properties": {
+          "schemaVersion": { "type": "string" },
+          "licenseId": { "type": "string" },
+          "customerId": { "type": "string" },
+          "tenantId": { "type": "string" },
+          "planId": { "type": "string" },
+          "planVersion": { "type": "string" },
+          "issuedAt": { "type": "string", "format": "date-time" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
+          "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64" } }
+        }
+      },
       "Capabilities": {
         "type": "object",
         "properties": {
