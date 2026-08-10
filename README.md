@@ -30,6 +30,9 @@ the documented migration policy.
 
 The public and Enterprise module boundary is recorded in
 [`docs/adr/0001-open-core-and-enterprise-boundary.md`](docs/adr/0001-open-core-and-enterprise-boundary.md).
+Stable extension interfaces for entitlement, identity, policy, audit and FinOps
+are defined in [`domain/extensions.go`](domain/extensions.go). They accept only
+tenant-scoped typed data; Enterprise implementations remain out of this module.
 
 ## Development
 

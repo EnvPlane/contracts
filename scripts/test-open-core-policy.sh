@@ -11,3 +11,4 @@ done
 for section in "Private Enterprise modules" "must not import private modules" "Legal and release checklist" "read, delete, cleanup or export"; do
   rg -q "$section" "$policy"
 done
+"$(dirname "$0")/check-module-boundary.sh" "$(git rev-parse --show-toplevel)"
