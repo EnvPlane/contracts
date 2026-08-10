@@ -49,6 +49,30 @@
           },
           "recovery": {
             "type": "string"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "string"
+          },
+          "current": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requested": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "plan": {
+            "type": "string"
+          },
+          "upgrade_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "request_id": {
+            "type": "string"
           }
         }
       },
