@@ -730,6 +730,17 @@
           }
         }
       },
+      "PlanDefinition": {
+        "type": "object",
+        "required": ["id", "schemaVersion", "effectiveVersion", "features", "limits"],
+        "properties": {
+          "id": { "type": "string" },
+          "schemaVersion": { "type": "string" },
+          "effectiveVersion": { "type": "string" },
+          "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
+          "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64", "minimum": 0 } }
+        }
+      },
       "Capabilities": {
         "type": "object",
         "properties": {
@@ -742,6 +753,13 @@
               "scmOfflineBootstrap": {
                 "type": "boolean"
               }
+            }
+          },
+          "planCatalog": {
+            "type": "object",
+            "properties": {
+              "schemaVersion": { "type": "string" },
+              "plans": { "type": "array", "items": { "$ref": "#/components/schemas/PlanDefinition" } }
             }
           },
           "remoteControlPlane": {
