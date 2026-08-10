@@ -23,6 +23,17 @@ Service repositories should consume these types instead of maintaining private
 copies. Update the OpenAPI document and dependent clients together with model
 changes.
 
+Legacy machine identifiers are catalogued in
+[`docs/legacy-machine-identifiers.json`](docs/legacy-machine-identifiers.json).
+They are compatibility contracts rather than product branding and must follow
+the documented migration policy.
+
+The public and Enterprise module boundary is recorded in
+[`docs/adr/0001-open-core-and-enterprise-boundary.md`](docs/adr/0001-open-core-and-enterprise-boundary.md).
+Stable extension interfaces for entitlement, identity, policy, audit and FinOps
+are defined in [`domain/extensions.go`](domain/extensions.go). They accept only
+tenant-scoped typed data; Enterprise implementations remain out of this module.
+
 ## Development
 
 ```bash

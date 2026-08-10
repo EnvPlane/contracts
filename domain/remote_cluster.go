@@ -7,6 +7,7 @@ import "time"
 // operator-managed Kubernetes Secrets; raw kubeconfig, token and CA data are
 // intentionally not part of this API model.
 type RemoteCluster struct {
+	TenantID          string                          `json:"tenant_id,omitempty"`
 	ID                string                          `json:"id"`
 	Name              string                          `json:"name"`
 	Ownership         RemoteClusterOwnership          `json:"ownership"`

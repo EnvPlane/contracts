@@ -13,6 +13,7 @@ const (
 )
 
 type BootstrapSession struct {
+	TenantID    string                 `json:"tenant_id,omitempty" db:"tenant_id"`
 	ID          string                 `json:"id" db:"id"`
 	ProjectID   string                 `json:"project_id" db:"project_id"`
 	CurrentStep int                    `json:"current_step" db:"current_step"`

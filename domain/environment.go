@@ -26,6 +26,7 @@ const (
 )
 
 type Environment struct {
+	TenantID                  string                 `json:"tenant_id,omitempty"`
 	ID                        string                 `json:"id"`
 	Project                   string                 `json:"project"`
 	Product                   string                 `json:"product"`
@@ -64,6 +65,7 @@ type Environment struct {
 }
 
 type EnvironmentRecord struct {
+	TenantID  string            `json:"tenant_id,omitempty" db:"tenant_id"`
 	ID        string            `json:"id" db:"id"`
 	ProjectID string            `json:"project_id" db:"project_id"`
 	PRID      string            `json:"pr_id" db:"pr_id"`
@@ -79,6 +81,7 @@ type EnvironmentRecord struct {
 
 func NewEnvironmentRecord(environment Environment) EnvironmentRecord {
 	return EnvironmentRecord{
+		TenantID:  environment.TenantID,
 		ID:        environment.ID,
 		ProjectID: environment.Project,
 		PRID:      environment.Source.PullRequestID,
@@ -97,6 +100,9 @@ func (r EnvironmentRecord) Environment() Environment {
 	environment := r.Payload
 	if environment.ID == "" {
 		environment.ID = r.ID
+	}
+	if environment.TenantID == "" {
+		environment.TenantID = r.TenantID
 	}
 	if environment.Project == "" {
 		environment.Project = r.ProjectID
@@ -208,6 +214,7 @@ type EnvironmentComponent struct {
 }
 
 type CreateEnvironmentRequest struct {
+	TenantID       string              `json:"tenant_id,omitempty"`
 	ID             string              `json:"id"`
 	Project        string              `json:"project"`
 	Product        string              `json:"product"`
