@@ -814,6 +814,13 @@
           "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64" } }
         }
       },
+      "OIDCProviderConfig": {
+        "type": "object",
+        "required": ["tenantId", "providerId", "issuer", "clientId", "clientSecretRef", "authorizationUrl", "tokenUrl", "userInfoUrl", "enabled"],
+        "properties": {
+          "tenantId": { "type": "string" }, "providerId": { "type": "string" }, "issuer": { "type": "string", "format": "uri" }, "clientId": { "type": "string" }, "clientSecretRef": { "$ref": "#/components/schemas/SecretReference" }, "authorizationUrl": { "type": "string", "format": "uri" }, "tokenUrl": { "type": "string", "format": "uri" }, "userInfoUrl": { "type": "string", "format": "uri" }, "scopes": { "type": "array", "items": { "type": "string" } }, "audience": { "type": "string" }, "enabled": { "type": "boolean" }
+        }
+      },
       "Capabilities": {
         "type": "object",
         "properties": {
