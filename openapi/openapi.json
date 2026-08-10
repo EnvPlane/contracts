@@ -779,6 +779,25 @@
           "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
+      "BillingCheckoutSession": {
+        "type": "object",
+        "required": ["tenantId", "sessionRef", "planId", "expiresAt"],
+        "properties": {
+          "tenantId": { "type": "string" },
+          "sessionRef": { "type": "string" },
+          "planId": { "type": "string" },
+          "expiresAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BillingPortalSession": {
+        "type": "object",
+        "required": ["tenantId", "sessionRef", "expiresAt"],
+        "properties": {
+          "tenantId": { "type": "string" },
+          "sessionRef": { "type": "string" },
+          "expiresAt": { "type": "string", "format": "date-time" }
+        }
+      },
       "Capabilities": {
         "type": "object",
         "properties": {
