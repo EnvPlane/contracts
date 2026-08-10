@@ -765,6 +765,26 @@
           "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64", "minimum": 0 } }
         }
       },
+      "Subscription": {
+        "type": "object",
+        "required": ["tenantId", "id", "planId", "planVersion", "state", "periodStart", "periodEnd", "source", "createdAt", "updatedAt"],
+        "properties": {
+          "tenantId": { "type": "string" },
+          "id": { "type": "string" },
+          "planId": { "type": "string" },
+          "planVersion": { "type": "string" },
+          "provider": { "type": "string" },
+          "providerRef": { "type": "string" },
+          "providerEventId": { "type": "string" },
+          "state": { "type": "string", "enum": ["trialing", "active", "past_due", "grace", "canceled", "downgraded"] },
+          "periodStart": { "type": "string", "format": "date-time" },
+          "periodEnd": { "type": "string", "format": "date-time" },
+          "graceEnd": { "type": "string", "format": "date-time" },
+          "source": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
       "UsageAggregate": {
         "type": "object",
         "required": ["tenantId", "metric", "periodStart", "periodEnd", "quantity", "eventCount", "revision", "updatedAt"],
@@ -6552,6 +6572,42 @@
           "401": {
             "description": "OAuth identity is required"
           }
+        }
+      }
+    },
+    "/api/v1/billing/subscription": {
+      "get": {
+        "summary": "Get the current tenant subscription",
+        "responses": {
+          "200": { "description": "Current subscription", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Subscription" } } } },
+          "400": { "description": "Tenant context is required" },
+          "403": { "description": "Billing read permission is required" }
+        }
+      }
+    },
+    "/api/v1/billing/checkout": {
+      "post": {
+        "summary": "Create a hosted billing checkout session",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["planId"], "properties": { "planId": { "type": "string" } } } } }
+        },
+        "responses": {
+          "201": { "description": "Checkout session created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BillingCheckoutSession" } } } },
+          "400": { "description": "Invalid request or tenant context" },
+          "403": { "description": "Billing write permission is required" },
+          "503": { "description": "Billing provider is unavailable" }
+        }
+      }
+    },
+    "/api/v1/billing/portal": {
+      "post": {
+        "summary": "Create a hosted customer portal session",
+        "responses": {
+          "201": { "description": "Portal session created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BillingPortalSession" } } } },
+          "400": { "description": "Tenant context is required" },
+          "403": { "description": "Billing write permission is required" },
+          "503": { "description": "Billing provider is unavailable" }
         }
       }
     },
