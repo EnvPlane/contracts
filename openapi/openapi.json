@@ -6323,6 +6323,37 @@
         }
       }
     },
+    "/api/projects/{id}/bootstrap-session/executor-reconciliation/retry": {
+      "post": {
+        "summary": "Retry failed same-cluster project executor reconciliation",
+        "description": "Queues a retry only for a failed Draft bootstrap operation. The response never contains bootstrap or registry credentials.",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Reconciliation retry queued"
+          },
+          "400": {
+            "description": "Reconciliation is not retryable"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Project or bootstrap session not found"
+          },
+          "503": {
+            "description": "Bootstrap session service unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/environments/{id}/delete/retry": {
       "post": {
         "summary": "Compatibility route POST /api/v1/environments/{id}/delete/retry",
