@@ -21,10 +21,22 @@ const (
 	MembershipDisabled MembershipStatus = "disabled"
 )
 
+type MembershipRole string
+
+const (
+	MembershipRoleOwner     MembershipRole = "owner"
+	MembershipRoleAdmin     MembershipRole = "admin"
+	MembershipRoleOperator  MembershipRole = "operator"
+	MembershipRoleDeveloper MembershipRole = "developer"
+	MembershipRoleViewer    MembershipRole = "viewer"
+	MembershipRoleAuditor   MembershipRole = "auditor"
+)
+
 type Membership struct {
 	TenantID  string           `json:"tenant_id"`
 	UserID    string           `json:"user_id"`
 	Status    MembershipStatus `json:"status"`
+	Role      MembershipRole   `json:"role"`
 	CreatedAt time.Time        `json:"created_at"`
 	UpdatedAt time.Time        `json:"updated_at"`
 }
