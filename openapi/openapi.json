@@ -821,6 +821,13 @@
           "tenantId": { "type": "string" }, "providerId": { "type": "string" }, "issuer": { "type": "string", "format": "uri" }, "clientId": { "type": "string" }, "clientSecretRef": { "$ref": "#/components/schemas/SecretReference" }, "authorizationUrl": { "type": "string", "format": "uri" }, "tokenUrl": { "type": "string", "format": "uri" }, "userInfoUrl": { "type": "string", "format": "uri" }, "scopes": { "type": "array", "items": { "type": "string" } }, "audience": { "type": "string" }, "enabled": { "type": "boolean" }
         }
       },
+      "SAMLProviderConfig": {
+        "type": "object",
+        "required": ["tenantId", "providerId", "issuer", "audience", "metadataRef", "signingKeyRef", "enabled"],
+        "properties": {
+          "tenantId": { "type": "string" }, "providerId": { "type": "string" }, "issuer": { "type": "string" }, "audience": { "type": "string" }, "metadataRef": { "$ref": "#/components/schemas/SecretReference" }, "signingKeyRef": { "$ref": "#/components/schemas/SecretReference" }, "attributeMapping": { "type": "object", "additionalProperties": { "type": "string" } }, "enabled": { "type": "boolean" }
+        }
+      },
       "Capabilities": {
         "type": "object",
         "properties": {
