@@ -833,6 +833,7 @@
       "AuditRetentionPolicy": { "type": "object", "required": ["tenantId", "retentionDays", "legalHold"], "properties": { "tenantId": { "type": "string" }, "retentionDays": { "type": "integer", "format": "int64", "minimum": 1 }, "legalHold": { "type": "boolean" } } },
       "AuditRetentionPlan": { "type": "object", "required": ["tenantId", "purgeBefore", "candidates", "bounded"], "properties": { "tenantId": { "type": "string" }, "purgeBefore": { "type": "string", "format": "date-time" }, "candidates": { "type": "array", "items": { "type": "integer", "format": "int64" } }, "bounded": { "type": "boolean" } } },
       "SIEMAuditEvent": { "type": "object", "required": ["eventId", "tenantId", "occurredAt", "actor", "action", "resource"], "properties": { "eventId": { "type": "string" }, "tenantId": { "type": "string" }, "occurredAt": { "type": "string", "format": "date-time" }, "actor": { "type": "string" }, "action": { "type": "string" }, "resource": { "type": "string" }, "resourceId": { "type": "string" } } },
+      "PolicyDecision": { "type": "object", "required": ["effect", "allowed", "ruleIds", "explanation", "bundleVersion"], "properties": { "effect": { "type": "string", "enum": ["allow", "deny", "warn"] }, "allowed": { "type": "boolean" }, "ruleIds": { "type": "array", "items": { "type": "string" } }, "explanation": { "type": "string" }, "bundleVersion": { "type": "string" } } },
       "Capabilities": {
         "type": "object",
         "properties": {
