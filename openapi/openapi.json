@@ -828,6 +828,8 @@
           "tenantId": { "type": "string" }, "providerId": { "type": "string" }, "issuer": { "type": "string" }, "audience": { "type": "string" }, "metadataRef": { "$ref": "#/components/schemas/SecretReference" }, "signingKeyRef": { "$ref": "#/components/schemas/SecretReference" }, "attributeMapping": { "type": "object", "additionalProperties": { "type": "string" } }, "enabled": { "type": "boolean" }
         }
       },
+      "SCIMUser": { "type": "object", "required": ["id", "userName", "active"], "properties": { "id": { "type": "string" }, "externalId": { "type": "string" }, "userName": { "type": "string" }, "displayName": { "type": "string" }, "active": { "type": "boolean" } } },
+      "SCIMGroup": { "type": "object", "required": ["id", "displayName"], "properties": { "id": { "type": "string" }, "displayName": { "type": "string" }, "members": { "type": "array", "items": { "type": "string" } }, "role": { "type": "string" } } },
       "Capabilities": {
         "type": "object",
         "properties": {
