@@ -8,11 +8,12 @@ import (
 type SubscriptionState string
 
 const (
-	SubscriptionTrialing SubscriptionState = "trialing"
-	SubscriptionActive   SubscriptionState = "active"
-	SubscriptionPastDue  SubscriptionState = "past_due"
-	SubscriptionGrace    SubscriptionState = "grace"
-	SubscriptionCanceled SubscriptionState = "canceled"
+	SubscriptionTrialing   SubscriptionState = "trialing"
+	SubscriptionActive     SubscriptionState = "active"
+	SubscriptionPastDue    SubscriptionState = "past_due"
+	SubscriptionGrace      SubscriptionState = "grace"
+	SubscriptionCanceled   SubscriptionState = "canceled"
+	SubscriptionDowngraded SubscriptionState = "downgraded"
 )
 
 type Subscription struct {
@@ -53,11 +54,12 @@ func ValidateSubscriptionTransition(from, to SubscriptionState) error {
 		return nil
 	}
 	allowed := map[SubscriptionState]map[SubscriptionState]bool{
-		SubscriptionTrialing: {SubscriptionActive: true, SubscriptionCanceled: true},
-		SubscriptionActive:   {SubscriptionPastDue: true, SubscriptionCanceled: true},
-		SubscriptionPastDue:  {SubscriptionGrace: true, SubscriptionActive: true, SubscriptionCanceled: true},
-		SubscriptionGrace:    {SubscriptionActive: true, SubscriptionCanceled: true},
-		SubscriptionCanceled: {},
+		SubscriptionTrialing:   {SubscriptionActive: true, SubscriptionGrace: true, SubscriptionCanceled: true},
+		SubscriptionActive:     {SubscriptionPastDue: true, SubscriptionGrace: true, SubscriptionCanceled: true},
+		SubscriptionPastDue:    {SubscriptionGrace: true, SubscriptionActive: true, SubscriptionCanceled: true},
+		SubscriptionGrace:      {SubscriptionActive: true, SubscriptionCanceled: true, SubscriptionDowngraded: true},
+		SubscriptionCanceled:   {},
+		SubscriptionDowngraded: {SubscriptionActive: true, SubscriptionCanceled: true},
 	}
 	if !allowed[from][to] {
 		return fmt.Errorf("invalid subscription transition %q -> %q", from, to)
