@@ -23,6 +23,11 @@ Service repositories should consume these types instead of maintaining private
 copies. Update the OpenAPI document and dependent clients together with model
 changes.
 
+Legacy machine identifiers are catalogued in
+[`docs/legacy-machine-identifiers.json`](docs/legacy-machine-identifiers.json).
+They are compatibility contracts rather than product branding and must follow
+the documented migration policy.
+
 ## Development
 
 ```bash

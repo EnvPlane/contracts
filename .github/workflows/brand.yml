@@ -14,4 +14,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: ./scripts/test-check-brand.sh
       - run: ./scripts/check-brand.sh
-
+      - run: ./scripts/test-check-legacy-machine-inventory.sh
