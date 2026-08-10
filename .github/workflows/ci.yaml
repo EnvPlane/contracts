@@ -18,3 +18,4 @@ jobs:
           go-version-file: go.mod
           cache: true
       - run: go test ./...
+      - run: ./scripts/check-sdk-generated.sh
