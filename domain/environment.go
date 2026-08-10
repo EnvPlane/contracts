@@ -214,6 +214,7 @@ type EnvironmentComponent struct {
 }
 
 type CreateEnvironmentRequest struct {
+	TenantID       string              `json:"tenant_id,omitempty"`
 	ID             string              `json:"id"`
 	Project        string              `json:"project"`
 	Product        string              `json:"product"`
