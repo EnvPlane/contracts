@@ -7,7 +7,7 @@ func TestCommunityFreePlanCatalogIsValidAndVersioned(t *testing.T) {
 	if err := catalog.Validate(); err != nil {
 		t.Fatalf("catalog validation: %v", err)
 	}
-	if len(catalog.Plans) != 2 || catalog.Plans[1].Limits["maxActiveEnvironments"] != 5 {
+	if len(catalog.Plans) != 2 || catalog.Plans[1].Limits["maxActiveEnvironments"] != 2 {
 		t.Fatalf("unexpected free catalog: %#v", catalog)
 	}
 }

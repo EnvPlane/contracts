@@ -27,10 +27,10 @@ func CommunityFreePlanCatalog() PlanCatalog {
 		Plans: []PlanDefinition{
 			{ID: "community", SchemaVersion: PlanSchemaVersion, EffectiveVersion: "1.0.0", Features: map[string]bool{
 				"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
-			}, Limits: map[string]int64{"maxProjects": 10, "maxActiveEnvironments": 25, "maxRemoteClusters": 3, "maxMembers": 10}},
+			}, Limits: map[string]int64{"maxProjects": 10, "maxActiveEnvironments": 25, "maxRemoteClusters": 3, "maxMembers": 10, "maxTTLHours": 720, "maxPinDays": 30}},
 			{ID: "free", SchemaVersion: PlanSchemaVersion, EffectiveVersion: "1.0.0", Features: map[string]bool{
 				"projects": true, "environments": true, "gitops": true, "helmDirect": false, "audit": true,
-			}, Limits: map[string]int64{"maxProjects": 3, "maxActiveEnvironments": 5, "maxRemoteClusters": 1, "maxMembers": 3}},
+			}, Limits: map[string]int64{"maxProjects": 3, "maxActiveEnvironments": 2, "maxRemoteClusters": 1, "maxMembers": 3, "maxTTLHours": 72, "maxPinDays": 7}},
 		},
 	}
 }
