@@ -7,6 +7,8 @@ import "time"
 type AuthenticationSettings struct {
 	State              string                         `json:"state"`
 	Mode               string                         `json:"mode"`
+	DesiredMode        string                         `json:"desiredMode"`
+	Revision           int64                          `json:"revision"`
 	Provider           *string                        `json:"provider,omitempty"`
 	ProviderSettings   AuthenticationProviderSettings `json:"providerSettings"`
 	Configured         bool                           `json:"configured"`
