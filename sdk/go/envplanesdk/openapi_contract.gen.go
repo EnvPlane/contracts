@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "e39d2e52578fb87d055081eba9f0ef5b8dc06ae8b28e599f41ba5444e64579b0"
+const CanonicalOpenAPISHA256 = "b58dc75b985346ec47e9aba9c443db6342a2e69b49085c66336d0f9bf3a64f10"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -60,6 +60,8 @@ var CanonicalOperations = []string{
 	"GET /api/v1/runners/health",
 	"GET /api/v1/runners/runtime-access",
 	"GET /api/v1/settings",
+	"GET /api/v1/settings/authentication",
+	"GET /api/v1/settings/authentication/setup/status",
 	"GET /api/v1/settings/clusters/{id}/health",
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
 	"GET /api/v1/tenants/{tenantID}/memberships",
@@ -122,6 +124,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/runners/heartbeat",
 	"POST /api/v1/runners/register",
 	"POST /api/v1/scim/{tenantID}/credential",
+	"POST /api/v1/settings/authentication/setup/claim",
 	"POST /api/v1/settings/secret-refs/{id}/validate",
 	"POST /api/v1/tenants/{tenantID}/approvals/{id}/approve",
 	"POST /api/v1/tenants/{tenantID}/approvals/{id}/reject",

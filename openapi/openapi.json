@@ -793,17 +793,20 @@
       "AuthenticationSettings": {
         "type": "object",
         "description": "Installation-wide safe read model for interactive browser authentication. It never contains clientSecret.",
-        "required": ["state", "mode", "providerSettings", "configured", "credentialRevision", "sessionRevision"],
+        "required": ["state", "mode", "desiredMode", "configured", "revision", "credentialRevision", "sessionRevision"],
         "properties": {
-          "state": { "type": "string", "enum": ["setup_required", "setup_claimed", "configured"] },
+          "state": { "type": "string", "enum": ["setup_required", "setup_claimed", "configured", "invalid_configuration"] },
           "mode": { "type": "string", "enum": ["disabled", "oauth_required"] },
+          "desiredMode": { "type": "string", "enum": ["disabled", "oauth_required"] },
           "provider": { "type": "string", "nullable": true, "enum": ["github", "gitlab", "oidc"] },
-          "providerSettings": { "$ref": "#/components/schemas/AuthenticationProviderSettings" },
           "configured": { "type": "boolean" },
+          "revision": { "type": "integer", "format": "int64", "minimum": 0 },
           "credentialRevision": { "type": "integer", "format": "int64", "minimum": 0 },
           "sessionRevision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "transactionStatus": { "type": "string", "enum": ["pending", "committed", "failed"] },
           "updatedAt": { "type": "string", "format": "date-time" },
-          "updatedBy": { "type": "string" }
+          "updatedBy": { "type": "string" },
+          "callbackUrl": { "type": "string", "format": "uri", "readOnly": true }
         }
       },
       "AuthenticationProviderSettings": {
@@ -4800,6 +4803,45 @@
               }
             }
           }
+        }
+      }
+    },
+    "/api/v1/settings/authentication": {
+      "get": {
+        "summary": "Get safe authentication settings",
+        "security": [
+          { "apiToken": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credential-safe authentication status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthenticationSettings" }
+              }
+            }
+          },
+          "503": { "description": "Authentication settings unavailable" }
+        }
+      }
+    },
+    "/api/v1/settings/authentication/setup/status": {
+      "get": {
+        "summary": "Get safe authentication setup status",
+        "responses": {
+          "200": { "description": "Safe setup state" },
+          "503": { "description": "Authentication setup unavailable" }
+        }
+      }
+    },
+    "/api/v1/settings/authentication/setup/claim": {
+      "post": {
+        "summary": "Claim one-time setup credential",
+        "description": "Internal dependency-gated route. The setup credential is accepted only in the Authorization header and never returned.",
+        "responses": {
+          "200": { "description": "Setup claimed" },
+          "401": { "description": "Invalid, expired, or replayed setup credential" },
+          "503": { "description": "Authentication setup unavailable" }
         }
       }
     },
