@@ -4846,8 +4846,8 @@
         }
       },
       "put": {
-        "summary": "Request initial OAuth activation",
-        "description": "Available only with a scoped setup session. Effective interactive authentication remains disabled until a later runtime activation release.",
+        "summary": "Request authentication update",
+        "description": "Initial setup requires a scoped setup session; subsequent updates require settings.write. Effective interactive authentication remains disabled until a later runtime activation release.",
         "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InitialAuthenticationCommand" } } } },
         "responses": {
@@ -4857,6 +4857,22 @@
           "412": { "description": "Canonical public URL required" },
           "409": { "description": "Activation transaction unavailable" }
         }
+      },
+      "delete": {
+        "summary": "Request authentication disable",
+        "security": [{ "apiToken": [] }],
+        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["expectedRevision"], "properties": { "expectedRevision": { "type": "integer", "format": "int64" } } } } } },
+        "responses": { "202": { "description": "Disable transaction pending" }, "403": { "description": "settings.write required" } }
+      }
+    },
+    "/api/v1/settings/authentication/credentials/rotate": {
+      "post": {
+        "summary": "Rotate provider credentials",
+        "security": [{ "apiToken": [] }],
+        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InitialAuthenticationCommand" } } } },
+        "responses": { "202": { "description": "Rotation transaction pending" }, "403": { "description": "settings.write required" } }
       }
     },
     "/api/v1/settings/authentication/setup/status": {
