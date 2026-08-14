@@ -790,6 +790,44 @@
           "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
+      "AuthenticationSettings": {
+        "type": "object",
+        "description": "Installation-wide safe read model for interactive browser authentication. It never contains clientSecret.",
+        "required": ["state", "mode", "providerSettings", "configured", "credentialRevision", "sessionRevision"],
+        "properties": {
+          "state": { "type": "string", "enum": ["setup_required", "setup_claimed", "configured"] },
+          "mode": { "type": "string", "enum": ["disabled", "oauth_required"] },
+          "provider": { "type": "string", "nullable": true, "enum": ["github", "gitlab", "oidc"] },
+          "providerSettings": { "$ref": "#/components/schemas/AuthenticationProviderSettings" },
+          "configured": { "type": "boolean" },
+          "credentialRevision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "sessionRevision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "updatedBy": { "type": "string" }
+        }
+      },
+      "AuthenticationProviderSettings": {
+        "type": "object",
+        "description": "Safe provider metadata. callbackUrl is derived from the canonical public control-plane URL and is not writable.",
+        "properties": {
+          "clientId": { "type": "string" }, "issuer": { "type": "string", "format": "uri" },
+          "authorizationUrl": { "type": "string", "format": "uri" }, "tokenUrl": { "type": "string", "format": "uri" },
+          "userInfoUrl": { "type": "string", "format": "uri" }, "revocationUrl": { "type": "string", "format": "uri" },
+          "scopes": { "type": "array", "items": { "type": "string" } }, "callbackUrl": { "type": "string", "format": "uri", "readOnly": true }
+        }
+      },
+      "AuthenticationSettingsCommand": {
+        "type": "object",
+        "description": "Write-only command. clientSecret is never returned by AuthenticationSettings.",
+        "required": ["expectedCredentialRevision", "mode"],
+        "properties": {
+          "expectedCredentialRevision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "mode": { "type": "string", "enum": ["disabled", "oauth_required"] },
+          "provider": { "type": "string", "nullable": true, "enum": ["github", "gitlab", "oidc"] },
+          "providerSettings": { "$ref": "#/components/schemas/AuthenticationProviderSettings" },
+          "clientSecret": { "type": "string", "writeOnly": true }
+        }
+      },
       "UsageAggregate": {
         "type": "object",
         "required": ["tenantId", "metric", "periodStart", "periodEnd", "quantity", "eventCount", "revision", "updatedAt"],
