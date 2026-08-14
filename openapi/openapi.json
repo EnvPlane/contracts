@@ -831,6 +831,27 @@
           "clientSecret": { "type": "string", "writeOnly": true }
         }
       },
+      "InitialAuthenticationCommand": {
+        "type": "object",
+        "description": "Write-only initial setup command. clientSecret is accepted but is never returned.",
+        "required": ["mode", "provider", "clientId", "clientSecret"],
+        "additionalProperties": false,
+        "properties": {
+          "mode": { "type": "string", "enum": ["oauth_required"] },
+          "provider": { "type": "string", "enum": ["github", "gitlab", "oidc"] },
+          "clientId": { "type": "string" },
+          "clientSecret": { "type": "string", "writeOnly": true },
+          "scopes": { "type": "array", "items": { "type": "string" } },
+          "enterpriseBaseUrl": { "type": "string", "format": "uri" },
+          "baseUrl": { "type": "string", "format": "uri" },
+          "issuer": { "type": "string", "format": "uri" },
+          "audience": { "type": "array", "items": { "type": "string" } },
+          "authorizationUrl": { "type": "string", "format": "uri" },
+          "tokenUrl": { "type": "string", "format": "uri" },
+          "userInfoUrl": { "type": "string", "format": "uri" },
+          "revocationUrl": { "type": "string", "format": "uri" }
+        }
+      },
       "UsageAggregate": {
         "type": "object",
         "required": ["tenantId", "metric", "periodStart", "periodEnd", "quantity", "eventCount", "revision", "updatedAt"],
@@ -4822,6 +4843,19 @@
             }
           },
           "503": { "description": "Authentication settings unavailable" }
+        }
+      },
+      "put": {
+        "summary": "Request initial OAuth activation",
+        "description": "Available only with a scoped setup session. Effective interactive authentication remains disabled until a later runtime activation release.",
+        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InitialAuthenticationCommand" } } } },
+        "responses": {
+          "202": { "description": "Activation transaction pending", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthenticationSettings" } } } },
+          "400": { "description": "Invalid provider command" },
+          "401": { "description": "Scoped setup session required" },
+          "412": { "description": "Canonical public URL required" },
+          "409": { "description": "Activation transaction unavailable" }
         }
       }
     },

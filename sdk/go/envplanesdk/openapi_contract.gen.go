@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "b58dc75b985346ec47e9aba9c443db6342a2e69b49085c66336d0f9bf3a64f10"
+const CanonicalOpenAPISHA256 = "bb61d676b53b7d80add6085d78918ba6b6715ca1e7880d4a8450200388e02360"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -141,6 +141,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/projects/{id}/hybrid-config",
 	"PUT /api/v1/remote-clusters/{id}",
 	"PUT /api/v1/settings",
+	"PUT /api/v1/settings/authentication",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"PUT /scim/v2/{tenantID}/Groups/{id}",
 	"PUT /scim/v2/{tenantID}/Users/{id}",
