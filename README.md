@@ -28,6 +28,10 @@ Legacy machine identifiers are catalogued in
 They are compatibility contracts rather than product branding and must follow
 the documented migration policy.
 
+The versioned branding and wire-compatibility sequencing is documented in
+[`docs/brand-migration.md`](docs/brand-migration.md). JSON fields, enum values,
+module paths and generated SDK symbols are not renamed in place.
+
 The public and Enterprise module boundary is recorded in
 [`docs/adr/0001-open-core-and-enterprise-boundary.md`](docs/adr/0001-open-core-and-enterprise-boundary.md).
 Stable extension interfaces for entitlement, identity, policy, audit and FinOps
