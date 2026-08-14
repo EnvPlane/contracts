@@ -30,6 +30,10 @@ type AuthenticationTransaction struct {
 	ExpectedSettingsRevision   int64     `json:"expectedSettingsRevision"`
 	ExpectedCredentialRevision int64     `json:"expectedCredentialRevision"`
 	ExpectedRuntimeRevision    int64     `json:"expectedRuntimeRevision"`
+	// ExpectedMaterialRevision fences an out-of-band setup recovery against the
+	// exact managed-Secret material snapshot it inspected. It is intentionally
+	// separate from runtime revisions, which belong to provider activation.
+	ExpectedMaterialRevision string    `json:"expectedMaterialRevision,omitempty"`
 	IdempotencyKey             string    `json:"idempotencyKey,omitempty"`
 	ErrorCode                  string    `json:"errorCode,omitempty"`
 	CreatedAt                  time.Time `json:"createdAt"`
