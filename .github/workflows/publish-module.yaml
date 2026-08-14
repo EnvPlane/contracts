@@ -43,5 +43,7 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
         run: |
           set -euo pipefail
+          git config user.name "envpilot automation"
+          git config user.email "automation@envpilot.dev"
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
