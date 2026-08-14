@@ -803,7 +803,9 @@
           "revision": { "type": "integer", "format": "int64", "minimum": 0 },
           "credentialRevision": { "type": "integer", "format": "int64", "minimum": 0 },
           "sessionRevision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "transactionStatus": { "type": "string", "enum": ["pending", "committed", "failed"] },
+          "preparedRuntimeRevision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "activeRuntimeRevision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "transactionStatus": { "type": "string", "enum": ["pending", "runtime_ready", "committed", "failed"] },
           "updatedAt": { "type": "string", "format": "date-time" },
           "updatedBy": { "type": "string" },
           "callbackUrl": { "type": "string", "format": "uri", "readOnly": true }

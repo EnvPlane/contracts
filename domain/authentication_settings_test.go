@@ -23,3 +23,18 @@ func TestAuthenticationSettingsReadModelNeverSerializesClientSecret(t *testing.T
 		t.Fatal("write command must retain write-only credential field")
 	}
 }
+
+func TestAuthenticationSettingsRuntimeRevisionsRoundTrip(t *testing.T) {
+	settings := AuthenticationSettings{Mode: "disabled", PreparedRuntimeRevision: 4, ActiveRuntimeRevision: 3}
+	payload, err := json.Marshal(settings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var decoded AuthenticationSettings
+	if err := json.Unmarshal(payload, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	if decoded.PreparedRuntimeRevision != 4 || decoded.ActiveRuntimeRevision != 3 {
+		t.Fatalf("runtime revisions = %#v", decoded)
+	}
+}

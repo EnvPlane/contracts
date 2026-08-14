@@ -14,7 +14,7 @@ type ControlPlaneSettings struct {
 	// Secret-reference metadata; certificate, kubeconfig and token bytes never
 	// belong in settings or an API response.
 	ManagementEndpointProfile *ManagementEndpointProfile `json:"management_endpoint_profile,omitempty"`
-	Authentication            AuthenticationSettings    `json:"authentication"`
+	Authentication            AuthenticationSettings     `json:"authentication"`
 	AuthenticationTransaction *AuthenticationTransaction `json:"authentication_transaction,omitempty"`
 	UpdatedAt                 time.Time                  `json:"updated_at"`
 	UpdatedBy                 string                     `json:"updated_by,omitempty"`
@@ -24,15 +24,16 @@ type ControlPlaneSettings struct {
 // AuthenticationTransaction is safe persisted coordination state. It never
 // contains provider credentials or Secret references.
 type AuthenticationTransaction struct {
-	ID                          string    `json:"id"`
-	Kind                        string    `json:"kind"`
-	Status                      string    `json:"status"`
-	ExpectedSettingsRevision    int64     `json:"expectedSettingsRevision"`
-	ExpectedCredentialRevision  int64     `json:"expectedCredentialRevision"`
-	IdempotencyKey              string    `json:"idempotencyKey,omitempty"`
-	ErrorCode                   string    `json:"errorCode,omitempty"`
-	CreatedAt                   time.Time `json:"createdAt"`
-	UpdatedAt                   time.Time `json:"updatedAt"`
+	ID                         string    `json:"id"`
+	Kind                       string    `json:"kind"`
+	Status                     string    `json:"status"`
+	ExpectedSettingsRevision   int64     `json:"expectedSettingsRevision"`
+	ExpectedCredentialRevision int64     `json:"expectedCredentialRevision"`
+	ExpectedRuntimeRevision    int64     `json:"expectedRuntimeRevision"`
+	IdempotencyKey             string    `json:"idempotencyKey,omitempty"`
+	ErrorCode                  string    `json:"errorCode,omitempty"`
+	CreatedAt                  time.Time `json:"createdAt"`
+	UpdatedAt                  time.Time `json:"updatedAt"`
 }
 
 // ManagementEndpointProfile describes the management control-plane HTTPS

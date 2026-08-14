@@ -5,17 +5,19 @@ import "time"
 // AuthenticationSettings is the installation-wide, safe-to-read interactive
 // login configuration. It intentionally has no clientSecret field.
 type AuthenticationSettings struct {
-	State              string                         `json:"state"`
-	Mode               string                         `json:"mode"`
-	DesiredMode        string                         `json:"desiredMode"`
-	Revision           int64                          `json:"revision"`
-	Provider           *string                        `json:"provider,omitempty"`
-	ProviderSettings   AuthenticationProviderSettings `json:"providerSettings"`
-	Configured         bool                           `json:"configured"`
-	CredentialRevision int64                          `json:"credentialRevision"`
-	SessionRevision    int64                          `json:"sessionRevision"`
-	UpdatedAt          *time.Time                     `json:"updatedAt,omitempty"`
-	UpdatedBy          string                         `json:"updatedBy,omitempty"`
+	State                   string                         `json:"state"`
+	Mode                    string                         `json:"mode"`
+	DesiredMode             string                         `json:"desiredMode"`
+	Revision                int64                          `json:"revision"`
+	Provider                *string                        `json:"provider,omitempty"`
+	ProviderSettings        AuthenticationProviderSettings `json:"providerSettings"`
+	Configured              bool                           `json:"configured"`
+	CredentialRevision      int64                          `json:"credentialRevision"`
+	SessionRevision         int64                          `json:"sessionRevision"`
+	PreparedRuntimeRevision int64                          `json:"preparedRuntimeRevision"`
+	ActiveRuntimeRevision   int64                          `json:"activeRuntimeRevision"`
+	UpdatedAt               *time.Time                     `json:"updatedAt,omitempty"`
+	UpdatedBy               string                         `json:"updatedBy,omitempty"`
 }
 
 // AuthenticationProviderSettings contains only non-secret provider metadata.
