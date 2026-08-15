@@ -12,6 +12,7 @@ type User struct {
 	DisplayName      string    `json:"display_name,omitempty"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
+	SessionEpoch     int64     `json:"session_epoch"`
 }
 
 type MembershipStatus string
