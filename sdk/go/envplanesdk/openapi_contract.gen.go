@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "3999d569557eb87538cf2dbedb0bd208e3f64b0b919176f97434bb4087bc9377"
+const CanonicalOpenAPISHA256 = "a819ed77b5a7869a5d0d75339b499208f8e34ed7c299d7a22b8b99956742088b"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -36,6 +36,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/audit",
 	"GET /api/v1/billing/subscription",
 	"GET /api/v1/capabilities",
+	"GET /api/v1/enterprise/{capabilityID}",
 	"GET /api/v1/environment-records",
 	"GET /api/v1/environments",
 	"GET /api/v1/environments/{id}",
@@ -66,6 +67,13 @@ var CanonicalOperations = []string{
 	"GET /api/v1/settings/clusters/{id}/health",
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
 	"GET /api/v1/tenants/{tenantID}/memberships",
+	"GET /auth/github/callback",
+	"GET /auth/github/login",
+	"GET /auth/gitlab/callback",
+	"GET /auth/gitlab/login",
+	"GET /auth/logout",
+	"GET /auth/oidc/callback",
+	"GET /auth/oidc/login",
 	"GET /openapi.json",
 	"GET /scim/v2/{tenantID}/Groups",
 	"GET /scim/v2/{tenantID}/Users",
@@ -108,10 +116,12 @@ var CanonicalOperations = []string{
 	"POST /api/v1/environments/{id}/status",
 	"POST /api/v1/environments/{id}/unpin",
 	"POST /api/v1/jobs",
+	"POST /api/v1/jobs/commands",
 	"POST /api/v1/jobs/{id}/retry",
 	"POST /api/v1/products",
 	"POST /api/v1/products/validate",
 	"POST /api/v1/projects/{id}/runner-config",
+	"POST /api/v1/projects/{id}/runtime-tokens/revoke",
 	"POST /api/v1/remote-clusters",
 	"POST /api/v1/remote-clusters/{id}/credentials",
 	"POST /api/v1/remote-clusters/{id}/credentials/rotate",
@@ -121,6 +131,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/remote-clusters/{id}/repair",
 	"POST /api/v1/remote-clusters/{id}/rotate",
 	"POST /api/v1/render/preview",
+	"POST /api/v1/runners/commands/{id}/lease",
 	"POST /api/v1/runners/commands/{id}/result",
 	"POST /api/v1/runners/heartbeat",
 	"POST /api/v1/runners/register",
@@ -133,6 +144,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/tenants/{tenantID}/jobs/{id}/approval",
 	"POST /api/v1/webhooks/github",
 	"POST /api/v1/webhooks/gitlab",
+	"POST /auth/logout",
 	"POST /webhook/github",
 	"PUT /api/projects/{id}/components",
 	"PUT /api/v1/license",

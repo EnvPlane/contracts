@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -14,10 +15,12 @@ import (
 func TestClientAuthPaginationAndIdempotency(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer runtime-token" || r.Header.Get("Idempotency-Key") != "request-1" {
-			t.Fatalf("headers not propagated")
+			http.Error(w, "headers not propagated", http.StatusBadRequest)
+			return
 		}
 		if r.URL.Query().Get("cursor") != "next" || r.URL.Query().Get("limit") != "10" {
-			t.Fatalf("pagination not encoded: %s", r.URL.RawQuery)
+			http.Error(w, "pagination not encoded: "+r.URL.RawQuery, http.StatusBadRequest)
+			return
 		}
 		w.Header().Set("X-EnvPlane-API-Version", "1")
 		w.Header().Set("X-EnvPlane-Capabilities", "billing,scim")
@@ -34,6 +37,32 @@ func TestClientAuthPaginationAndIdempotency(t *testing.T) {
 	got := NegotiateCapabilities(resp)
 	if got.APIVersion != "1" || len(got.Features) != 2 {
 		t.Fatalf("capabilities = %#v", got)
+	}
+}
+
+func TestClientDoJSONProvidesTypedTransport(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost || r.Header.Get("Content-Type") != "application/json" {
+			http.Error(w, "invalid request headers", http.StatusBadRequest)
+			return
+		}
+		var request map[string]string
+		if err := json.NewDecoder(r.Body).Decode(&request); err != nil || request["id"] != "env-1" {
+			http.Error(w, "invalid request", http.StatusBadRequest)
+			return
+		}
+		_, _ = io.WriteString(w, `{"status":"ready"}`)
+	}))
+	defer server.Close()
+	var response struct {
+		Status string `json:"status"`
+	}
+	client := Client{BaseURL: server.URL}
+	if err := client.DoJSON(context.Background(), http.MethodPost, "/v1/environments", map[string]string{"id": "env-1"}, &response, "request-1"); err != nil {
+		t.Fatal(err)
+	}
+	if response.Status != "ready" {
+		t.Fatalf("response = %#v", response)
 	}
 }
 

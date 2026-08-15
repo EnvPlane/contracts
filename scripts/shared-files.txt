@@ -1,0 +1,6 @@
+# Canonical shared files. Each entry is checked across the sibling modules.
+domain/job.go
+domain/scm.go
+sdk/go/envplanesdk/client.go
+render/renderer.go
+writer/writer.go

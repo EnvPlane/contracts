@@ -1,7 +1,7 @@
 package domain
 
 type ProductTemplate struct {
-	TenantID         string            `json:"tenant_id,omitempty" db:"tenant_id"`
+	TenantID         string            `json:"tenant_id,omitempty"`
 	Name             string            `json:"name"`
 	Project          string            `json:"project"`
 	NamespaceSuffix  string            `json:"namespaceSuffix"`

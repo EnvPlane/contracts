@@ -24,20 +24,20 @@ type ControlPlaneSettings struct {
 // AuthenticationTransaction is safe persisted coordination state. It never
 // contains provider credentials or Secret references.
 type AuthenticationTransaction struct {
-	ID                         string    `json:"id"`
-	Kind                       string    `json:"kind"`
-	Status                     string    `json:"status"`
-	ExpectedSettingsRevision   int64     `json:"expectedSettingsRevision"`
-	ExpectedCredentialRevision int64     `json:"expectedCredentialRevision"`
-	ExpectedRuntimeRevision    int64     `json:"expectedRuntimeRevision"`
+	ID                         string `json:"id"`
+	Kind                       string `json:"kind"`
+	Status                     string `json:"status"`
+	ExpectedSettingsRevision   int64  `json:"expectedSettingsRevision"`
+	ExpectedCredentialRevision int64  `json:"expectedCredentialRevision"`
+	ExpectedRuntimeRevision    int64  `json:"expectedRuntimeRevision"`
 	// ExpectedMaterialRevision fences an out-of-band setup recovery against the
 	// exact managed-Secret material snapshot it inspected. It is intentionally
 	// separate from runtime revisions, which belong to provider activation.
 	ExpectedMaterialRevision string    `json:"expectedMaterialRevision,omitempty"`
-	IdempotencyKey             string    `json:"idempotencyKey,omitempty"`
-	ErrorCode                  string    `json:"errorCode,omitempty"`
-	CreatedAt                  time.Time `json:"createdAt"`
-	UpdatedAt                  time.Time `json:"updatedAt"`
+	IdempotencyKey           string    `json:"idempotencyKey,omitempty"`
+	ErrorCode                string    `json:"errorCode,omitempty"`
+	CreatedAt                time.Time `json:"createdAt"`
+	UpdatedAt                time.Time `json:"updatedAt"`
 }
 
 // ManagementEndpointProfile describes the management control-plane HTTPS

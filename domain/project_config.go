@@ -15,6 +15,23 @@ const (
 
 type DeploymentBackend string
 
+// ParseDeploymentBackend validates and canonicalizes a deployment backend received at a boundary.
+func ParseDeploymentBackend(raw string) (DeploymentBackend, error) {
+	value := strings.ToLower(strings.TrimSpace(raw))
+	switch value {
+	case "", string(DeploymentBackendHelmDirect), "helm-direct":
+		return DeploymentBackendHelmDirect, nil
+	case string(DeploymentBackendFluxCD), "flux", "flux_cd":
+		return DeploymentBackendFluxCD, nil
+	case string(DeploymentBackendGitOpsManifest), "gitops-manifest":
+		return DeploymentBackendGitOpsManifest, nil
+	case string(DeploymentBackendArgoCD), "argo-cd":
+		return DeploymentBackendArgoCD, nil
+	default:
+		return "", fmt.Errorf("unsupported deployment backend %q", raw)
+	}
+}
+
 type ProjectDeploymentConfig struct {
 	Backend    DeploymentBackend        `json:"backend"`
 	HelmDirect *ProjectHelmDirectConfig `json:"helmDirect,omitempty"`
@@ -102,13 +119,13 @@ func asString(value any) string {
 }
 
 type ProjectConfig struct {
-	TenantID      string         `json:"tenant_id,omitempty" db:"tenant_id"`
-	ID            string         `json:"id" db:"id"`
-	ProjectID     string         `json:"project_id" db:"project_id"`
-	Version       int            `json:"version" db:"version"`
-	Config        map[string]any `json:"config,omitempty" db:"config"`
-	Sensitive     map[string]any `json:"sensitive,omitempty" db:"sensitive"`
+	TenantID      string         `json:"tenant_id,omitempty"`
+	ID            string         `json:"id"`
+	ProjectID     string         `json:"project_id"`
+	Version       int            `json:"version"`
+	Config        map[string]any `json:"config,omitempty"`
+	Sensitive     map[string]any `json:"sensitive,omitempty"`
 	SensitiveRefs map[string]any `json:"sensitive_refs,omitempty"`
-	CreatedBy     string         `json:"created_by" db:"created_by"`
-	CreatedAt     time.Time      `json:"created_at" db:"created_at"`
+	CreatedBy     string         `json:"created_by"`
+	CreatedAt     time.Time      `json:"created_at"`
 }

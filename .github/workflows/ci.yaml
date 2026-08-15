@@ -17,5 +17,21 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+      - name: Verify contracts version pins in assembled workspace
+        run: bash scripts/check-contract-version.sh "$GITHUB_WORKSPACE/.."
       - run: go test ./...
+      - run: go vet ./...
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64
+      - run: go test -race ./...
+      - run: go test -coverprofile=cover.out ./...
+      - run: |
+          total=$(go tool cover -func=cover.out | awk '/^total:/ {print $3}' | tr -d '%')
+          awk -v total="$total" 'BEGIN { if (total < 30) { print "coverage below 30%: " total "%"; exit 1 } }'
       - run: ./scripts/check-sdk-generated.sh
+      - run: ./scripts/check-domain-boundary.sh
+      - name: Verify shared module boundaries
+        run: ./scripts/check-no-duplicated-paths.sh "$GITHUB_WORKSPACE/.."
+      - name: Verify shared file drift
+        run: ./scripts/check-shared-file-drift.sh "$GITHUB_WORKSPACE/.."

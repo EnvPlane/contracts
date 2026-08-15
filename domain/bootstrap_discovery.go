@@ -5,6 +5,24 @@ import (
 	"time"
 )
 
+// ClusterCapabilities is the transport contract produced by an agent's
+// capability discovery and consumed by control-plane registration endpoints.
+type ClusterCapabilities struct {
+	KubernetesVersion string                  `json:"kubernetesVersion"`
+	Capabilities      []string                `json:"capabilities,omitempty"`
+	Report            ClusterCapabilityReport `json:"report"`
+}
+
+// NamespaceStatusReport is the agent-to-control-plane status payload.
+type NamespaceStatusReport struct {
+	EnvironmentID string            `json:"environmentId"`
+	Namespace     string            `json:"namespace"`
+	Status        EnvironmentStatus `json:"status"`
+	Message       string            `json:"message,omitempty"`
+	EventType     string            `json:"eventType,omitempty"`
+	Phase         string            `json:"phase,omitempty"`
+}
+
 type ClusterCapabilityReport struct {
 	Revision           int        `json:"revision,omitempty"`
 	ObservedAt         *time.Time `json:"observedAt,omitempty"`

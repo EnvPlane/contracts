@@ -13,13 +13,13 @@ const (
 )
 
 type BootstrapSession struct {
-	TenantID    string                 `json:"tenant_id,omitempty" db:"tenant_id"`
-	ID          string                 `json:"id" db:"id"`
-	ProjectID   string                 `json:"project_id" db:"project_id"`
-	CurrentStep int                    `json:"current_step" db:"current_step"`
-	Status      BootstrapSessionStatus `json:"status" db:"status"`
-	CreatedBy   string                 `json:"created_by" db:"created_by"`
-	Data        map[string]any         `json:"data,omitempty" db:"data"`
-	CreatedAt   time.Time              `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time              `json:"updated_at" db:"updated_at"`
+	TenantID    string                 `json:"tenant_id,omitempty"`
+	ID          string                 `json:"id"`
+	ProjectID   string                 `json:"project_id"`
+	CurrentStep int                    `json:"current_step"`
+	Status      BootstrapSessionStatus `json:"status"`
+	CreatedBy   string                 `json:"created_by"`
+	Data        map[string]any         `json:"data,omitempty"`
+	CreatedAt   time.Time              `json:"created_at"`
+	UpdatedAt   time.Time              `json:"updated_at"`
 }
