@@ -51,36 +51,113 @@
     "schemas": {
       "SCMEvent": {
         "type": "object",
-        "required": ["provider", "action", "repo", "changeId"],
+        "required": [
+          "provider",
+          "action",
+          "repo",
+          "changeId"
+        ],
         "properties": {
-          "provider": {"type": "string", "enum": ["github", "gitlab"]},
-          "action": {"type": "string", "enum": ["open", "update", "close", "ignore"]},
-          "repo": {"type": "string"},
-          "branch": {"type": "string"},
-          "changeId": {"type": "string"},
-          "commitSha": {"type": "string"},
-          "author": {"type": "string"},
-          "url": {"type": "string"},
-          "eventId": {"type": "string"},
-          "installationId": {"type": "string"},
-          "labels": {"type": "array", "items": {"type": "string"}},
-          "draft": {"type": "boolean"}
+          "provider": {
+            "type": "string",
+            "enum": [
+              "github",
+              "gitlab"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "open",
+              "update",
+              "close",
+              "ignore"
+            ]
+          },
+          "repo": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "changeId": {
+            "type": "string"
+          },
+          "commitSha": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "installationId": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "draft": {
+            "type": "boolean"
+          }
         }
       },
       "SCMCommand": {
         "type": "object",
-        "required": ["provider", "command", "repo", "changeId"],
+        "required": [
+          "provider",
+          "command",
+          "repo",
+          "changeId"
+        ],
         "properties": {
-          "provider": {"type": "string", "enum": ["github", "gitlab"]},
-          "command": {"type": "string", "enum": ["recreate", "destroy", "pin"]},
-          "repo": {"type": "string"},
-          "changeId": {"type": "string"},
-          "author": {"type": "string"},
-          "url": {"type": "string"},
-          "eventId": {"type": "string"},
-          "installationId": {"type": "string"},
-          "pinDuration": {"type": "integer", "format": "int64"},
-          "pinRaw": {"type": "string"}
+          "provider": {
+            "type": "string",
+            "enum": [
+              "github",
+              "gitlab"
+            ]
+          },
+          "command": {
+            "type": "string",
+            "enum": [
+              "recreate",
+              "destroy",
+              "pin"
+            ]
+          },
+          "repo": {
+            "type": "string"
+          },
+          "changeId": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "installationId": {
+            "type": "string"
+          },
+          "pinDuration": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pinRaw": {
+            "type": "string"
+          }
         }
       },
       "Error": {
@@ -482,7 +559,16 @@
           },
           "status": {
             "type": "string",
-            "enum": ["creating", "ready", "failed", "delete_requested", "gitops_delete_pending", "delete_failed", "terminating", "terminated"]
+            "enum": [
+              "creating",
+              "ready",
+              "failed",
+              "delete_requested",
+              "gitops_delete_pending",
+              "delete_failed",
+              "terminating",
+              "terminated"
+            ]
           },
           "deploymentBackend": {
             "type": "string",
@@ -841,193 +927,1203 @@
       },
       "PlanDefinition": {
         "type": "object",
-        "required": ["id", "schemaVersion", "effectiveVersion", "features", "limits"],
+        "required": [
+          "id",
+          "schemaVersion",
+          "effectiveVersion",
+          "features",
+          "limits"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "schemaVersion": { "type": "string" },
-          "effectiveVersion": { "type": "string" },
-          "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
-          "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64", "minimum": 0 } }
+          "id": {
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "effectiveVersion": {
+            "type": "string"
+          },
+          "features": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "limits": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          }
         }
       },
       "Subscription": {
         "type": "object",
-        "required": ["tenantId", "id", "planId", "planVersion", "state", "periodStart", "periodEnd", "source", "createdAt", "updatedAt"],
+        "required": [
+          "tenantId",
+          "id",
+          "planId",
+          "planVersion",
+          "state",
+          "periodStart",
+          "periodEnd",
+          "source",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
-          "tenantId": { "type": "string" },
-          "id": { "type": "string" },
-          "planId": { "type": "string" },
-          "planVersion": { "type": "string" },
-          "provider": { "type": "string" },
-          "providerRef": { "type": "string" },
-          "providerEventId": { "type": "string" },
-          "state": { "type": "string", "enum": ["trialing", "active", "past_due", "grace", "canceled", "downgraded"] },
-          "periodStart": { "type": "string", "format": "date-time" },
-          "periodEnd": { "type": "string", "format": "date-time" },
-          "graceEnd": { "type": "string", "format": "date-time" },
-          "source": { "type": "string" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "tenantId": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "planVersion": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "providerRef": {
+            "type": "string"
+          },
+          "providerEventId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "trialing",
+              "active",
+              "past_due",
+              "grace",
+              "canceled",
+              "downgraded"
+            ]
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "graceEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "AuthenticationSettings": {
         "type": "object",
         "description": "Installation-wide safe read model for interactive browser authentication. It never contains clientSecret.",
-        "required": ["state", "mode", "desiredMode", "configured", "revision", "credentialRevision", "sessionRevision"],
+        "required": [
+          "state",
+          "mode",
+          "desiredMode",
+          "configured",
+          "revision",
+          "credentialRevision",
+          "sessionRevision"
+        ],
         "properties": {
-          "state": { "type": "string", "enum": ["setup_required", "setup_claimed", "configured", "invalid_configuration"] },
-          "mode": { "type": "string", "enum": ["disabled", "oauth_required"] },
-          "desiredMode": { "type": "string", "enum": ["disabled", "oauth_required"] },
-          "provider": { "type": "string", "nullable": true, "enum": ["github", "gitlab", "oidc"] },
-          "configured": { "type": "boolean" },
-          "revision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "credentialRevision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "sessionRevision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "preparedRuntimeRevision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "activeRuntimeRevision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "transactionStatus": { "type": "string", "enum": ["pending", "runtime_ready", "committed", "failed"] },
-          "updatedAt": { "type": "string", "format": "date-time" },
-          "updatedBy": { "type": "string" },
-          "callbackUrl": { "type": "string", "format": "uri", "readOnly": true }
+          "state": {
+            "type": "string",
+            "enum": [
+              "setup_required",
+              "setup_claimed",
+              "configured",
+              "invalid_configuration"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "oauth_required"
+            ]
+          },
+          "desiredMode": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "oauth_required"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "github",
+              "gitlab",
+              "oidc"
+            ]
+          },
+          "configured": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "credentialRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "sessionRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "preparedRuntimeRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "activeRuntimeRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "transactionStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "runtime_ready",
+              "committed",
+              "failed"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          }
         }
       },
       "AuthenticationProviderSettings": {
         "type": "object",
         "description": "Safe provider metadata. callbackUrl is derived from the canonical public control-plane URL and is not writable.",
         "properties": {
-          "clientId": { "type": "string" }, "issuer": { "type": "string", "format": "uri" },
-          "authorizationUrl": { "type": "string", "format": "uri" }, "tokenUrl": { "type": "string", "format": "uri" },
-          "userInfoUrl": { "type": "string", "format": "uri" }, "revocationUrl": { "type": "string", "format": "uri" },
-          "scopes": { "type": "array", "items": { "type": "string" } }, "callbackUrl": { "type": "string", "format": "uri", "readOnly": true }
+          "clientId": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
+          "authorizationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "tokenUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "userInfoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "revocationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          }
         }
       },
       "AuthenticationSettingsCommand": {
         "type": "object",
         "description": "Write-only command. clientSecret is never returned by AuthenticationSettings.",
-        "required": ["expectedCredentialRevision", "mode"],
+        "required": [
+          "expectedCredentialRevision",
+          "mode"
+        ],
         "properties": {
-          "expectedCredentialRevision": { "type": "integer", "format": "int64", "minimum": 0 },
-          "mode": { "type": "string", "enum": ["disabled", "oauth_required"] },
-          "provider": { "type": "string", "nullable": true, "enum": ["github", "gitlab", "oidc"] },
-          "providerSettings": { "$ref": "#/components/schemas/AuthenticationProviderSettings" },
-          "clientSecret": { "type": "string", "writeOnly": true }
+          "expectedCredentialRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "oauth_required"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "github",
+              "gitlab",
+              "oidc"
+            ]
+          },
+          "providerSettings": {
+            "$ref": "#/components/schemas/AuthenticationProviderSettings"
+          },
+          "clientSecret": {
+            "type": "string",
+            "writeOnly": true
+          }
         }
       },
       "InitialAuthenticationCommand": {
         "type": "object",
         "description": "Write-only initial setup command. clientSecret is accepted but is never returned.",
-        "required": ["mode", "provider", "clientId", "clientSecret"],
+        "required": [
+          "mode",
+          "provider",
+          "clientId",
+          "clientSecret"
+        ],
         "additionalProperties": false,
         "properties": {
-          "mode": { "type": "string", "enum": ["oauth_required"] },
-          "provider": { "type": "string", "enum": ["github", "gitlab", "oidc"] },
-          "clientId": { "type": "string" },
-          "clientSecret": { "type": "string", "writeOnly": true },
-          "scopes": { "type": "array", "items": { "type": "string" } },
-          "enterpriseBaseUrl": { "type": "string", "format": "uri" },
-          "baseUrl": { "type": "string", "format": "uri" },
-          "issuer": { "type": "string", "format": "uri" },
-          "audience": { "type": "array", "items": { "type": "string" } },
-          "authorizationUrl": { "type": "string", "format": "uri" },
-          "tokenUrl": { "type": "string", "format": "uri" },
-          "userInfoUrl": { "type": "string", "format": "uri" },
-          "revocationUrl": { "type": "string", "format": "uri" }
+          "mode": {
+            "type": "string",
+            "enum": [
+              "oauth_required"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "github",
+              "gitlab",
+              "oidc"
+            ]
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "clientSecret": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enterpriseBaseUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "baseUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
+          "audience": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorizationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "tokenUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "userInfoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "revocationUrl": {
+            "type": "string",
+            "format": "uri"
+          }
         }
       },
       "UsageAggregate": {
         "type": "object",
-        "required": ["tenantId", "metric", "periodStart", "periodEnd", "quantity", "eventCount", "revision", "updatedAt"],
+        "required": [
+          "tenantId",
+          "metric",
+          "periodStart",
+          "periodEnd",
+          "quantity",
+          "eventCount",
+          "revision",
+          "updatedAt"
+        ],
         "properties": {
-          "tenantId": { "type": "string" },
-          "metric": { "type": "string" },
-          "periodStart": { "type": "string", "format": "date-time" },
-          "periodEnd": { "type": "string", "format": "date-time" },
-          "quantity": { "type": "integer", "format": "int64" },
-          "eventCount": { "type": "integer", "format": "int64" },
-          "revision": { "type": "string" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "tenantId": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "eventCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "BillingCheckoutSession": {
         "type": "object",
-        "required": ["tenantId", "sessionRef", "planId", "expiresAt"],
+        "required": [
+          "tenantId",
+          "sessionRef",
+          "planId",
+          "expiresAt"
+        ],
         "properties": {
-          "tenantId": { "type": "string" },
-          "sessionRef": { "type": "string" },
-          "planId": { "type": "string" },
-          "expiresAt": { "type": "string", "format": "date-time" }
+          "tenantId": {
+            "type": "string"
+          },
+          "sessionRef": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "BillingPortalSession": {
         "type": "object",
-        "required": ["tenantId", "sessionRef", "expiresAt"],
+        "required": [
+          "tenantId",
+          "sessionRef",
+          "expiresAt"
+        ],
         "properties": {
-          "tenantId": { "type": "string" },
-          "sessionRef": { "type": "string" },
-          "expiresAt": { "type": "string", "format": "date-time" }
+          "tenantId": {
+            "type": "string"
+          },
+          "sessionRef": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "LicenseGrant": {
         "type": "object",
-        "required": ["schemaVersion", "licenseId", "customerId", "tenantId", "planId", "planVersion", "issuedAt", "expiresAt"],
+        "required": [
+          "schemaVersion",
+          "licenseId",
+          "customerId",
+          "tenantId",
+          "planId",
+          "planVersion",
+          "issuedAt",
+          "expiresAt"
+        ],
         "properties": {
-          "schemaVersion": { "type": "string" },
-          "licenseId": { "type": "string" },
-          "customerId": { "type": "string" },
-          "tenantId": { "type": "string" },
-          "planId": { "type": "string" },
-          "planVersion": { "type": "string" },
-          "issuedAt": { "type": "string", "format": "date-time" },
-          "expiresAt": { "type": "string", "format": "date-time" },
-          "features": { "type": "object", "additionalProperties": { "type": "boolean" } },
-          "limits": { "type": "object", "additionalProperties": { "type": "integer", "format": "int64" } }
+          "schemaVersion": {
+            "type": "string"
+          },
+          "licenseId": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "planVersion": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "features": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "limits": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
         }
       },
       "SignedLicense": {
         "type": "object",
-        "required": ["keyId", "grant", "signature"],
+        "required": [
+          "keyId",
+          "grant",
+          "signature"
+        ],
         "properties": {
-          "keyId": { "type": "string" },
-          "grant": { "$ref": "#/components/schemas/LicenseGrant" },
-          "signature": { "type": "string" }
+          "keyId": {
+            "type": "string"
+          },
+          "grant": {
+            "$ref": "#/components/schemas/LicenseGrant"
+          },
+          "signature": {
+            "type": "string"
+          }
         }
       },
       "OIDCProviderConfig": {
         "type": "object",
-        "required": ["tenantId", "providerId", "issuer", "clientId", "clientSecretRef", "authorizationUrl", "tokenUrl", "userInfoUrl", "enabled"],
+        "required": [
+          "tenantId",
+          "providerId",
+          "issuer",
+          "clientId",
+          "clientSecretRef",
+          "authorizationUrl",
+          "tokenUrl",
+          "userInfoUrl",
+          "enabled"
+        ],
         "properties": {
-          "tenantId": { "type": "string" }, "providerId": { "type": "string" }, "issuer": { "type": "string", "format": "uri" }, "clientId": { "type": "string" }, "clientSecretRef": { "$ref": "#/components/schemas/SecretReference" }, "authorizationUrl": { "type": "string", "format": "uri" }, "tokenUrl": { "type": "string", "format": "uri" }, "userInfoUrl": { "type": "string", "format": "uri" }, "scopes": { "type": "array", "items": { "type": "string" } }, "audience": { "type": "string" }, "enabled": { "type": "boolean" }
+          "tenantId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string",
+            "format": "uri"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "clientSecretRef": {
+            "$ref": "#/components/schemas/SecretReference"
+          },
+          "authorizationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "tokenUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "userInfoUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "audience": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
         }
       },
       "SAMLProviderConfig": {
         "type": "object",
-        "required": ["tenantId", "providerId", "issuer", "audience", "metadataRef", "signingKeyRef", "enabled"],
+        "required": [
+          "tenantId",
+          "providerId",
+          "issuer",
+          "audience",
+          "metadataRef",
+          "signingKeyRef",
+          "enabled"
+        ],
         "properties": {
-          "tenantId": { "type": "string" }, "providerId": { "type": "string" }, "issuer": { "type": "string" }, "audience": { "type": "string" }, "metadataRef": { "$ref": "#/components/schemas/SecretReference" }, "signingKeyRef": { "$ref": "#/components/schemas/SecretReference" }, "attributeMapping": { "type": "object", "additionalProperties": { "type": "string" } }, "enabled": { "type": "boolean" }
+          "tenantId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          },
+          "audience": {
+            "type": "string"
+          },
+          "metadataRef": {
+            "$ref": "#/components/schemas/SecretReference"
+          },
+          "signingKeyRef": {
+            "$ref": "#/components/schemas/SecretReference"
+          },
+          "attributeMapping": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          }
         }
       },
-      "SCIMUser": { "type": "object", "required": ["id", "userName", "active"], "properties": { "id": { "type": "string" }, "externalId": { "type": "string" }, "userName": { "type": "string" }, "displayName": { "type": "string" }, "active": { "type": "boolean" } } },
-      "SCIMGroup": { "type": "object", "required": ["id", "displayName"], "properties": { "id": { "type": "string" }, "displayName": { "type": "string" }, "members": { "type": "array", "items": { "type": "string" } }, "role": { "type": "string" } } },
-      "AuditRetentionPolicy": { "type": "object", "required": ["tenantId", "retentionDays", "legalHold"], "properties": { "tenantId": { "type": "string" }, "retentionDays": { "type": "integer", "format": "int64", "minimum": 1 }, "legalHold": { "type": "boolean" } } },
-      "AuditRetentionPlan": { "type": "object", "required": ["tenantId", "purgeBefore", "candidates", "bounded"], "properties": { "tenantId": { "type": "string" }, "purgeBefore": { "type": "string", "format": "date-time" }, "candidates": { "type": "array", "items": { "type": "integer", "format": "int64" } }, "bounded": { "type": "boolean" } } },
-      "SIEMAuditEvent": { "type": "object", "required": ["eventId", "tenantId", "occurredAt", "actor", "action", "resource"], "properties": { "eventId": { "type": "string" }, "tenantId": { "type": "string" }, "occurredAt": { "type": "string", "format": "date-time" }, "actor": { "type": "string" }, "action": { "type": "string" }, "resource": { "type": "string" }, "resourceId": { "type": "string" } } },
-      "PolicyDecision": { "type": "object", "required": ["effect", "allowed", "ruleIds", "explanation", "bundleVersion"], "properties": { "effect": { "type": "string", "enum": ["allow", "deny", "warn"] }, "allowed": { "type": "boolean" }, "ruleIds": { "type": "array", "items": { "type": "string" } }, "explanation": { "type": "string" }, "bundleVersion": { "type": "string" } } },
-      "ApprovalRequest": { "type": "object", "required": ["id", "tenantId", "requesterId", "action", "resourceId", "state", "expiresAt", "resumeKey"], "properties": { "id": { "type": "string" }, "tenantId": { "type": "string" }, "requesterId": { "type": "string" }, "action": { "type": "string" }, "resourceId": { "type": "string" }, "state": { "type": "string", "enum": ["pending", "approved", "rejected", "expired", "canceled"] }, "expiresAt": { "type": "string", "format": "date-time" }, "approvedBy": { "type": "string" }, "decisionAt": { "type": "string", "format": "date-time" }, "resumeKey": { "type": "string" } } },
-      "CostAllocation": { "type": "object", "required": ["snapshotId", "tenantId", "currency", "cpuCoreHours", "memoryGiBHours", "amountCents", "priceKnown", "periodStart", "periodEnd"], "properties": { "snapshotId": { "type": "string" }, "tenantId": { "type": "string" }, "projectId": { "type": "string" }, "environmentId": { "type": "string" }, "componentId": { "type": "string" }, "currency": { "type": "string" }, "cpuCoreHours": { "type": "number" }, "memoryGiBHours": { "type": "number" }, "amountCents": { "type": "integer", "format": "int64" }, "priceKnown": { "type": "boolean" }, "periodStart": { "type": "string", "format": "date-time" }, "periodEnd": { "type": "string", "format": "date-time" } } },
-      "BudgetForecast": { "type": "object", "required": ["tenantId", "currency", "actualCents", "forecastCents", "periodStart", "periodEnd", "method"], "properties": { "tenantId": { "type": "string" }, "currency": { "type": "string" }, "actualCents": { "type": "integer", "format": "int64" }, "forecastCents": { "type": "integer", "format": "int64" }, "periodStart": { "type": "string", "format": "date-time" }, "periodEnd": { "type": "string", "format": "date-time" }, "method": { "type": "string" } } },
-      "BudgetAnomaly": { "type": "object", "required": ["tenantId", "ruleId", "severity", "deviationCents", "message", "observedAt"], "properties": { "tenantId": { "type": "string" }, "ruleId": { "type": "string" }, "severity": { "type": "string" }, "deviationCents": { "type": "integer", "format": "int64" }, "message": { "type": "string" }, "observedAt": { "type": "string", "format": "date-time" } } },
-      "FleetGroup": { "type": "object", "required": ["id", "tenantId", "name", "selector"], "properties": { "id": { "type": "string" }, "tenantId": { "type": "string" }, "name": { "type": "string" }, "selector": { "type": "object", "additionalProperties": { "type": "string" } }, "maintenanceWindow": { "type": "string" } } },
-      "UpgradeWave": { "type": "object", "required": ["id", "groupId", "maxUnavailable", "artifactSet", "paused", "rolledBack"], "properties": { "id": { "type": "string" }, "groupId": { "type": "string" }, "maxUnavailable": { "type": "integer", "minimum": 1 }, "artifactSet": { "type": "string" }, "previousSignedSet": { "type": "string" }, "paused": { "type": "boolean" }, "rolledBack": { "type": "boolean" } } },
-      "BackupManifest": { "type": "object", "required": ["backupId", "createdAt", "tenantIds", "postgresqlStateRef", "kubernetesMetadataRef", "schemaVersion"], "properties": { "backupId": { "type": "string" }, "createdAt": { "type": "string", "format": "date-time" }, "tenantIds": { "type": "array", "items": { "type": "string" } }, "postgresqlStateRef": { "type": "string" }, "kubernetesMetadataRef": { "type": "string" }, "secretReferences": { "type": "array", "items": { "$ref": "#/components/schemas/SecretReference" } }, "signingKeyRef": { "$ref": "#/components/schemas/SecretReference" }, "licenseConfigRef": { "$ref": "#/components/schemas/SecretReference" }, "schemaVersion": { "type": "string" } } },
-      "DRDrillReport": { "type": "object", "required": ["backupId", "verifiedAt", "restoreDurationSeconds", "rpoSeconds", "rtoSeconds", "consistencyChecks", "passed"], "properties": { "backupId": { "type": "string" }, "verifiedAt": { "type": "string", "format": "date-time" }, "restoreDurationSeconds": { "type": "integer", "format": "int64" }, "rpoSeconds": { "type": "integer", "format": "int64" }, "rtoSeconds": { "type": "integer", "format": "int64" }, "consistencyChecks": { "type": "array", "items": { "type": "string" } }, "passed": { "type": "boolean" }, "failureReason": { "type": "string" } } },
-      "AirgapBundleManifest": { "type": "object", "required": ["bundleId", "schemaVersion", "createdAt", "artifacts", "runbookRef"], "properties": { "bundleId": { "type": "string" }, "schemaVersion": { "type": "string" }, "createdAt": { "type": "string", "format": "date-time" }, "artifacts": { "type": "array", "items": { "type": "object", "required": ["name", "sourceRef", "digest", "signature", "registryPath"], "properties": { "name": { "type": "string" }, "sourceRef": { "type": "string" }, "digest": { "type": "string" }, "signature": { "type": "string" }, "registryPath": { "type": "string" } } } }, "licenseRef": { "$ref": "#/components/schemas/SecretReference" }, "runbookRef": { "type": "string" } } },
+      "SCIMUser": {
+        "type": "object",
+        "required": [
+          "id",
+          "userName",
+          "active"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SCIMGroup": {
+        "type": "object",
+        "required": [
+          "id",
+          "displayName"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditRetentionPolicy": {
+        "type": "object",
+        "required": [
+          "tenantId",
+          "retentionDays",
+          "legalHold"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "retentionDays": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "legalHold": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditRetentionPlan": {
+        "type": "object",
+        "required": [
+          "tenantId",
+          "purgeBefore",
+          "candidates",
+          "bounded"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "purgeBefore": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "bounded": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SIEMAuditEvent": {
+        "type": "object",
+        "required": [
+          "eventId",
+          "tenantId",
+          "occurredAt",
+          "actor",
+          "action",
+          "resource"
+        ],
+        "properties": {
+          "eventId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actor": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "resource": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string"
+          }
+        }
+      },
+      "PolicyDecision": {
+        "type": "object",
+        "required": [
+          "effect",
+          "allowed",
+          "ruleIds",
+          "explanation",
+          "bundleVersion"
+        ],
+        "properties": {
+          "effect": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "deny",
+              "warn"
+            ]
+          },
+          "allowed": {
+            "type": "boolean"
+          },
+          "ruleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "bundleVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "ApprovalRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "tenantId",
+          "requesterId",
+          "action",
+          "resourceId",
+          "state",
+          "expiresAt",
+          "resumeKey"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "requesterId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "expired",
+              "canceled"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approvedBy": {
+            "type": "string"
+          },
+          "decisionAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resumeKey": {
+            "type": "string"
+          }
+        }
+      },
+      "CostAllocation": {
+        "type": "object",
+        "required": [
+          "snapshotId",
+          "tenantId",
+          "currency",
+          "cpuCoreHours",
+          "memoryGiBHours",
+          "amountCents",
+          "priceKnown",
+          "periodStart",
+          "periodEnd"
+        ],
+        "properties": {
+          "snapshotId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "componentId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "cpuCoreHours": {
+            "type": "number"
+          },
+          "memoryGiBHours": {
+            "type": "number"
+          },
+          "amountCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "priceKnown": {
+            "type": "boolean"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BudgetForecast": {
+        "type": "object",
+        "required": [
+          "tenantId",
+          "currency",
+          "actualCents",
+          "forecastCents",
+          "periodStart",
+          "periodEnd",
+          "method"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "actualCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "forecastCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "method": {
+            "type": "string"
+          }
+        }
+      },
+      "BudgetAnomaly": {
+        "type": "object",
+        "required": [
+          "tenantId",
+          "ruleId",
+          "severity",
+          "deviationCents",
+          "message",
+          "observedAt"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "deviationCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "message": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FleetGroup": {
+        "type": "object",
+        "required": [
+          "id",
+          "tenantId",
+          "name",
+          "selector"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "selector": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "maintenanceWindow": {
+            "type": "string"
+          }
+        }
+      },
+      "UpgradeWave": {
+        "type": "object",
+        "required": [
+          "id",
+          "groupId",
+          "maxUnavailable",
+          "artifactSet",
+          "paused",
+          "rolledBack"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string"
+          },
+          "maxUnavailable": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "artifactSet": {
+            "type": "string"
+          },
+          "previousSignedSet": {
+            "type": "string"
+          },
+          "paused": {
+            "type": "boolean"
+          },
+          "rolledBack": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BackupManifest": {
+        "type": "object",
+        "required": [
+          "backupId",
+          "createdAt",
+          "tenantIds",
+          "postgresqlStateRef",
+          "kubernetesMetadataRef",
+          "schemaVersion"
+        ],
+        "properties": {
+          "backupId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tenantIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "postgresqlStateRef": {
+            "type": "string"
+          },
+          "kubernetesMetadataRef": {
+            "type": "string"
+          },
+          "secretReferences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecretReference"
+            }
+          },
+          "signingKeyRef": {
+            "$ref": "#/components/schemas/SecretReference"
+          },
+          "licenseConfigRef": {
+            "$ref": "#/components/schemas/SecretReference"
+          },
+          "schemaVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "DRDrillReport": {
+        "type": "object",
+        "required": [
+          "backupId",
+          "verifiedAt",
+          "restoreDurationSeconds",
+          "rpoSeconds",
+          "rtoSeconds",
+          "consistencyChecks",
+          "passed"
+        ],
+        "properties": {
+          "backupId": {
+            "type": "string"
+          },
+          "verifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "restoreDurationSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rpoSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rtoSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "consistencyChecks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "failureReason": {
+            "type": "string"
+          }
+        }
+      },
+      "AirgapBundleManifest": {
+        "type": "object",
+        "required": [
+          "bundleId",
+          "schemaVersion",
+          "createdAt",
+          "artifacts",
+          "runbookRef"
+        ],
+        "properties": {
+          "bundleId": {
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "sourceRef",
+                "digest",
+                "signature",
+                "registryPath"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "sourceRef": {
+                  "type": "string"
+                },
+                "digest": {
+                  "type": "string"
+                },
+                "signature": {
+                  "type": "string"
+                },
+                "registryPath": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "licenseRef": {
+            "$ref": "#/components/schemas/SecretReference"
+          },
+          "runbookRef": {
+            "type": "string"
+          }
+        }
+      },
       "EnterpriseCapability": {
         "type": "object",
-        "required": ["id", "status", "surface"],
+        "required": [
+          "id",
+          "status",
+          "surface"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "status": { "type": "string", "enum": ["available"] },
-          "surface": { "type": "string", "enum": ["library"] }
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available"
+            ]
+          },
+          "surface": {
+            "type": "string",
+            "enum": [
+              "library"
+            ]
+          }
         }
       },
       "Capabilities": {
@@ -1047,8 +2143,15 @@
           "planCatalog": {
             "type": "object",
             "properties": {
-              "schemaVersion": { "type": "string" },
-              "plans": { "type": "array", "items": { "$ref": "#/components/schemas/PlanDefinition" } }
+              "schemaVersion": {
+                "type": "string"
+              },
+              "plans": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PlanDefinition"
+                }
+              }
             }
           },
           "remoteControlPlane": {
@@ -2470,18 +3573,94 @@
     }
   },
   "paths": {
-    "/auth/github/login": { "get": { "responses": { "302": { "description": "Redirect to GitHub" } } } },
-    "/auth/github/callback": { "get": { "responses": { "302": { "description": "OAuth callback redirect" } } } },
-    "/auth/gitlab/login": { "get": { "responses": { "302": { "description": "Redirect to GitLab" } } } },
-    "/auth/gitlab/callback": { "get": { "responses": { "302": { "description": "OAuth callback redirect" } } } },
-    "/auth/oidc/login": { "get": { "responses": { "302": { "description": "Redirect to OIDC provider" } } } },
-    "/auth/oidc/callback": { "get": { "responses": { "302": { "description": "OAuth callback redirect" } } } },
-    "/auth/logout": {
-      "get": { "responses": { "302": { "description": "Logout redirect" } } },
-      "post": { "responses": { "204": { "description": "Logged out" } } }
+    "/auth/github/login": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "Redirect to GitHub"
+          }
+        }
+      }
     },
-    "/api/v1/projects/{id}/runtime-tokens/revoke": { "post": { "responses": { "204": { "description": "Runtime tokens revoked" } } } },
-    "/api/v1/runners/commands/{id}/lease": { "post": { "responses": { "200": { "description": "Lease renewed" } } } },
+    "/auth/github/callback": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "OAuth callback redirect"
+          }
+        }
+      }
+    },
+    "/auth/gitlab/login": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "Redirect to GitLab"
+          }
+        }
+      }
+    },
+    "/auth/gitlab/callback": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "OAuth callback redirect"
+          }
+        }
+      }
+    },
+    "/auth/oidc/login": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "Redirect to OIDC provider"
+          }
+        }
+      }
+    },
+    "/auth/oidc/callback": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "OAuth callback redirect"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "responses": {
+          "302": {
+            "description": "Logout redirect"
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Logged out"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/runtime-tokens/revoke": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Runtime tokens revoked"
+          }
+        }
+      }
+    },
+    "/api/v1/runners/commands/{id}/lease": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Lease renewed"
+          }
+        }
+      }
+    },
     "/api/dashboard/summary": {
       "get": {
         "summary": "Get UI dashboard summary",
@@ -3970,10 +5149,30 @@
     "/api/v1/enterprise/{capabilityID}": {
       "get": {
         "summary": "Read one enterprise capability",
-        "parameters": [{"name": "capabilityID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "parameters": [
+          {
+            "name": "capabilityID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "200": {"description": "Enterprise capability", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EnterpriseCapability"}}}},
-          "404": {"description": "Unknown enterprise capability"}
+          "200": {
+            "description": "Enterprise capability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnterpriseCapability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown enterprise capability"
+          }
         }
       }
     },
@@ -4950,56 +6149,168 @@
       "get": {
         "summary": "Get safe authentication settings",
         "security": [
-          { "apiToken": [] }
+          {
+            "apiToken": []
+          }
         ],
         "responses": {
           "200": {
             "description": "Credential-safe authentication status",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AuthenticationSettings" }
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationSettings"
+                }
               }
             }
           },
-          "503": { "description": "Authentication settings unavailable" }
+          "503": {
+            "description": "Authentication settings unavailable"
+          }
         }
       },
       "put": {
         "summary": "Request authentication update",
         "description": "Initial setup requires a scoped setup session; subsequent updates require settings.write. Effective interactive authentication remains disabled until a later runtime activation release.",
-        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InitialAuthenticationCommand" } } } },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitialAuthenticationCommand"
+              }
+            }
+          }
+        },
         "responses": {
-          "202": { "description": "Activation transaction pending", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthenticationSettings" } } } },
-          "400": { "description": "Invalid provider command" },
-          "401": { "description": "Scoped setup session required" },
-          "412": { "description": "Canonical public URL required" },
-          "409": { "description": "Activation transaction unavailable" }
+          "202": {
+            "description": "Activation transaction pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationSettings"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid provider command"
+          },
+          "401": {
+            "description": "Scoped setup session required"
+          },
+          "412": {
+            "description": "Canonical public URL required"
+          },
+          "409": {
+            "description": "Activation transaction unavailable"
+          }
         }
       },
       "delete": {
         "summary": "Request authentication disable",
-        "security": [{ "apiToken": [] }],
-        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["expectedRevision"], "properties": { "expectedRevision": { "type": "integer", "format": "int64" } } } } } },
-        "responses": { "202": { "description": "Disable transaction pending" }, "403": { "description": "settings.write required" } }
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "expectedRevision"
+                ],
+                "properties": {
+                  "expectedRevision": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Disable transaction pending"
+          },
+          "403": {
+            "description": "settings.write required"
+          }
+        }
       }
     },
     "/api/v1/settings/authentication/credentials/rotate": {
       "post": {
         "summary": "Rotate provider credentials",
-        "security": [{ "apiToken": [] }],
-        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/InitialAuthenticationCommand" } } } },
-        "responses": { "202": { "description": "Rotation transaction pending" }, "403": { "description": "settings.write required" } }
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitialAuthenticationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Rotation transaction pending"
+          },
+          "403": {
+            "description": "settings.write required"
+          }
+        }
       }
     },
     "/api/v1/settings/authentication/setup/status": {
       "get": {
         "summary": "Get safe authentication setup status",
         "responses": {
-          "200": { "description": "Safe setup state" },
-          "503": { "description": "Authentication setup unavailable" }
+          "200": {
+            "description": "Safe setup state"
+          },
+          "503": {
+            "description": "Authentication setup unavailable"
+          }
         }
       }
     },
@@ -5008,9 +6319,15 @@
         "summary": "Claim one-time setup credential",
         "description": "Internal dependency-gated route. The setup credential is accepted only in the Authorization header and never returned.",
         "responses": {
-          "200": { "description": "Setup claimed" },
-          "401": { "description": "Invalid, expired, or replayed setup credential" },
-          "503": { "description": "Authentication setup unavailable" }
+          "200": {
+            "description": "Setup claimed"
+          },
+          "401": {
+            "description": "Invalid, expired, or replayed setup credential"
+          },
+          "503": {
+            "description": "Authentication setup unavailable"
+          }
         }
       }
     },
@@ -5455,9 +6772,31 @@
           }
         ],
         "parameters": [
-          {"name": "limit", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 200, "default": 50}},
-          {"name": "before_created_at", "in": "query", "schema": {"type": "string", "format": "date-time"}},
-          {"name": "before_id", "in": "query", "schema": {"type": "string"}}
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "before_created_at",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -5487,7 +6826,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {"$ref": "#/components/schemas/SCMEvent"}
+              "schema": {
+                "$ref": "#/components/schemas/SCMEvent"
+              }
             }
           }
         },
@@ -5528,12 +6869,52 @@
     "/api/v1/jobs/commands": {
       "post": {
         "summary": "Submit a normalized SCM pull request command",
-        "security": [{"apiToken": []}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMCommand"}}}},
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SCMCommand"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {"description": "Command accepted", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EmptyObject"}}}},
-          "202": {"description": "Command accepted", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EmptyObject"}}}},
-          "400": {"description": "Invalid SCM command", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+          "200": {
+            "description": "Command accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyObject"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Command accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyObject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid SCM command",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -5944,17 +7325,75 @@
     "/api/v1/environments/status:batch": {
       "post": {
         "summary": "Update environment statuses in a batch",
-        "security": [{"apiToken": []}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["items"], "properties": {"items": {"type": "array", "maxItems": 200}}}}}},
-        "responses": {"200": {"description": "Updated"}, "400": {"$ref": "#/components/responses/BadRequest"}}
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "maxItems": 200
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
       }
     },
     "/api/v1/environments/events:batch": {
       "post": {
         "summary": "Ingest environment events in a batch",
-        "security": [{"apiToken": []}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["items"], "properties": {"items": {"type": "array", "maxItems": 200}}}}}},
-        "responses": {"202": {"description": "Accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}}
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "items"
+                ],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "maxItems": 200
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          }
+        }
       }
     },
     "/api/v1/environments/{id}/status": {
@@ -6846,9 +8285,22 @@
       "get": {
         "summary": "Get the current tenant subscription",
         "responses": {
-          "200": { "description": "Current subscription", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Subscription" } } } },
-          "400": { "description": "Tenant context is required" },
-          "403": { "description": "Billing read permission is required" }
+          "200": {
+            "description": "Current subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Tenant context is required"
+          },
+          "403": {
+            "description": "Billing read permission is required"
+          }
         }
       }
     },
@@ -6857,13 +8309,42 @@
         "summary": "Create a hosted billing checkout session",
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "type": "object", "required": ["planId"], "properties": { "planId": { "type": "string" } } } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "planId"
+                ],
+                "properties": {
+                  "planId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
         "responses": {
-          "201": { "description": "Checkout session created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BillingCheckoutSession" } } } },
-          "400": { "description": "Invalid request or tenant context" },
-          "403": { "description": "Billing write permission is required" },
-          "503": { "description": "Billing provider is unavailable" }
+          "201": {
+            "description": "Checkout session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingCheckoutSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or tenant context"
+          },
+          "403": {
+            "description": "Billing write permission is required"
+          },
+          "503": {
+            "description": "Billing provider is unavailable"
+          }
         }
       }
     },
@@ -6871,44 +8352,428 @@
       "post": {
         "summary": "Create a hosted customer portal session",
         "responses": {
-          "201": { "description": "Portal session created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BillingPortalSession" } } } },
-          "400": { "description": "Tenant context is required" },
-          "403": { "description": "Billing write permission is required" },
-          "503": { "description": "Billing provider is unavailable" }
+          "201": {
+            "description": "Portal session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPortalSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Tenant context is required"
+          },
+          "403": {
+            "description": "Billing write permission is required"
+          },
+          "503": {
+            "description": "Billing provider is unavailable"
+          }
         }
       }
     },
     "/api/v1/license": {
-      "get": { "summary": "Inspect the current tenant offline license", "responses": { "200": { "description": "Installed license grant", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LicenseGrant" } } } }, "404": { "description": "License is not installed" } } },
-      "put": { "summary": "Install a signed offline license", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SignedLicense" } } } }, "responses": { "200": { "description": "Verified license grant", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LicenseGrant" } } } }, "400": { "description": "Invalid, expired, or cross-tenant license" } } }
+      "get": {
+        "summary": "Inspect the current tenant offline license",
+        "responses": {
+          "200": {
+            "description": "Installed license grant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseGrant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "License is not installed"
+          }
+        }
+      },
+      "put": {
+        "summary": "Install a signed offline license",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignedLicense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verified license grant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseGrant"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, expired, or cross-tenant license"
+          }
+        }
+      }
     },
     "/api/v1/scim/{tenantID}/credential": {
-      "post": { "summary": "Rotate the tenant SCIM bearer credential", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "201": { "description": "Credential returned once" }, "403": { "description": "Tenant owner permission is required" } } }
+      "post": {
+        "summary": "Rotate the tenant SCIM bearer credential",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Credential returned once"
+          },
+          "403": {
+            "description": "Tenant owner permission is required"
+          }
+        }
+      }
     },
     "/scim/v2/{tenantID}/Users": {
-      "get": { "summary": "List tenant SCIM users", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "SCIM user list" }, "401": { "description": "Invalid SCIM credential" } } }
+      "get": {
+        "summary": "List tenant SCIM users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SCIM user list"
+          },
+          "401": {
+            "description": "Invalid SCIM credential"
+          }
+        }
+      }
     },
     "/scim/v2/{tenantID}/Users/{id}": {
-      "put": { "summary": "Provision or update a tenant SCIM user", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMUser" } } } }, "responses": { "200": { "description": "Provisioned SCIM user", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMUser" } } } } } },
-      "delete": { "summary": "Deactivate a tenant SCIM user", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "204": { "description": "SCIM user deactivated" } } }
+      "put": {
+        "summary": "Provision or update a tenant SCIM user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SCIMUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provisioned SCIM user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SCIMUser"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deactivate a tenant SCIM user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "SCIM user deactivated"
+          }
+        }
+      }
     },
     "/scim/v2/{tenantID}/Groups": {
-      "get": { "summary": "List tenant SCIM groups", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "SCIM group list" } } }
+      "get": {
+        "summary": "List tenant SCIM groups",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SCIM group list"
+          }
+        }
+      }
     },
     "/scim/v2/{tenantID}/Groups/{id}": {
-      "put": { "summary": "Provision or update a tenant SCIM group", "security": [{ "bearerAuth": [] }], "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMGroup" } } } }, "responses": { "200": { "description": "Provisioned SCIM group", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SCIMGroup" } } } } } }
+      "put": {
+        "summary": "Provision or update a tenant SCIM group",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SCIMGroup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provisioned SCIM group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SCIMGroup"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "/api/v1/tenants/{tenantID}/jobs/{id}/approval": {
-      "post": { "summary": "Pause a tenant job pending an approval", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "201": { "description": "Approval request created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } } } }
+      "post": {
+        "summary": "Pause a tenant job pending an approval",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Approval request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequest"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "/api/v1/tenants/{tenantID}/approvals/{id}": {
-      "get": { "summary": "Inspect a tenant approval request", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Approval request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } } } }
+      "get": {
+        "summary": "Inspect a tenant approval request",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approval request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequest"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "/api/v1/tenants/{tenantID}/approvals/{id}/approve": {
-      "post": { "summary": "Approve and resume a tenant job", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Approved request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } }, "409": { "description": "Self approval, expiry, or invalid state" } } }
+      "post": {
+        "summary": "Approve and resume a tenant job",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approved request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequest"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Self approval, expiry, or invalid state"
+          }
+        }
+      }
     },
     "/api/v1/tenants/{tenantID}/approvals/{id}/reject": {
-      "post": { "summary": "Reject a tenant approval request", "parameters": [{ "name": "tenantID", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "Rejected request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalRequest" } } } }, "409": { "description": "Self approval or invalid state" } } }
+      "post": {
+        "summary": "Reject a tenant approval request",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rejected request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequest"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Self approval or invalid state"
+          }
+        }
+      }
     },
     "/api/v1/tenants/{tenantID}/memberships": {
       "get": {
@@ -6989,6 +8854,1069 @@
           },
           "403": {
             "description": "Admin role is required"
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/summary": {
+      "get": {
+        "summary": "Get UI dashboard summary",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get bootstrap session for project",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bootstrap session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapSession"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create bootstrap session for project",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BootstrapSessionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created or restored bootstrap session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapSession"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update bootstrap session for project",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BootstrapSessionPatch"
+              },
+              "examples": {
+                "secretStrategies": {
+                  "summary": "Update secret strategies with manual and external modes",
+                  "value": {
+                    "current_step": 8,
+                    "status": "compiled",
+                    "step_data": {
+                      "secretStrategies": {
+                        "dev/db-password": {
+                          "strategy": "manual input",
+                          "required": true,
+                          "serviceId": "Service/dev/orders",
+                          "container": "orders-api",
+                          "variable": "DB_PASSWORD",
+                          "manualValue": "super-secret-value"
+                        },
+                        "dev/payment-api-token": {
+                          "strategy": "external secret",
+                          "required": true,
+                          "backend": "vault",
+                          "reference": "kv/data/envpilot/payment#token"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated bootstrap session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapSession"
+                },
+                "examples": {
+                  "maskedSecretStrategies": {
+                    "summary": "Secret values are masked after save",
+                    "value": {
+                      "id": "checkout-bs-1714726400000000000",
+                      "project_id": "checkout",
+                      "current_step": 8,
+                      "status": "compiled",
+                      "created_by": "alice",
+                      "data": {
+                        "secretStrategies": {
+                          "dev/db-password": {
+                            "strategy": "manual input",
+                            "required": true,
+                            "serviceId": "Service/dev/orders",
+                            "container": "orders-api",
+                            "variable": "DB_PASSWORD",
+                            "manualValueStored": true,
+                            "manualValueMasked": true,
+                            "manualValue": ""
+                          },
+                          "dev/payment-api-token": {
+                            "strategy": "external secret",
+                            "required": true,
+                            "backend": "vault",
+                            "reference": "kv/data/envpilot/payment#token"
+                          }
+                        }
+                      },
+                      "created_at": "2026-05-02T10:00:00Z",
+                      "updated_at": "2026-05-02T10:05:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/manifest-templates": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get generated bootstrap manifest templates for project",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bootstrap manifest templates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "projectId": {
+                      "type": "string"
+                    },
+                    "bootstrapSessionId": {
+                      "type": "string"
+                    },
+                    "manifestTemplates": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BootstrapManifestTemplate"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/compile": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Compile bootstrap session into generated manifest templates",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bootstrap session updated to compiled status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/simulate-pr": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Simulate PR creation and return validation and generated templates",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BootstrapSessionSimulatePRRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PR simulation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapSessionSimulatePRResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/validate-scm": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Validate bootstrap session SCM connection settings",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SCMValidationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SCM validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SCMValidationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "SCM validation unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/agent-token": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Generate one-time bootstrap agent registration token",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmptyObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bootstrap agent token response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRegistrationTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/agent-status": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get bootstrap agent connection and scan status",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bootstrap agent status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapAgentStatusResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/resource-scan/start": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Schedule bootstrap resource scan task",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Resource scan task scheduled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or session not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/environments": {
+      "get": {
+        "summary": "List environments for project",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project environments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Environment"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/cost-policy": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get project cost policy",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project cost policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCostPolicy"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update project cost policy",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCostPolicy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated project cost policy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCostPolicy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/runtime-bundle": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Download project runtime bundle",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Runtime bundle archive",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Compile required before bundle can be downloaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project or config not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Project config storage is not configured"
+          }
+        }
+      }
+    },
+    "/api/v1/environments/{id}/kubernetes-events": {
+      "get": {
+        "summary": "List Kubernetes events for environment",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Normal",
+                "Warning"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kubernetes events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/runner-status": {
+      "get": {
+        "summary": "Compatibility route GET /api/projects/{id}/bootstrap-session/runner-status",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/config": {
+      "get": {
+        "summary": "Compatibility route GET /api/projects/{id}/config",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/helm-direct/preflight": {
+      "post": {
+        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/helm-direct/preflight",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/runner-deploy": {
+      "post": {
+        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deploy",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions": {
+      "post": {
+        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate": {
+      "post": {
+        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/scm-offline": {
+      "post": {
+        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/scm-offline",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/executor-reconciliation/retry": {
+      "post": {
+        "summary": "Retry failed same-cluster project executor reconciliation",
+        "description": "Queues a retry only for a failed Draft bootstrap operation. The response never contains bootstrap or registry credentials.",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Reconciliation retry queued"
+          },
+          "400": {
+            "description": "Reconciliation is not retryable"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Project or bootstrap session not found"
+          },
+          "503": {
+            "description": "Bootstrap session service unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/components": {
+      "put": {
+        "summary": "Compatibility route PUT /api/projects/{id}/components",
+        "description": "Canonical route registered by the EnvPlane control plane.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
