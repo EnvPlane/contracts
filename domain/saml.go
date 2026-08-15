@@ -9,6 +9,8 @@ type SAMLProviderConfig struct {
 	Audience         string            `json:"audience"`
 	MetadataRef      SecretReference   `json:"metadataRef"`
 	SigningKeyRef    SecretReference   `json:"signingKeyRef"`
+	SigningCertificatePEM string         `json:"signingCertificatePem"`
+	Destination      string            `json:"destination"`
 	AttributeMapping map[string]string `json:"attributeMapping"`
 	Enabled          bool              `json:"enabled"`
 }
@@ -21,5 +23,4 @@ type SAMLAssertion struct {
 	Attributes     map[string]string `json:"attributes"`
 	NotBefore      time.Time         `json:"notBefore"`
 	NotOnOrAfter   time.Time         `json:"notOnOrAfter"`
-	SignatureValid bool              `json:"signatureValid"`
 }
