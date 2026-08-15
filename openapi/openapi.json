@@ -7354,7 +7354,7 @@
             "description": "Updated"
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Bad request"
           }
         }
       }
@@ -7391,7 +7391,7 @@
             "description": "Accepted"
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Bad request"
           }
         }
       }
