@@ -82,6 +82,8 @@ type ProjectReadinessAction struct {
 type ProjectResponse struct {
 	Project
 	DeploymentReadiness ProjectDeploymentReadiness `json:"deployment_readiness"`
+	ActiveEnvironmentCount int `json:"active_environment_count"`
+	EnvironmentStatus      string `json:"environment_status"`
 }
 
 type RepositoryRef struct {
