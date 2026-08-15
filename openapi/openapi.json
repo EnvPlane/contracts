@@ -5940,6 +5940,22 @@
         }
       }
     },
+    "/api/v1/environments/status:batch": {
+      "post": {
+        "summary": "Update environment statuses in a batch",
+        "security": [{"apiToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["items"], "properties": {"items": {"type": "array", "maxItems": 200}}}}}},
+        "responses": {"200": {"description": "Updated"}, "400": {"$ref": "#/components/responses/BadRequest"}}
+      }
+    },
+    "/api/v1/environments/events:batch": {
+      "post": {
+        "summary": "Ingest environment events in a batch",
+        "security": [{"apiToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["items"], "properties": {"items": {"type": "array", "maxItems": 200}}}}}},
+        "responses": {"202": {"description": "Accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}}
+      }
+    },
     "/api/v1/environments/{id}/status": {
       "post": {
         "summary": "Update status from cluster",
