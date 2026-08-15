@@ -3,10 +3,10 @@
   "info": {
     "title": "EnvPlane API",
     "version": "1.0.0",
-    "description": "Control plane API for EnvPlane environments, projects, products, settings and webhook intake. Legacy EnvPilot machine identifiers remain compatibility aliases during the versioned migration window.",
+    "description": "Control plane API for EnvPlane environments, projects, products, settings and webhook intake. Legacy product identifiers remain compatibility aliases during the versioned migration window.",
     "x-branding": {
       "canonicalProduct": "EnvPlane",
-      "legacyProduct": "EnvPilot",
+      "legacyProduct": "legacy-product",
       "wireCompatibility": "JSON field names, enum values, paths and authentication schemes are stable in v1",
       "deprecationPolicy": "Legacy machine identifiers are read-only compatibility aliases and are removed only in a future major version."
     }
