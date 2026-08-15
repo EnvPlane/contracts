@@ -15,6 +15,12 @@ const (
 
 type DeploymentBackend string
 
+// AllDeploymentBackends is the canonical list used by validation and error
+// messages so supported backend documentation cannot drift from the enum.
+func AllDeploymentBackends() []DeploymentBackend {
+	return []DeploymentBackend{DeploymentBackendHelmDirect, DeploymentBackendFluxCD, DeploymentBackendGitOpsManifest, DeploymentBackendArgoCD}
+}
+
 // ParseDeploymentBackend validates and canonicalizes a deployment backend received at a boundary.
 func ParseDeploymentBackend(raw string) (DeploymentBackend, error) {
 	value := strings.ToLower(strings.TrimSpace(raw))
