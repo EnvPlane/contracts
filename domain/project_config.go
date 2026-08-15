@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -14,6 +15,24 @@ const (
 )
 
 type DeploymentBackend string
+
+// IsSafeHelmChartRef rejects values that could be interpreted as Helm flags or
+// shell-like input while accepting OCI, HTTP(S), and repo/chart references.
+func IsSafeHelmChartRef(raw string) bool {
+	value := strings.TrimSpace(raw)
+	if value == "" || strings.HasPrefix(value, "-") || strings.ContainsAny(value, " \t\r\n\"'`;&|$") {
+		return false
+	}
+	if strings.HasPrefix(value, "./") || strings.HasPrefix(value, "../") || strings.HasPrefix(value, "deploy/helm/") {
+		return false
+	}
+	if strings.HasPrefix(value, "oci://") || strings.HasPrefix(value, "https://") || strings.HasPrefix(value, "http://") {
+		parsed, err := url.Parse(value)
+		return err == nil && parsed.Host != "" && parsed.Path != "" && !strings.HasSuffix(parsed.Path, "/")
+	}
+	parts := strings.Split(value, "/")
+	return len(parts) == 2 && parts[0] != "" && parts[1] != ""
+}
 
 // AllDeploymentBackends is the canonical list used by validation and error
 // messages so supported backend documentation cannot drift from the enum.
