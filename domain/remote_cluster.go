@@ -121,8 +121,8 @@ type RemoteClusterCondition struct {
 // material, HTTP response body, or authorization data.
 //
 // Code is an allow-listed diagnostic (passed, dns_failed, tcp_failed,
-// tls_ca_failed, tls_server_name_mismatch, endpoint_unhealthy or
-// runtime_auth_failed).  The control plane validates the source identity and
+// tls_ca_failed, tls_server_name_mismatch, endpoint_unhealthy,
+// insecure_transport or runtime_auth_failed). The control plane validates the source identity and
 // records the authenticated runtime-access result itself.
 type ManagementEndpointPreflight struct {
 	Generation      int64      `json:"generation"`

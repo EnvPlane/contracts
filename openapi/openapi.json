@@ -771,7 +771,8 @@
               "tls_ca_failed",
               "tls_server_name_mismatch",
               "endpoint_unhealthy",
-              "runtime_auth_failed"
+              "runtime_auth_failed",
+              "insecure_transport"
             ]
           },
           "dns_resolved": {
