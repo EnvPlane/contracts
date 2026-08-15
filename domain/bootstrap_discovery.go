@@ -221,10 +221,10 @@ type AgentResourceScanRequest struct {
 	ErrorCode          string                      `json:"errorCode,omitempty"`
 	Error              string                      `json:"error,omitempty"`
 	ResourceSnapshots  []ResourceSnapshot          `json:"resourceSnapshots"`
-	ServiceGraph       ServiceGraph                `json:"serviceGraph,omitempty"`
-	ServiceEnvs        ServiceEnvironmentVariables `json:"serviceEnvs,omitempty"`
+	ServiceGraph       ServiceGraph                `json:"serviceGraph"`
+	ServiceEnvs        ServiceEnvironmentVariables `json:"serviceEnvs"`
 	PermissionWarnings []string                    `json:"permissionWarnings,omitempty"`
-	ObservedAt         time.Time                   `json:"observedAt,omitempty"`
+	ObservedAt         time.Time                   `json:"observedAt"`
 }
 
 type AgentResourceScanTaskResponse struct {

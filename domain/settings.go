@@ -46,7 +46,7 @@ type AuthenticationTransaction struct {
 // of storing an independently editable management endpoint.
 type ManagementEndpointProfile struct {
 	Endpoint           string                        `json:"endpoint"`
-	TLS                RemoteClusterTLS              `json:"tls,omitempty"`
+	TLS                RemoteClusterTLS              `json:"tls"`
 	Source             string                        `json:"source,omitempty"` // api|chart_bootstrap
 	DesiredGeneration  int64                         `json:"desired_generation,omitempty"`
 	ObservedGeneration int64                         `json:"observed_generation,omitempty"`

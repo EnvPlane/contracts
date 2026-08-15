@@ -17,7 +17,7 @@ type RemoteCluster struct {
 	Runner            RemoteClusterRunnerConfig       `json:"runner"`
 	Discovery         RemoteClusterDiscoveryScope     `json:"discovery"`
 	FeatureNamespaces FeatureNamespacePolicy          `json:"feature_namespaces"`
-	Status            RemoteClusterStatus             `json:"status,omitempty"`
+	Status            RemoteClusterStatus             `json:"status"`
 	CreatedAt         time.Time                       `json:"created_at"`
 	UpdatedAt         time.Time                       `json:"updated_at"`
 }
@@ -37,7 +37,7 @@ type RemoteClusterKubernetesConfig struct {
 	Endpoint                    string             `json:"endpoint"`
 	CredentialSecretRef         SecretKeyReference `json:"credential_secret_ref"`
 	CredentialSecretFingerprint string             `json:"credential_secret_fingerprint,omitempty"`
-	TLS                         RemoteClusterTLS   `json:"tls,omitempty"`
+	TLS                         RemoteClusterTLS   `json:"tls"`
 }
 
 type RemoteClusterTLS struct {
@@ -47,8 +47,8 @@ type RemoteClusterTLS struct {
 
 type RemoteClusterControlPlaneConfig struct {
 	Endpoint string                         `json:"endpoint"`
-	TLS      RemoteClusterTLS               `json:"tls,omitempty"`
-	Trust    RemoteClusterTrustDistribution `json:"trust,omitempty"`
+	TLS      RemoteClusterTLS               `json:"tls"`
+	Trust    RemoteClusterTrustDistribution `json:"trust"`
 }
 
 // RemoteClusterTrustDistribution configures only the ownership and safe

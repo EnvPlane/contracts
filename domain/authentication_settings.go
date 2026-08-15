@@ -38,6 +38,6 @@ type AuthenticationSettingsCommand struct {
 	ExpectedCredentialRevision int64                          `json:"expectedCredentialRevision"`
 	Mode                       string                         `json:"mode"`
 	Provider                   *string                        `json:"provider,omitempty"`
-	ProviderSettings           AuthenticationProviderSettings `json:"providerSettings,omitempty"`
+	ProviderSettings           AuthenticationProviderSettings `json:"providerSettings"`
 	ClientSecret               string                         `json:"clientSecret,omitempty"`
 }

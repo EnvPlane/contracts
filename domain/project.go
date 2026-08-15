@@ -23,7 +23,7 @@ type Project struct {
 	GitOpsRepo            RepositoryRef      `json:"gitops_repo"`
 	Components            []ProjectComponent `json:"components,omitempty"`
 	BaseEnvConfig         BaseEnvConfig      `json:"base_env_config"`
-	CostPolicy            ProjectCostPolicy  `json:"cost_policy,omitempty"`
+	CostPolicy            ProjectCostPolicy  `json:"cost_policy"`
 	CreatedAt             time.Time          `json:"created_at"`
 	UpdatedAt             time.Time          `json:"updated_at"`
 }
@@ -81,9 +81,9 @@ type ProjectReadinessAction struct {
 // clients that create environments.
 type ProjectResponse struct {
 	Project
-	DeploymentReadiness ProjectDeploymentReadiness `json:"deployment_readiness"`
-	ActiveEnvironmentCount int `json:"active_environment_count"`
-	EnvironmentStatus      string `json:"environment_status"`
+	DeploymentReadiness    ProjectDeploymentReadiness `json:"deployment_readiness"`
+	ActiveEnvironmentCount int                        `json:"active_environment_count"`
+	EnvironmentStatus      string                     `json:"environment_status"`
 }
 
 type RepositoryRef struct {
@@ -101,8 +101,8 @@ type ProjectComponent struct {
 	Name       string                  `json:"name"`
 	Service    string                  `json:"service"`
 	Repository RepositoryRef           `json:"repository"`
-	Build      ComponentBuildMetadata  `json:"build,omitempty"`
-	Deploy     ComponentDeployMetadata `json:"deploy,omitempty"`
+	Build      ComponentBuildMetadata  `json:"build"`
+	Deploy     ComponentDeployMetadata `json:"deploy"`
 }
 
 // ComponentBuildMetadata is deliberately provider-agnostic. It records the

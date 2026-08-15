@@ -39,7 +39,7 @@ type Environment struct {
 	Domain                    string                 `json:"domain"`
 	URL                       string                 `json:"url"`
 	Source                    SCMSource              `json:"source"`
-	Base                      BaseEnvironment        `json:"base,omitempty"`
+	Base                      BaseEnvironment        `json:"base"`
 	GitOps                    GitOpsTarget           `json:"gitops"`
 	Charts                    ChartVersions          `json:"charts"`
 	Infrastructure            Infrastructure         `json:"infrastructure"`
@@ -153,7 +153,7 @@ type CreateEnvironmentRequest struct {
 	Mode           EnvironmentMode     `json:"mode"`
 	Domain         string              `json:"domain"`
 	Source         SCMSource           `json:"source"`
-	Base           BaseEnvironment     `json:"base,omitempty"`
+	Base           BaseEnvironment     `json:"base"`
 	Charts         ChartVersions       `json:"charts"`
 	Infrastructure Infrastructure      `json:"infrastructure"`
 	Services       []ServiceOverride   `json:"services"`
