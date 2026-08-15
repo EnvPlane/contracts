@@ -19,3 +19,13 @@ func TestNormalizeEnvironmentIDProperty(t *testing.T) {
 		}
 	}
 }
+
+func TestEnvironmentWorkBranchIsStableAndModuleIndependent(t *testing.T) {
+	got := EnvironmentWorkBranch("Feature/Order_42")
+	if got != "envplane/env-feature-order-42" {
+		t.Fatalf("work branch = %q", got)
+	}
+	if strings.Contains(got, ".") || strings.HasPrefix(got, "github.com/") {
+		t.Fatalf("work branch contains module or host prefix: %q", got)
+	}
+}

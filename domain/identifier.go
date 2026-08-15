@@ -5,6 +5,13 @@ import (
 	"strings"
 )
 
+// EnvironmentWorkBranch returns the canonical GitOps work branch for an
+// environment. The prefix is deliberately module-independent and stable
+// across control-plane, gitops, and runner implementations.
+func EnvironmentWorkBranch(environmentID string) string {
+	return "envplane/env-" + NormalizeEnvironmentID(environmentID)
+}
+
 var invalidEnvironmentIDCharacters = regexp.MustCompile(`[^a-z0-9-]+`)
 
 // NormalizeEnvironmentID converts an arbitrary external identifier to a DNS-safe label.
