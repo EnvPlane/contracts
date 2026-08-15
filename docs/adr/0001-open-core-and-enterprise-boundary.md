@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted.
+Accepted; boundary interpretation superseded by ADR-0002 for already-published
+community implementations.
 
 ## Context
 
@@ -27,9 +28,10 @@ The following repositories form the public compatibility core:
 | `frontend` | Community UI |
 | `deploy` | Community installation and signed release metadata |
 
-Private Enterprise modules provide entitlement/billing, managed SaaS
-operations, SAML/SCIM, advanced RBAC, policy/compliance/SIEM, FinOps, fleet
-operations, HA/DR and air-gapped packaging.
+Future Private Enterprise modules may provide managed SaaS operations,
+commercial-only policy, fleet operations and air-gapped packaging. Existing
+implementations already published in the Community control-plane remain public
+under Apache-2.0; ADR-0002 records this transition explicitly.
 
 Private modules may depend only on versioned public contracts and declared
 extension interfaces. Public modules must not import private modules, fetch
