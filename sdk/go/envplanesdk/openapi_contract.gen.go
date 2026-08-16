@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "d97cb9e6fd00ccbbb391503a59e77827db5f431b8f944e292d503de29aa86030"
+const CanonicalOpenAPISHA256 = "a4b44760b66bf5fe067609284e03ad8c05f39befb74b67020a010b3e15b23859"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -64,6 +64,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/config",
 	"GET /api/v1/projects/{id}/cost-policy",
 	"GET /api/v1/projects/{id}/environments",
+	"GET /api/v1/projects/{id}/hybrid-config",
 	"GET /api/v1/projects/{id}/runtime-bundle",
 	"GET /api/v1/remote-clusters",
 	"GET /api/v1/remote-clusters/targets",
@@ -91,8 +92,10 @@ var CanonicalOperations = []string{
 	"PATCH /api/projects/{id}/bootstrap-session",
 	"PATCH /api/projects/{id}/cost-policy",
 	"PATCH /api/projects/{id}/hybrid-config",
+	"PATCH /api/v1/projects/{id}",
 	"PATCH /api/v1/projects/{id}/bootstrap-session",
 	"PATCH /api/v1/projects/{id}/cost-policy",
+	"PATCH /api/v1/projects/{id}/hybrid-config",
 	"POST /api/environments/{id}/extend-ttl",
 	"POST /api/environments/{id}/pin",
 	"POST /api/environments/{id}/recreate",
@@ -115,6 +118,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/agents/resource-scan",
 	"POST /api/v1/billing/checkout",
 	"POST /api/v1/billing/portal",
+	"POST /api/v1/billing/webhook",
 	"POST /api/v1/environments",
 	"POST /api/v1/environments/events:batch",
 	"POST /api/v1/environments/reconcile",

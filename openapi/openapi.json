@@ -5886,6 +5886,59 @@
           }
         }
       },
+      "patch": {
+        "summary": "Patch project",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "Delete project",
         "security": [
@@ -5958,6 +6011,32 @@
           }
         }
       ],
+      "get": {
+        "summary": "Get project hybrid config",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project hybrid configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyObject"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
       "put": {
         "summary": "Update project hybrid config",
         "security": [
@@ -6016,6 +6095,68 @@
                 }
               }
             }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Patch project hybrid config",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "baseNamespace": {
+                    "type": "string"
+                  },
+                  "baseDomain": {
+                    "type": "string"
+                  },
+                  "baseIngress": {
+                    "type": "string"
+                  },
+                  "sharedDependencies": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "hybridOverrides": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated hybrid config",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyObject"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
           }
         }
       }
@@ -8370,6 +8511,71 @@
           },
           "503": {
             "description": "Billing provider is unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/billing/webhook": {
+      "post": {
+        "summary": "Accept a Stripe billing webhook",
+        "parameters": [
+          {
+            "name": "Stripe-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Stripe event payload."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed or accepted as a duplicate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "processed",
+                        "duplicate"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid webhook payload"
+          },
+          "401": {
+            "description": "Webhook signature is invalid or webhook handling is not configured"
+          },
+          "413": {
+            "description": "Webhook payload is too large"
+          },
+          "500": {
+            "description": "Webhook processing failed"
+          },
+          "503": {
+            "description": "Webhook persistence is unavailable"
           }
         }
       }
