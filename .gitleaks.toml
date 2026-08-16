@@ -1,0 +1,5 @@
+title = "EnvPlane contracts gitleaks configuration"
+
+[[allowlists]]
+description = "Generated SHA-256 digest of the canonical OpenAPI document"
+paths = ['''sdk/go/envplanesdk/openapi_contract\.gen\.go''']
