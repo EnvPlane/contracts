@@ -15,6 +15,7 @@ func TestAuthenticationSettingsReadModelNeverSerializesClientSecret(t *testing.T
 	if strings.Contains(string(payload), "clientSecret") {
 		t.Fatalf("safe read model contains clientSecret: %s", payload)
 	}
+	// #nosec G117 -- this fixture verifies that the write-only field is serialized on commands.
 	command, err := json.Marshal(AuthenticationSettingsCommand{ClientSecret: "write-only"})
 	if err != nil {
 		t.Fatal(err)
