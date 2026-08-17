@@ -59,6 +59,7 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
+	// #nosec G306 -- generated Go source is intentionally readable by repository users.
 	if err := os.WriteFile(*outputPath, formatted, 0o644); err != nil {
 		fatal(err)
 	}

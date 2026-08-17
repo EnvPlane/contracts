@@ -1,7 +1,6 @@
-run:
-  timeout: 5m
-  skip-dirs: [sdk/go]
+version: "2"
+
 linters:
   enable: [errcheck, govet, staticcheck, ineffassign, unused, bodyclose, errorlint, gosec]
-issues:
-  exclude-use-default: false
+  exclusions:
+    paths: [sdk/go]

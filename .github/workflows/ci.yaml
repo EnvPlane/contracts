@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
           cache: true
@@ -25,9 +25,9 @@ jobs:
         run: bash scripts/check-contract-version.sh "$GITHUB_WORKSPACE/.."
       - run: go test ./...
       - run: go vet ./...
-      - uses: golangci/golangci-lint-action@v6
+      - uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.1.6
+          version: v2.12.2
       - run: go test -race ./...
       - run: go test -coverprofile=cover.out ./...
       - run: |
