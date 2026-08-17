@@ -6476,6 +6476,23 @@
         }
       }
     },
+    "/api/v1/settings/authentication/setup/auto-claim": {
+      "post": {
+        "summary": "Auto-claim generated setup credential",
+        "description": "Local-development route that derives a setup session without an out-of-band token when explicit local policies allow it.",
+        "responses": {
+          "200": {
+            "description": "Setup claimed"
+          },
+          "401": {
+            "description": "Auto-claim unavailable"
+          },
+          "503": {
+            "description": "Authentication setup unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/settings/secret-refs/{id}/validate": {
       "parameters": [
         {
