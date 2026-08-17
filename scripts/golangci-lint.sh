@@ -2,7 +2,11 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-lint_version="${GOLANGCI_LINT_VERSION:-v1.64.8}"
+# The repository uses the v2 configuration schema. Build the binary with the
+# selected Go toolchain so a cached/release binary built by Go 1.24 is never
+# used for this Go 1.25 module.
+lint_version="${GOLANGCI_LINT_VERSION:-v2.12.2}"
+lint_module="github.com/golangci/golangci-lint/v2/cmd/golangci-lint"
 module_file="${GO_VERSION_FILE:-go.mod}"
 required_go="${GO_MIN_VERSION:-}"
 
@@ -26,9 +30,15 @@ go_version_from_bin() {
   "$bin" version 2>/dev/null | awk '{print $3}' | sed 's/^go//'
 }
 
-go_gopath_from_bin() {
+go_bin_dir_from_bin() {
   local bin="$1"
-  "$bin" env GOPATH
+  local gobin
+  gobin="$(GOTOOLCHAIN=local "$bin" env GOBIN)"
+  if [[ -n "${gobin}" ]]; then
+    printf '%s\n' "${gobin}"
+    return 0
+  fi
+  GOTOOLCHAIN=local "$bin" env GOPATH | awk '{print $1 "/bin"}'
 }
 
 check_go_binary() {
@@ -44,7 +54,7 @@ check_go_binary() {
   if version_ge "${ver}" "${required_go}"; then
     GO_BIN_SELECTED="${bin}"
     GO_VERSION_SELECTED="${ver}"
-    GO_GOPATH_SELECTED="$(go_gopath_from_bin "${bin}")"
+    GO_BIN_DIR_SELECTED="$(go_bin_dir_from_bin "${bin}")"
     return 0
   fi
   return 1
@@ -55,7 +65,7 @@ ensure_and_select_go() {
 
   GO_BIN_SELECTED=""
   GO_VERSION_SELECTED=""
-  GO_GOPATH_SELECTED=""
+  GO_BIN_DIR_SELECTED=""
 
   if [[ -n "${GO_BIN:-}" ]]; then
     check_go_binary "${GO_BIN}" && return 0
@@ -91,39 +101,30 @@ if ! ensure_and_select_go; then
   exit 1
 fi
 
-lint_gopath="${GO_GOPATH_SELECTED}"
-lint_bin="${lint_gopath}/bin/golangci-lint"
+lint_bin="${GO_BIN_DIR_SELECTED}/golangci-lint"
 
-if [[ "${GOLANGCI_LINT_FORCE_INSTALL:-1}" != "0" ]]; then
+lint_is_compatible() {
+  local lint_output installed_lint installed_builder
+  [[ -x "${lint_bin}" ]] || return 1
+
+  lint_output="$("${lint_bin}" --version 2>&1)"
+  installed_lint="v$(printf '%s\n' "${lint_output}" | sed -nE 's/.*version v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/p' | head -n 1)"
+  installed_builder="$(printf '%s\n' "${lint_output}" | sed -nE 's/.*built with (go[0-9]+\.[0-9]+\.[0-9]+).*/\1/p' | head -n 1)"
+
+  [[ "${installed_lint}" == "${lint_version}" ]] || return 1
+  [[ -n "${installed_builder}" ]] || return 1
+  installed_builder="${installed_builder#go}"
+  version_ge "${installed_builder}" "${required_go}"
+}
+
+if ! lint_is_compatible; then
   rm -f "${lint_bin}"
-  "${GO_BIN_SELECTED}" install "github.com/golangci/golangci-lint/cmd/golangci-lint@${lint_version}"
-else
-  # Legacy behavior: keep fast path when preinstalled binary is compatible.
-  need_install=0
+  GOTOOLCHAIN=local "${GO_BIN_SELECTED}" install "${lint_module}@${lint_version}"
+fi
 
-  if [[ ! -x "${lint_bin}" ]]; then
-    need_install=1
-  else
-    lint_output="$(${lint_bin} --version 2>&1)"
-    installed_lint="$(echo "${lint_output}" | awk 'match($0, /v[0-9]+\.[0-9]+(\.[0-9]+)?/, m) { print m[0]; exit }')"
-    installed_builder="$(echo "${lint_output}" | awk 'match($0, /go[0-9]+\.[0-9]+(\.[0-9]+)?/, m) { print m[0]; exit }')"
-
-    if [[ "${installed_lint}" != "${lint_version}" ]]; then
-      need_install=1
-    elif [[ -n "${installed_builder}" ]]; then
-      installed_builder="${installed_builder#go}"
-      if ! version_ge "${installed_builder}" "${required_go}"; then
-        need_install=1
-      fi
-    else
-      need_install=1
-    fi
-  fi
-
-  if [[ "${need_install}" -eq 1 ]]; then
-    rm -f "${lint_bin}"
-    "${GO_BIN_SELECTED}" install "github.com/golangci/golangci-lint/cmd/golangci-lint@${lint_version}"
-  fi
+if ! lint_is_compatible; then
+  echo "::error::golangci-lint must be ${lint_version} built with Go ${required_go}+" >&2
+  exit 1
 fi
 
 "${lint_bin}" run ./...
