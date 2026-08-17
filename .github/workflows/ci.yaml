@@ -17,6 +17,15 @@ jobs:
         run: |
           GO_VERSION_FILE=go.mod \
           ./scripts/ensure-go.sh
+      - name: Cache Go modules and build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: contracts-go-cache-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            contracts-go-cache-${{ runner.os }}-
       - name: Scan Go dependencies
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
       - name: Verify contracts version pins in assembled workspace
