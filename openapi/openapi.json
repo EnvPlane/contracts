@@ -178,6 +178,10 @@
           "limit": {
             "type": "string"
           },
+          "limit_value": {
+            "type": "integer",
+            "format": "int64"
+          },
           "current": {
             "type": "integer",
             "format": "int64"
