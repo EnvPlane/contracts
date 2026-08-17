@@ -20,10 +20,10 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v7
-        with:
-          go-version-file: go.mod
-          cache: true
+      - name: Ensure Go toolchain
+        run: |
+          GO_VERSION_FILE=go.mod \
+          ./scripts/ensure-go.sh
       - name: Verify module before publication
         run: go test ./...
       - id: version
