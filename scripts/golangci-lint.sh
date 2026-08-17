@@ -33,12 +33,12 @@ go_version_from_bin() {
 go_bin_dir_from_bin() {
   local bin="$1"
   local gobin
-  gobin="$(GOTOOLCHAIN=local "$bin" env GOBIN)"
+  gobin="$(GOTOOLCHAIN=auto "$bin" env GOBIN)"
   if [[ -n "${gobin}" ]]; then
     printf '%s\n' "${gobin}"
     return 0
   fi
-  GOTOOLCHAIN=local "$bin" env GOPATH | awk '{print $1 "/bin"}'
+  GOTOOLCHAIN=auto "$bin" env GOPATH | awk '{print $1 "/bin"}'
 }
 
 check_go_binary() {
@@ -119,7 +119,10 @@ lint_is_compatible() {
 
 if ! lint_is_compatible; then
   rm -f "${lint_bin}"
-  GOTOOLCHAIN=local "${GO_BIN_SELECTED}" install "${lint_module}@${lint_version}"
+  # The runner may expose an older system Go even after ensure-go has
+  # provisioned the required version. Let Go's toolchain resolver select the
+  # module-required compiler instead of failing with GOTOOLCHAIN=local.
+  GOTOOLCHAIN=auto "${GO_BIN_SELECTED}" install "${lint_module}@${lint_version}"
 fi
 
 if ! lint_is_compatible; then
