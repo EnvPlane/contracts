@@ -106,6 +106,12 @@
           },
           "draft": {
             "type": "boolean"
+          },
+          "artifactDigest": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer"
           }
         }
       },
@@ -807,6 +813,53 @@
           },
           "releasePlanKeyId": {
             "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "compatibilityAliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IngressEndpoint"
+            }
+          },
+          "primaryEndpoint": {
+            "type": "string"
+          },
+          "endpointPreflight": {
+            "$ref": "#/components/schemas/EndpointPreflight"
+          },
+          "desiredRevision": {
+            "$ref": "#/components/schemas/EnvironmentRevision"
+          },
+          "appliedRevision": {
+            "$ref": "#/components/schemas/EnvironmentRevision"
+          },
+          "cleanup": {
+            "type": "object",
+            "properties": {
+              "phase": {
+                "type": "string"
+              },
+              "attempts": {
+                "type": "integer"
+              },
+              "verified": {
+                "type": "boolean"
+              },
+              "finalizers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           }
         },
         "required": [
@@ -4672,6 +4725,136 @@
           },
           "backendApplied": {
             "type": "boolean"
+          }
+        }
+      },
+      "EnvironmentRevision": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "github",
+              "gitlab"
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "changeId": {
+            "type": "string"
+          },
+          "commit": {
+            "type": "string"
+          },
+          "artifactDigest": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer"
+          }
+        }
+      },
+      "IngressEndpoint": {
+        "type": "object",
+        "required": [
+          "sourceName",
+          "name",
+          "host",
+          "primary"
+        ],
+        "properties": {
+          "sourceName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "tlsSecretName": {
+            "type": "string"
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backendServices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ingressClassName": {
+            "type": "string"
+          },
+          "annotations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "primary": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ResourceSourceMapping": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "gitRepositoryNamespace": {
+            "type": "string"
+          },
+          "gitRepositoryName": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "ResourceHealth": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "OwnershipRecord": {
+        "type": "object",
+        "required": [
+          "kind",
+          "name",
+          "namespace"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
           }
         }
       }
