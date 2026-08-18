@@ -199,6 +199,9 @@ func CompileStatefulExecutionPlan(tenantID, projectID, environmentID, revisionID
 		if policy.Strategy == StatefulStrategyReferenceShared {
 			plan.Independent = false
 		}
+		if policy.Strategy == StatefulStrategyVolumeSnapshot && (policy.SourceNamespace == "" || policy.SourceName == "" || policy.StorageClass == "" || policy.SnapshotClass == "" || policy.Size == "" || len(policy.AccessModes) == 0 || policy.CSIProvisioner == "") {
+			return StatefulExecutionPlan{}, fmt.Errorf("snapshot capability and source/storage settings are required for %s", policy.ID)
+		}
 		if policy.ApprovalRequired || (policy.MaxStorage != "" && policy.Size == policy.MaxStorage) {
 			plan.ApprovalRequired = true
 		}

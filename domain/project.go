@@ -23,7 +23,7 @@ type Project struct {
 	GitOpsRepo            RepositoryRef       `json:"gitops_repo"`
 	Components            []ProjectComponent  `json:"components,omitempty"`
 	BaseEnvConfig         BaseEnvConfig       `json:"base_env_config"`
-	PreviewDomainPolicy   PreviewDomainPolicy `json:"preview_domain_policy,omitempty"`
+	PreviewDomainPolicy   PreviewDomainPolicy `json:"preview_domain_policy"`
 	CostPolicy            ProjectCostPolicy   `json:"cost_policy"`
 	CreatedAt             time.Time           `json:"created_at"`
 	UpdatedAt             time.Time           `json:"updated_at"`

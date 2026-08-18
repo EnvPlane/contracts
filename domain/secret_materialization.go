@@ -100,7 +100,7 @@ func (p SecretMaterializationPlan) Validate() error {
 			return fmt.Errorf("unsupported secret materialization strategy %q", item.Strategy)
 		}
 		if item.Owned {
-			owned[item.ID] = true
+			owned[item.TargetName] = true
 		}
 	}
 	for _, record := range p.Ownership {

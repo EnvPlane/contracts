@@ -32,7 +32,7 @@ type Environment struct {
 	CompatibilityAliases        []string                   `json:"compatibilityAliases,omitempty"`
 	Endpoints                   []IngressEndpoint          `json:"endpoints,omitempty"`
 	PrimaryEndpoint             string                     `json:"primaryEndpoint,omitempty"`
-	EndpointPreflight           EndpointPreflight          `json:"endpointPreflight,omitempty"`
+	EndpointPreflight           EndpointPreflight          `json:"endpointPreflight"`
 	Project                     string                     `json:"project"`
 	Product                     string                     `json:"product"`
 	ClusterID                   string                     `json:"clusterId,omitempty"`
@@ -68,8 +68,8 @@ type Environment struct {
 	ReleasePlanSignature        string                     `json:"releasePlanSignature,omitempty"`
 	ReleasePlanKeyID            string                     `json:"releasePlanKeyId,omitempty"`
 	ReleaseInputDigest          string                     `json:"releaseInputDigest,omitempty"`
-	DesiredRevision             EnvironmentRevision        `json:"desiredRevision,omitempty"`
-	AppliedRevision             EnvironmentRevision        `json:"appliedRevision,omitempty"`
+	DesiredRevision             EnvironmentRevision        `json:"desiredRevision"`
+	AppliedRevision             EnvironmentRevision        `json:"appliedRevision"`
 	ManifestPath                string                     `json:"manifestPath"`
 	NamespaceManifestPath       string                     `json:"namespaceManifestPath,omitempty"`
 	KustomizationManifestPath   string                     `json:"kustomizationManifestPath,omitempty"`
@@ -187,9 +187,9 @@ type CreateEnvironmentRequest struct {
 }
 
 type RenderPreview struct {
-	Environment Environment       `json:"environment"`
-	Values      map[string]string `json:"values"`
-	ValuesYAML  string            `json:"valuesYaml"`
+	Environment Environment             `json:"environment"`
+	Values      map[string]string       `json:"values"`
+	ValuesYAML  string                  `json:"valuesYaml"`
 	Manifests   []RenderPreviewManifest `json:"manifests"`
 }
 
