@@ -4590,6 +4590,90 @@
             "type": "boolean"
           }
         }
+      },
+      "ReleaseGate": {
+        "type": "object",
+        "required": [
+          "stage",
+          "provider",
+          "backend",
+          "tenantId",
+          "projectId",
+          "environmentId"
+        ],
+        "properties": {
+          "stage": {
+            "type": "string",
+            "enum": [
+              "scan",
+              "template",
+              "scm_open",
+              "apply",
+              "parity",
+              "update",
+              "cleanup",
+              "terminated"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "github",
+              "gitlab"
+            ]
+          },
+          "backend": {
+            "type": "string",
+            "enum": [
+              "helm_direct",
+              "fluxcd"
+            ]
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "planDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "expectedInventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReleasePlanInventoryItem"
+            }
+          },
+          "observedInventory": {
+            "type": "object"
+          },
+          "expectedGraph": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "observedGraph": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "scmOpen": {
+            "type": "boolean"
+          },
+          "backendApplied": {
+            "type": "boolean"
+          }
+        }
       }
     }
   },
