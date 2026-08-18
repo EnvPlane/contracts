@@ -411,34 +411,36 @@ type RunnerHeartbeatRequest struct {
 // its pinned chart contract with a newer compiled deployment configuration.
 // None of these fields contains secret material.
 type RunnerCommand struct {
-	ID                              string        `json:"id"`
-	ProjectID                       string        `json:"projectId"`
-	ClusterID                       string        `json:"clusterId"`
-	RunnerID                        string        `json:"runnerId"`
-	RemoteClusterGeneration         int64         `json:"remoteClusterGeneration,omitempty"`
-	RunnerIdentityIssuedAt          string        `json:"runnerIdentityIssuedAt,omitempty"`
-	Operation                       string        `json:"operation"`
-	ChartRef                        string        `json:"chartRef,omitempty"`
-	ChartVersion                    string        `json:"chartVersion,omitempty"`
-	ProjectConfigVersion            int           `json:"projectConfigVersion,omitempty"`
-	Environment                     Environment   `json:"environment"`
-	ProjectConfig                   ProjectConfig `json:"projectConfig"`
-	Status                          string        `json:"status"`
-	CreatedAt                       time.Time     `json:"createdAt"`
-	ClaimedAt                       *time.Time    `json:"claimedAt,omitempty"`
-	Attempt                         int           `json:"attempt,omitempty"`
-	AttemptID                       string        `json:"attemptId,omitempty"`
-	LeaseExpiresAt                  *time.Time    `json:"leaseExpiresAt,omitempty"`
-	MaxAttempts                     int           `json:"maxAttempts,omitempty"`
-	LastError                       string        `json:"lastError,omitempty"`
-	SecretMaterializationPlanID     string        `json:"secretMaterializationPlanId,omitempty"`
-	SecretMaterializationPlanDigest string        `json:"secretMaterializationPlanDigest,omitempty"`
-	StatefulExecutionPlanID         string        `json:"statefulExecutionPlanId,omitempty"`
-	StatefulExecutionPlanDigest     string        `json:"statefulExecutionPlanDigest,omitempty"`
-	ReleasePlanID                   string        `json:"releasePlanId,omitempty"`
-	ReleasePlanDigest               string        `json:"releasePlanDigest,omitempty"`
-	ReleasePlanSignature            string        `json:"releasePlanSignature,omitempty"`
-	ReleasePlanKeyID                string        `json:"releasePlanKeyId,omitempty"`
+	ID                              string                     `json:"id"`
+	ProjectID                       string                     `json:"projectId"`
+	ClusterID                       string                     `json:"clusterId"`
+	RunnerID                        string                     `json:"runnerId"`
+	RemoteClusterGeneration         int64                      `json:"remoteClusterGeneration,omitempty"`
+	RunnerIdentityIssuedAt          string                     `json:"runnerIdentityIssuedAt,omitempty"`
+	Operation                       string                     `json:"operation"`
+	ChartRef                        string                     `json:"chartRef,omitempty"`
+	ChartVersion                    string                     `json:"chartVersion,omitempty"`
+	ProjectConfigVersion            int                        `json:"projectConfigVersion,omitempty"`
+	Environment                     Environment                `json:"environment"`
+	ProjectConfig                   ProjectConfig              `json:"projectConfig"`
+	Status                          string                     `json:"status"`
+	CreatedAt                       time.Time                  `json:"createdAt"`
+	ClaimedAt                       *time.Time                 `json:"claimedAt,omitempty"`
+	Attempt                         int                        `json:"attempt,omitempty"`
+	AttemptID                       string                     `json:"attemptId,omitempty"`
+	LeaseExpiresAt                  *time.Time                 `json:"leaseExpiresAt,omitempty"`
+	MaxAttempts                     int                        `json:"maxAttempts,omitempty"`
+	LastError                       string                     `json:"lastError,omitempty"`
+	SecretMaterializationPlanID     string                     `json:"secretMaterializationPlanId,omitempty"`
+	SecretMaterializationPlanDigest string                     `json:"secretMaterializationPlanDigest,omitempty"`
+	StatefulExecutionPlanID         string                     `json:"statefulExecutionPlanId,omitempty"`
+	StatefulExecutionPlanDigest     string                     `json:"statefulExecutionPlanDigest,omitempty"`
+	ReleasePlanID                   string                     `json:"releasePlanId,omitempty"`
+	ReleasePlanDigest               string                     `json:"releasePlanDigest,omitempty"`
+	ReleasePlanSignature            string                     `json:"releasePlanSignature,omitempty"`
+	ReleasePlanKeyID                string                     `json:"releasePlanKeyId,omitempty"`
+	CleanupInventory                []ReleasePlanInventoryItem `json:"cleanupInventory,omitempty"`
+	CleanupPhase                    CleanupPhase               `json:"cleanupPhase,omitempty"`
 }
 
 type RunnerCommandResult struct {
@@ -456,6 +458,7 @@ type RunnerCommandResult struct {
 	Error                   string `json:"error,omitempty"`
 	ErrorCode               string `json:"errorCode,omitempty"`
 	EnvironmentStatus       string `json:"environmentStatus,omitempty"`
+	CleanupVerified         bool   `json:"cleanupVerified,omitempty"`
 }
 
 type RunnerHeartbeatStatus string
