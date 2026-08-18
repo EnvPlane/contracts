@@ -13,3 +13,8 @@ func TestEnvironmentTemplateRejectsSecretResources(t *testing.T) {
 	r := EnvironmentTemplateRevision{ContractVersion: EnvironmentTemplateContractVersion, RevisionID: "rev-1", TemplateID: "tpl-1", TenantID: "tenant-a", ProjectID: "project-a", SourceScanID: "scan-1", Resources: []ResourceTemplate{{Kind: "Secret", Name: "credentials"}}}
 	digest, err := r.CanonicalDigest(); if err != nil { t.Fatal(err) }; r.Digest = digest; if err := r.Validate(); err == nil { t.Fatal("expected Secret resource to be rejected") }
 }
+
+func TestEnvironmentTemplateDigestIncludesDependencyPolicies(t *testing.T) {
+	r := EnvironmentTemplateRevision{ContractVersion: EnvironmentTemplateContractVersion, RevisionID: "rev-cms", TemplateID: "cms", TenantID: "tenant-a", ProjectID: "cms", SourceScanID: "scan-cms", Resources: []ResourceTemplate{{Kind: "Deployment", Namespace: "dev-cms", Name: "web", Manifest: map[string]any{"apiVersion": "apps/v1"}}}, ResourcePolicies: []ResourceDependencyPolicy{{ResourceID: "ConfigMap/dev-cms/web-config", Kind: "ConfigMap", Namespace: "dev-cms", Name: "web-config", Strategy: ResourcePolicyClone, Defaulted: true, Reason: "workload-owned desired state defaults to clone"}}}
+	d1, err := r.CanonicalDigest(); if err != nil { t.Fatal(err) }; r.ResourcePolicies[0].Strategy = ResourcePolicyReference; d2, err := r.CanonicalDigest(); if err != nil { t.Fatal(err) }; if d1 == d2 { t.Fatal("dependency policy changes must change revision digest") }
+}

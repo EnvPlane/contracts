@@ -3669,6 +3669,12 @@
           "publishedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "resourcePolicies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceDependencyPolicy"
+            }
           }
         }
       },
@@ -3904,6 +3910,120 @@
           },
           "complete": {
             "type": "boolean"
+          }
+        }
+      },
+      "ServiceGraph": {
+        "properties": {
+          "policies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceDependencyPolicy"
+            }
+          },
+          "validation": {
+            "$ref": "#/components/schemas/DependencyGraphValidation"
+          }
+        }
+      },
+      "ServiceGraphEdge": {
+        "properties": {
+          "required": {
+            "type": "boolean"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "ResourceDependencyPolicy": {
+        "type": "object",
+        "required": [
+          "resourceId",
+          "kind",
+          "namespace",
+          "name",
+          "strategy",
+          "defaulted",
+          "reason",
+          "required"
+        ],
+        "properties": {
+          "resourceId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "strategy": {
+            "type": "string",
+            "enum": [
+              "clone",
+              "parameterize",
+              "reference",
+              "external",
+              "ignore",
+              "unsupported"
+            ]
+          },
+          "defaulted": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DependencyGraphIssue": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "DependencyGraphValidation": {
+        "type": "object",
+        "required": [
+          "valid"
+        ],
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DependencyGraphIssue"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DependencyGraphIssue"
+            }
           }
         }
       }

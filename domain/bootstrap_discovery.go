@@ -134,6 +134,8 @@ type ResourceSourceMapping struct {
 type ServiceGraph struct {
 	Nodes []ServiceGraphNode `json:"nodes"`
 	Edges []ServiceGraphEdge `json:"edges"`
+	Policies []ResourceDependencyPolicy `json:"policies,omitempty"`
+	Validation *DependencyGraphValidation `json:"validation,omitempty"`
 }
 
 type ServiceEnvironmentVariables struct {
@@ -167,7 +169,33 @@ type ServiceGraphEdge struct {
 	Type       string  `json:"type"`
 	Reason     string  `json:"reason,omitempty"`
 	Confidence float64 `json:"confidence"`
+	Required   bool    `json:"required,omitempty"`
+	Path       string  `json:"path,omitempty"`
 }
+
+type ResourcePolicyStrategy string
+const (
+	ResourcePolicyClone ResourcePolicyStrategy = "clone"
+	ResourcePolicyParameterize ResourcePolicyStrategy = "parameterize"
+	ResourcePolicyReference ResourcePolicyStrategy = "reference"
+	ResourcePolicyExternal ResourcePolicyStrategy = "external"
+	ResourcePolicyIgnore ResourcePolicyStrategy = "ignore"
+	ResourcePolicyUnsupported ResourcePolicyStrategy = "unsupported"
+)
+
+type ResourceDependencyPolicy struct {
+	ResourceID string `json:"resourceId"`
+	Kind string `json:"kind"`
+	Namespace string `json:"namespace"`
+	Name string `json:"name"`
+	Strategy ResourcePolicyStrategy `json:"strategy"`
+	Defaulted bool `json:"defaulted"`
+	Reason string `json:"reason"`
+	Required bool `json:"required"`
+}
+
+type DependencyGraphIssue struct { Code string `json:"code"`; ResourceID string `json:"resourceId,omitempty"`; Path string `json:"path,omitempty"`; Message string `json:"message"` }
+type DependencyGraphValidation struct { Valid bool `json:"valid"`; Errors []DependencyGraphIssue `json:"errors,omitempty"`; Warnings []DependencyGraphIssue `json:"warnings,omitempty"` }
 
 type AgentRegistrationTokenRequest struct {
 	ClusterID      string `json:"clusterId,omitempty"`
