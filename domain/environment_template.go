@@ -77,21 +77,22 @@ type OwnershipRecord struct {
 	Namespace string `json:"namespace"`
 }
 type EnvironmentRenderInputs struct {
-	TenantID        string            `json:"tenantId"`
-	ProjectID       string            `json:"projectId"`
-	EnvironmentID   string            `json:"environmentId"`
-	DisplayName     string            `json:"displayName,omitempty"`
-	Branch          string            `json:"branch,omitempty"`
-	BranchSlug      string            `json:"branchSlug,omitempty"`
-	ChangeID        string            `json:"changeId,omitempty"`
-	CommitSHA       string            `json:"commitSha,omitempty"`
-	ComponentImages map[string]string `json:"componentImages,omitempty"`
-	NamespaceMap    map[string]string `json:"namespaceMap"`
-	ResourceNames   map[string]string `json:"resourceNames,omitempty"`
-	Hostnames       map[string]string `json:"hostnames,omitempty"`
-	ProjectDomain   string            `json:"projectDomain,omitempty"`
-	Backend         DeploymentBackend `json:"backend"`
-	ImmutableImages bool              `json:"immutableImages"`
+	TenantID             string            `json:"tenantId"`
+	ProjectID            string            `json:"projectId"`
+	EnvironmentID        string            `json:"environmentId"`
+	DisplayName          string            `json:"displayName,omitempty"`
+	Branch               string            `json:"branch,omitempty"`
+	BranchSlug           string            `json:"branchSlug,omitempty"`
+	ChangeID             string            `json:"changeId,omitempty"`
+	CommitSHA            string            `json:"commitSha,omitempty"`
+	ComponentImages      map[string]string `json:"componentImages,omitempty"`
+	NamespaceMap         map[string]string `json:"namespaceMap"`
+	ResourceNames        map[string]string `json:"resourceNames,omitempty"`
+	Hostnames            map[string]string `json:"hostnames,omitempty"`
+	ProjectDomain        string            `json:"projectDomain,omitempty"`
+	PreviewDomainPattern string            `json:"previewDomainPattern,omitempty"`
+	Backend              DeploymentBackend `json:"backend"`
+	ImmutableImages      bool              `json:"immutableImages"`
 }
 type RenderedResource struct {
 	ResourceID string         `json:"resourceId"`
@@ -123,6 +124,8 @@ type EnvironmentReleasePlan struct {
 	Ownership                       []OwnershipRecord      `json:"ownership"`
 	RenderedResources               []RenderedResource     `json:"renderedResources"`
 	Transformations                 []TransformationReport `json:"transformations"`
+	Endpoints                       []IngressEndpoint      `json:"endpoints,omitempty"`
+	PrimaryEndpoint                 string                 `json:"primaryEndpoint,omitempty"`
 	SecretMaterializationPlanID     string                 `json:"secretMaterializationPlanId,omitempty"`
 	SecretMaterializationPlanDigest string                 `json:"secretMaterializationPlanDigest,omitempty"`
 	StatefulExecutionPlanID         string                 `json:"statefulExecutionPlanId,omitempty"`

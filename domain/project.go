@@ -3,29 +3,30 @@ package domain
 import "time"
 
 type Project struct {
-	TenantID              string             `json:"tenant_id,omitempty"`
-	ID                    string             `json:"id"`
-	Name                  string             `json:"name"`
-	ProductID             string             `json:"product_id"`
-	AppRepositoryID       string             `json:"app_repository_id,omitempty"`
-	GitOpsRepositoryID    string             `json:"gitops_repository_id,omitempty"`
-	WebhookBranchFilters  []string           `json:"branch_filters,omitempty"`
-	WebhookLabels         []string           `json:"labels,omitempty"`
-	WebhookAllowDraftPRs  bool               `json:"allow_draft_prs,omitempty"`
-	GitHubInstallationIDs []string           `json:"github_installation_ids,omitempty"`
-	GitLabProjectIDs      []string           `json:"gitlab_project_ids,omitempty"`
-	ClusterID             string             `json:"cluster_id,omitempty"`
-	AuthorizedClusterIDs  []string           `json:"authorized_cluster_ids,omitempty"`
-	AccessUsers           []string           `json:"access_users,omitempty"`
-	AccessOrganizations   []string           `json:"access_organizations,omitempty"`
-	SecretRefs            []string           `json:"secret_refs,omitempty"`
-	GitRepo               RepositoryRef      `json:"git_repo"`
-	GitOpsRepo            RepositoryRef      `json:"gitops_repo"`
-	Components            []ProjectComponent `json:"components,omitempty"`
-	BaseEnvConfig         BaseEnvConfig      `json:"base_env_config"`
-	CostPolicy            ProjectCostPolicy  `json:"cost_policy"`
-	CreatedAt             time.Time          `json:"created_at"`
-	UpdatedAt             time.Time          `json:"updated_at"`
+	TenantID              string              `json:"tenant_id,omitempty"`
+	ID                    string              `json:"id"`
+	Name                  string              `json:"name"`
+	ProductID             string              `json:"product_id"`
+	AppRepositoryID       string              `json:"app_repository_id,omitempty"`
+	GitOpsRepositoryID    string              `json:"gitops_repository_id,omitempty"`
+	WebhookBranchFilters  []string            `json:"branch_filters,omitempty"`
+	WebhookLabels         []string            `json:"labels,omitempty"`
+	WebhookAllowDraftPRs  bool                `json:"allow_draft_prs,omitempty"`
+	GitHubInstallationIDs []string            `json:"github_installation_ids,omitempty"`
+	GitLabProjectIDs      []string            `json:"gitlab_project_ids,omitempty"`
+	ClusterID             string              `json:"cluster_id,omitempty"`
+	AuthorizedClusterIDs  []string            `json:"authorized_cluster_ids,omitempty"`
+	AccessUsers           []string            `json:"access_users,omitempty"`
+	AccessOrganizations   []string            `json:"access_organizations,omitempty"`
+	SecretRefs            []string            `json:"secret_refs,omitempty"`
+	GitRepo               RepositoryRef       `json:"git_repo"`
+	GitOpsRepo            RepositoryRef       `json:"gitops_repo"`
+	Components            []ProjectComponent  `json:"components,omitempty"`
+	BaseEnvConfig         BaseEnvConfig       `json:"base_env_config"`
+	PreviewDomainPolicy   PreviewDomainPolicy `json:"preview_domain_policy,omitempty"`
+	CostPolicy            ProjectCostPolicy   `json:"cost_policy"`
+	CreatedAt             time.Time           `json:"created_at"`
+	UpdatedAt             time.Time           `json:"updated_at"`
 }
 
 // ProjectDeploymentReadiness describes whether a project can be used to create

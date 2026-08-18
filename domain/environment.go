@@ -30,6 +30,9 @@ type Environment struct {
 	ID                        string                 `json:"id"`
 	DisplayName               string                 `json:"displayName,omitempty"`
 	CompatibilityAliases      []string               `json:"compatibilityAliases,omitempty"`
+	Endpoints                 []IngressEndpoint      `json:"endpoints,omitempty"`
+	PrimaryEndpoint           string                 `json:"primaryEndpoint,omitempty"`
+	EndpointPreflight         EndpointPreflight      `json:"endpointPreflight,omitempty"`
 	Project                   string                 `json:"project"`
 	Product                   string                 `json:"product"`
 	ClusterID                 string                 `json:"clusterId,omitempty"`
