@@ -420,6 +420,8 @@ type RunnerCommand struct {
 	LeaseExpiresAt          *time.Time    `json:"leaseExpiresAt,omitempty"`
 	MaxAttempts             int           `json:"maxAttempts,omitempty"`
 	LastError               string        `json:"lastError,omitempty"`
+	SecretMaterializationPlanID     string `json:"secretMaterializationPlanId,omitempty"`
+	SecretMaterializationPlanDigest string `json:"secretMaterializationPlanDigest,omitempty"`
 }
 
 type RunnerCommandResult struct {

@@ -3842,6 +3842,12 @@
             "items": {
               "$ref": "#/components/schemas/TransformationReport"
             }
+          },
+          "secretMaterializationPlanId": {
+            "type": "string"
+          },
+          "secretMaterializationPlanDigest": {
+            "type": "string"
           }
         }
       },
@@ -4169,6 +4175,148 @@
             "pattern": "^sha256:[0-9a-f]{64}$"
           },
           "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "SecretMaterializationPlan": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "templateRevisionId",
+          "templateDigest",
+          "targetNamespace",
+          "items",
+          "ownership",
+          "inputDigest",
+          "digest"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "templateRevisionId": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "targetNamespace": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "strategy",
+                "targetNamespace",
+                "targetName",
+                "owned"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "strategy": {
+                  "type": "string",
+                  "enum": [
+                    "reference",
+                    "external",
+                    "encrypted_clone",
+                    "manual",
+                    "generated"
+                  ]
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "sourceNamespace": {
+                  "type": "string"
+                },
+                "sourceName": {
+                  "type": "string"
+                },
+                "targetNamespace": {
+                  "type": "string"
+                },
+                "targetName": {
+                  "type": "string"
+                },
+                "backend": {
+                  "type": "string"
+                },
+                "externalSecretStore": {
+                  "type": "string"
+                },
+                "externalKey": {
+                  "type": "string"
+                },
+                "encryptedPayloadRef": {
+                  "type": "string"
+                },
+                "generator": {
+                  "type": "string"
+                },
+                "owned": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "ownership": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnershipRecord"
+            }
+          },
+          "inputDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "allowedSourceNamespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RunnerCommand": {
+        "properties": {
+          "secretMaterializationPlanId": {
+            "type": "string"
+          },
+          "secretMaterializationPlanDigest": {
             "type": "string"
           }
         }
