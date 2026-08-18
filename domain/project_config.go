@@ -153,4 +153,6 @@ type ProjectConfig struct {
 	SensitiveRefs map[string]any `json:"sensitive_refs,omitempty"`
 	CreatedBy     string         `json:"created_by"`
 	CreatedAt     time.Time      `json:"created_at"`
+	TemplateRevisionID string    `json:"template_revision_id,omitempty"`
+	TemplateDigest string       `json:"template_digest,omitempty"`
 }

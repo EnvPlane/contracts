@@ -56,6 +56,10 @@ type Environment struct {
 	ExpiresAt                 *time.Time             `json:"expiresAt,omitempty"`
 	CreatedAt                 time.Time              `json:"createdAt"`
 	UpdatedAt                 time.Time              `json:"updatedAt"`
+	TemplateRevisionID        string                 `json:"templateRevisionId,omitempty"`
+	TemplateDigest            string                 `json:"templateDigest,omitempty"`
+	ReleasePlanID             string                 `json:"releasePlanId,omitempty"`
+	ReleaseInputDigest        string                 `json:"releaseInputDigest,omitempty"`
 	ManifestPath              string                 `json:"manifestPath"`
 	NamespaceManifestPath     string                 `json:"namespaceManifestPath,omitempty"`
 	KustomizationManifestPath string                 `json:"kustomizationManifestPath,omitempty"`
@@ -161,6 +165,8 @@ type CreateEnvironmentRequest struct {
 	Overrides      map[string]string   `json:"overrides,omitempty"`
 	TTLHours       int                 `json:"ttlHours"`
 	Pinned         bool                `json:"pinned"`
+	TemplateRevisionID string          `json:"templateRevisionId,omitempty"`
+	TemplateDigest string             `json:"templateDigest,omitempty"`
 }
 
 type RenderPreview struct {

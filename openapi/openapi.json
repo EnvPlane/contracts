@@ -711,6 +711,20 @@
                 }
               }
             }
+          },
+          "templateRevisionId": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "releasePlanId": {
+            "type": "string"
+          },
+          "releaseInputDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
           }
         },
         "required": [
@@ -3573,6 +3587,253 @@
         "required": [
           "fluxStatus"
         ]
+      },
+      "EnvironmentTemplateRevision": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "revisionId",
+          "templateId",
+          "tenantId",
+          "projectId",
+          "sourceScanId",
+          "resources",
+          "digest"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          "revisionId": {
+            "type": "string"
+          },
+          "templateId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "sourceScanId": {
+            "type": "string"
+          },
+          "sourceNamespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "observedVersions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentResourceTemplate"
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentDependencyPolicy"
+            }
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentTemplateParameter"
+            }
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EnvironmentResourceTemplate": {
+        "type": "object",
+        "required": [
+          "kind",
+          "name",
+          "manifest"
+        ],
+        "properties": {
+          "apiVersion": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "manifest": {
+            "type": "object"
+          },
+          "policy": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentDependencyPolicy": {
+        "type": "object",
+        "required": [
+          "name",
+          "mode"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "clone",
+              "reference",
+              "external"
+            ]
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentTemplateParameter": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "required"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "secretRef": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentReleasePlan": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "templateRevisionId",
+          "templateDigest",
+          "backend",
+          "ownership",
+          "inputDigest",
+          "digest"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "templateRevisionId": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "backend": {
+            "type": "string"
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "ownership": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "inputDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProjectConfig": {
+        "properties": {
+          "templateRevisionId": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
       }
     }
   },
