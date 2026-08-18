@@ -474,6 +474,79 @@
                     "type": "boolean"
                   }
                 }
+              },
+              "feature_readiness": {
+                "type": "object",
+                "properties": {
+                  "ready": {
+                    "type": "boolean"
+                  },
+                  "backend_apply_complete": {
+                    "type": "boolean"
+                  },
+                  "structural_parity": {
+                    "type": "boolean"
+                  },
+                  "no_forbidden_base_links": {
+                    "type": "boolean"
+                  },
+                  "workloads_ready": {
+                    "type": "boolean"
+                  },
+                  "configured_probes": {
+                    "type": "boolean"
+                  },
+                  "stateful_complete": {
+                    "type": "boolean"
+                  },
+                  "reasons": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "parity_digest": {
+                    "type": "string"
+                  }
+                }
+              },
+              "safe_diff": {
+                "type": "object",
+                "properties": {
+                  "expected": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ReleasePlanInventoryItem"
+                    }
+                  },
+                  "missing": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ReleasePlanInventoryItem"
+                    }
+                  },
+                  "extra": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ReleasePlanInventoryItem"
+                    }
+                  },
+                  "mismatch": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "dangling": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "safe": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           },

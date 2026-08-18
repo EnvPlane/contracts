@@ -265,22 +265,23 @@ type BootstrapAgentStatusResponse struct {
 }
 
 type AgentResourceScanRequest struct {
-	ProjectID            string                          `json:"projectId"`
-	ProjectIDSnake       string                          `json:"project_id,omitempty"`
-	ClusterID            string                          `json:"clusterId"`
-	ClusterIDSnake       string                          `json:"cluster_id,omitempty"`
-	AgentID              string                          `json:"agentId"`
-	ScanID               string                          `json:"scanId"`
-	Status               string                          `json:"status"`
-	ErrorCode            string                          `json:"errorCode,omitempty"`
-	Error                string                          `json:"error,omitempty"`
-	ResourceSnapshots    []ResourceSnapshot              `json:"resourceSnapshots"`
-	ServiceGraph         ServiceGraph                    `json:"serviceGraph"`
-	ServiceEnvs          ServiceEnvironmentVariables     `json:"serviceEnvs"`
-	PermissionWarnings   []string                        `json:"permissionWarnings,omitempty"`
-	Completeness         ResourceScanCompletenessReport  `json:"completeness"`
-	StatefulObservations []StatefulDependencyObservation `json:"statefulObservations,omitempty"`
-	ObservedAt           time.Time                       `json:"observedAt"`
+	ProjectID              string                          `json:"projectId"`
+	ProjectIDSnake         string                          `json:"project_id,omitempty"`
+	ClusterID              string                          `json:"clusterId"`
+	ClusterIDSnake         string                          `json:"cluster_id,omitempty"`
+	AgentID                string                          `json:"agentId"`
+	ScanID                 string                          `json:"scanId"`
+	Status                 string                          `json:"status"`
+	ErrorCode              string                          `json:"errorCode,omitempty"`
+	Error                  string                          `json:"error,omitempty"`
+	ResourceSnapshots      []ResourceSnapshot              `json:"resourceSnapshots"`
+	ServiceGraph           ServiceGraph                    `json:"serviceGraph"`
+	ServiceEnvs            ServiceEnvironmentVariables     `json:"serviceEnvs"`
+	PermissionWarnings     []string                        `json:"permissionWarnings,omitempty"`
+	Completeness           ResourceScanCompletenessReport  `json:"completeness"`
+	SourceHealthDiagnostic []ObservedInventoryItem         `json:"sourceHealthDiagnostic,omitempty"`
+	StatefulObservations   []StatefulDependencyObservation `json:"statefulObservations,omitempty"`
+	ObservedAt             time.Time                       `json:"observedAt"`
 }
 
 type AgentResourceScanTaskResponse struct {

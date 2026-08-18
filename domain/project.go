@@ -44,6 +44,8 @@ type ProjectDeploymentReadiness struct {
 	HybridReady                bool                           `json:"hybrid_ready"`
 	HybridMissingPrerequisites []string                       `json:"hybrid_missing_prerequisites,omitempty"`
 	RemoteCluster              *ProjectRemoteClusterReadiness `json:"remote_cluster,omitempty"`
+	FeatureReadiness           *FeatureReadiness              `json:"feature_readiness,omitempty"`
+	SafeDiff                   *SafeInventoryDiff             `json:"safe_diff,omitempty"`
 }
 
 // ProjectRemoteClusterReadiness exposes only safe observed state for the
