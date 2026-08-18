@@ -3490,6 +3490,12 @@
           },
           "completeness": {
             "$ref": "#/components/schemas/ResourceScanCompletenessReport"
+          },
+          "statefulObservations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         },
         "required": [
@@ -3847,6 +3853,12 @@
             "type": "string"
           },
           "secretMaterializationPlanDigest": {
+            "type": "string"
+          },
+          "statefulExecutionPlanId": {
+            "type": "string"
+          },
+          "statefulExecutionPlanDigest": {
             "type": "string"
           }
         }
@@ -4318,6 +4330,112 @@
           },
           "secretMaterializationPlanDigest": {
             "type": "string"
+          },
+          "statefulExecutionPlanId": {
+            "type": "string"
+          },
+          "statefulExecutionPlanDigest": {
+            "type": "string"
+          }
+        }
+      },
+      "StatefulExecutionPlan": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "templateRevisionId",
+          "templateDigest",
+          "targetNamespace",
+          "policies",
+          "steps",
+          "readiness",
+          "dsnRewrites",
+          "sourceProtection",
+          "independent",
+          "approvalRequired",
+          "inputDigest",
+          "digest"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "templateRevisionId": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string"
+          },
+          "targetNamespace": {
+            "type": "string"
+          },
+          "independent": {
+            "type": "boolean"
+          },
+          "policies": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "readiness": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "dsnRewrites": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "sourceProtection": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "storageQuota": {
+            "type": "string"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "inputDigest": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }

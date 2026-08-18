@@ -63,17 +63,17 @@ type ResourceSnapshot struct {
 // ResourceScanNamespaceReport describes discovery coverage without exposing
 // Kubernetes response bodies or credentials.
 type ResourceScanNamespaceReport struct {
-	Namespace  string   `json:"namespace"`
-	Scanned    []string `json:"scanned,omitempty"`
-	Forbidden  []string `json:"forbidden,omitempty"`
+	Namespace   string   `json:"namespace"`
+	Scanned     []string `json:"scanned,omitempty"`
+	Forbidden   []string `json:"forbidden,omitempty"`
 	Unsupported []string `json:"unsupported,omitempty"`
-	Excluded   []string `json:"excluded,omitempty"`
-	Malformed  []string `json:"malformed,omitempty"`
+	Excluded    []string `json:"excluded,omitempty"`
+	Malformed   []string `json:"malformed,omitempty"`
 }
 
 type ResourceScanCompletenessReport struct {
 	Namespaces []ResourceScanNamespaceReport `json:"namespaces"`
-	Complete  bool                           `json:"complete"`
+	Complete   bool                          `json:"complete"`
 }
 
 // ResourceHealth is the observed readiness of a discovered workload. It is
@@ -132,9 +132,9 @@ type ResourceSourceMapping struct {
 }
 
 type ServiceGraph struct {
-	Nodes []ServiceGraphNode `json:"nodes"`
-	Edges []ServiceGraphEdge `json:"edges"`
-	Policies []ResourceDependencyPolicy `json:"policies,omitempty"`
+	Nodes      []ServiceGraphNode         `json:"nodes"`
+	Edges      []ServiceGraphEdge         `json:"edges"`
+	Policies   []ResourceDependencyPolicy `json:"policies,omitempty"`
 	Validation *DependencyGraphValidation `json:"validation,omitempty"`
 }
 
@@ -174,28 +174,38 @@ type ServiceGraphEdge struct {
 }
 
 type ResourcePolicyStrategy string
+
 const (
-	ResourcePolicyClone ResourcePolicyStrategy = "clone"
+	ResourcePolicyClone        ResourcePolicyStrategy = "clone"
 	ResourcePolicyParameterize ResourcePolicyStrategy = "parameterize"
-	ResourcePolicyReference ResourcePolicyStrategy = "reference"
-	ResourcePolicyExternal ResourcePolicyStrategy = "external"
-	ResourcePolicyIgnore ResourcePolicyStrategy = "ignore"
-	ResourcePolicyUnsupported ResourcePolicyStrategy = "unsupported"
+	ResourcePolicyReference    ResourcePolicyStrategy = "reference"
+	ResourcePolicyExternal     ResourcePolicyStrategy = "external"
+	ResourcePolicyIgnore       ResourcePolicyStrategy = "ignore"
+	ResourcePolicyUnsupported  ResourcePolicyStrategy = "unsupported"
 )
 
 type ResourceDependencyPolicy struct {
-	ResourceID string `json:"resourceId"`
-	Kind string `json:"kind"`
-	Namespace string `json:"namespace"`
-	Name string `json:"name"`
-	Strategy ResourcePolicyStrategy `json:"strategy"`
-	Defaulted bool `json:"defaulted"`
-	Reason string `json:"reason"`
-	Required bool `json:"required"`
+	ResourceID string                 `json:"resourceId"`
+	Kind       string                 `json:"kind"`
+	Namespace  string                 `json:"namespace"`
+	Name       string                 `json:"name"`
+	Strategy   ResourcePolicyStrategy `json:"strategy"`
+	Defaulted  bool                   `json:"defaulted"`
+	Reason     string                 `json:"reason"`
+	Required   bool                   `json:"required"`
 }
 
-type DependencyGraphIssue struct { Code string `json:"code"`; ResourceID string `json:"resourceId,omitempty"`; Path string `json:"path,omitempty"`; Message string `json:"message"` }
-type DependencyGraphValidation struct { Valid bool `json:"valid"`; Errors []DependencyGraphIssue `json:"errors,omitempty"`; Warnings []DependencyGraphIssue `json:"warnings,omitempty"` }
+type DependencyGraphIssue struct {
+	Code       string `json:"code"`
+	ResourceID string `json:"resourceId,omitempty"`
+	Path       string `json:"path,omitempty"`
+	Message    string `json:"message"`
+}
+type DependencyGraphValidation struct {
+	Valid    bool                   `json:"valid"`
+	Errors   []DependencyGraphIssue `json:"errors,omitempty"`
+	Warnings []DependencyGraphIssue `json:"warnings,omitempty"`
+}
 
 type AgentRegistrationTokenRequest struct {
 	ClusterID      string `json:"clusterId,omitempty"`
@@ -255,21 +265,22 @@ type BootstrapAgentStatusResponse struct {
 }
 
 type AgentResourceScanRequest struct {
-	ProjectID          string                      `json:"projectId"`
-	ProjectIDSnake     string                      `json:"project_id,omitempty"`
-	ClusterID          string                      `json:"clusterId"`
-	ClusterIDSnake     string                      `json:"cluster_id,omitempty"`
-	AgentID            string                      `json:"agentId"`
-	ScanID             string                      `json:"scanId"`
-	Status             string                      `json:"status"`
-	ErrorCode          string                      `json:"errorCode,omitempty"`
-	Error              string                      `json:"error,omitempty"`
-	ResourceSnapshots  []ResourceSnapshot          `json:"resourceSnapshots"`
-	ServiceGraph       ServiceGraph                `json:"serviceGraph"`
-	ServiceEnvs        ServiceEnvironmentVariables `json:"serviceEnvs"`
-	PermissionWarnings []string                    `json:"permissionWarnings,omitempty"`
-	Completeness       ResourceScanCompletenessReport `json:"completeness"`
-	ObservedAt         time.Time                   `json:"observedAt"`
+	ProjectID            string                          `json:"projectId"`
+	ProjectIDSnake       string                          `json:"project_id,omitempty"`
+	ClusterID            string                          `json:"clusterId"`
+	ClusterIDSnake       string                          `json:"cluster_id,omitempty"`
+	AgentID              string                          `json:"agentId"`
+	ScanID               string                          `json:"scanId"`
+	Status               string                          `json:"status"`
+	ErrorCode            string                          `json:"errorCode,omitempty"`
+	Error                string                          `json:"error,omitempty"`
+	ResourceSnapshots    []ResourceSnapshot              `json:"resourceSnapshots"`
+	ServiceGraph         ServiceGraph                    `json:"serviceGraph"`
+	ServiceEnvs          ServiceEnvironmentVariables     `json:"serviceEnvs"`
+	PermissionWarnings   []string                        `json:"permissionWarnings,omitempty"`
+	Completeness         ResourceScanCompletenessReport  `json:"completeness"`
+	StatefulObservations []StatefulDependencyObservation `json:"statefulObservations,omitempty"`
+	ObservedAt           time.Time                       `json:"observedAt"`
 }
 
 type AgentResourceScanTaskResponse struct {
@@ -400,28 +411,30 @@ type RunnerHeartbeatRequest struct {
 // its pinned chart contract with a newer compiled deployment configuration.
 // None of these fields contains secret material.
 type RunnerCommand struct {
-	ID                      string        `json:"id"`
-	ProjectID               string        `json:"projectId"`
-	ClusterID               string        `json:"clusterId"`
-	RunnerID                string        `json:"runnerId"`
-	RemoteClusterGeneration int64         `json:"remoteClusterGeneration,omitempty"`
-	RunnerIdentityIssuedAt  string        `json:"runnerIdentityIssuedAt,omitempty"`
-	Operation               string        `json:"operation"`
-	ChartRef                string        `json:"chartRef,omitempty"`
-	ChartVersion            string        `json:"chartVersion,omitempty"`
-	ProjectConfigVersion    int           `json:"projectConfigVersion,omitempty"`
-	Environment             Environment   `json:"environment"`
-	ProjectConfig           ProjectConfig `json:"projectConfig"`
-	Status                  string        `json:"status"`
-	CreatedAt               time.Time     `json:"createdAt"`
-	ClaimedAt               *time.Time    `json:"claimedAt,omitempty"`
-	Attempt                 int           `json:"attempt,omitempty"`
-	AttemptID               string        `json:"attemptId,omitempty"`
-	LeaseExpiresAt          *time.Time    `json:"leaseExpiresAt,omitempty"`
-	MaxAttempts             int           `json:"maxAttempts,omitempty"`
-	LastError               string        `json:"lastError,omitempty"`
-	SecretMaterializationPlanID     string `json:"secretMaterializationPlanId,omitempty"`
-	SecretMaterializationPlanDigest string `json:"secretMaterializationPlanDigest,omitempty"`
+	ID                              string        `json:"id"`
+	ProjectID                       string        `json:"projectId"`
+	ClusterID                       string        `json:"clusterId"`
+	RunnerID                        string        `json:"runnerId"`
+	RemoteClusterGeneration         int64         `json:"remoteClusterGeneration,omitempty"`
+	RunnerIdentityIssuedAt          string        `json:"runnerIdentityIssuedAt,omitempty"`
+	Operation                       string        `json:"operation"`
+	ChartRef                        string        `json:"chartRef,omitempty"`
+	ChartVersion                    string        `json:"chartVersion,omitempty"`
+	ProjectConfigVersion            int           `json:"projectConfigVersion,omitempty"`
+	Environment                     Environment   `json:"environment"`
+	ProjectConfig                   ProjectConfig `json:"projectConfig"`
+	Status                          string        `json:"status"`
+	CreatedAt                       time.Time     `json:"createdAt"`
+	ClaimedAt                       *time.Time    `json:"claimedAt,omitempty"`
+	Attempt                         int           `json:"attempt,omitempty"`
+	AttemptID                       string        `json:"attemptId,omitempty"`
+	LeaseExpiresAt                  *time.Time    `json:"leaseExpiresAt,omitempty"`
+	MaxAttempts                     int           `json:"maxAttempts,omitempty"`
+	LastError                       string        `json:"lastError,omitempty"`
+	SecretMaterializationPlanID     string        `json:"secretMaterializationPlanId,omitempty"`
+	SecretMaterializationPlanDigest string        `json:"secretMaterializationPlanDigest,omitempty"`
+	StatefulExecutionPlanID         string        `json:"statefulExecutionPlanId,omitempty"`
+	StatefulExecutionPlanDigest     string        `json:"statefulExecutionPlanDigest,omitempty"`
 }
 
 type RunnerCommandResult struct {
