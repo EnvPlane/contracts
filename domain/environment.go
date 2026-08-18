@@ -63,6 +63,8 @@ type Environment struct {
 	ReleasePlanSignature      string                 `json:"releasePlanSignature,omitempty"`
 	ReleasePlanKeyID          string                 `json:"releasePlanKeyId,omitempty"`
 	ReleaseInputDigest        string                 `json:"releaseInputDigest,omitempty"`
+	DesiredRevision           EnvironmentRevision    `json:"desiredRevision,omitempty"`
+	AppliedRevision           EnvironmentRevision    `json:"appliedRevision,omitempty"`
 	ManifestPath              string                 `json:"manifestPath"`
 	NamespaceManifestPath     string                 `json:"namespaceManifestPath,omitempty"`
 	KustomizationManifestPath string                 `json:"kustomizationManifestPath,omitempty"`
@@ -136,6 +138,7 @@ type ComponentOverride struct {
 	PullRequestID string `json:"pullRequestId,omitempty"`
 	Commit        string `json:"commit,omitempty"`
 	ImageTag      string `json:"imageTag,omitempty"`
+	ImageDigest   string `json:"imageDigest,omitempty"`
 }
 
 // EnvironmentComponent is the resolved, immutable component selection stored
@@ -148,6 +151,7 @@ type EnvironmentComponent struct {
 	Source      SCMSource `json:"source"`
 	Image       string    `json:"image,omitempty"`
 	ImageTag    string    `json:"imageTag,omitempty"`
+	ImageDigest string    `json:"imageDigest,omitempty"`
 }
 
 type CreateEnvironmentRequest struct {
@@ -170,6 +174,7 @@ type CreateEnvironmentRequest struct {
 	Pinned             bool                `json:"pinned"`
 	TemplateRevisionID string              `json:"templateRevisionId,omitempty"`
 	TemplateDigest     string              `json:"templateDigest,omitempty"`
+	DesiredRevision    EnvironmentRevision `json:"desiredRevision,omitempty"`
 }
 
 type RenderPreview struct {

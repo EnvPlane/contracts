@@ -45,6 +45,8 @@ type PullRequestEvent struct {
 	InstallationID string      `json:"installationId"`
 	Labels         []string    `json:"labels"`
 	Draft          bool        `json:"draft"`
+	ArtifactDigest string      `json:"artifactDigest,omitempty"`
+	Sequence       int64       `json:"sequence,omitempty"`
 }
 
 type PullRequestCommand struct {
@@ -107,7 +109,7 @@ func (e PullRequestEvent) CreateEnvironmentRequest(product, project string) Crea
 	if project == "" {
 		project = scmProjectName(e.Repo)
 	}
-	return CreateEnvironmentRequest{ID: e.EnvironmentID(), Project: project, Product: product, Mode: ModeFull, Source: SCMSource{Provider: string(e.Provider), Repository: e.Repo, PullRequestID: e.ChangeID, Branch: e.Branch, Commit: e.CommitSHA, Author: e.Author, URL: e.URL}}
+	return CreateEnvironmentRequest{ID: e.EnvironmentID(), Project: project, Product: product, Mode: ModeFull, Source: SCMSource{Provider: string(e.Provider), Repository: e.Repo, PullRequestID: e.ChangeID, Branch: e.Branch, Commit: e.CommitSHA, Author: e.Author, URL: e.URL}, DesiredRevision: EnvironmentRevision{Provider: e.Provider, Repository: e.Repo, ChangeID: e.ChangeID, Commit: e.CommitSHA, ArtifactDigest: e.ArtifactDigest, Sequence: e.Sequence}}
 }
 
 func normalizeSCMIdentifier(value string) string {

@@ -108,8 +108,9 @@ type ProjectComponent struct {
 // ComponentBuildMetadata is deliberately provider-agnostic. It records the
 // image identity and the tag to use when no per-environment override is given.
 type ComponentBuildMetadata struct {
-	Image      string `json:"image,omitempty"`
-	DefaultTag string `json:"default_tag,omitempty"`
+	Image           string `json:"image,omitempty"`
+	DefaultTag      string `json:"default_tag,omitempty"`
+	ImmutableDigest string `json:"immutable_digest,omitempty"`
 }
 
 // ComponentDeployMetadata describes where the mapped service is rendered in
