@@ -3487,6 +3487,9 @@
           "observedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "completeness": {
+            "$ref": "#/components/schemas/ResourceScanCompletenessReport"
           }
         },
         "required": [
@@ -3832,6 +3835,75 @@
           "templateDigest": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      },
+      "ResourceSnapshot": {
+        "properties": {
+          "sourceMapping": {
+            "$ref": "#/components/schemas/ResourceSourceMapping"
+          },
+          "health": {
+            "$ref": "#/components/schemas/ResourceHealth"
+          }
+        }
+      },
+      "ResourceScanNamespaceReport": {
+        "type": "object",
+        "required": [
+          "namespace"
+        ],
+        "properties": {
+          "namespace": {
+            "type": "string"
+          },
+          "scanned": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "forbidden": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unsupported": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excluded": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "malformed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ResourceScanCompletenessReport": {
+        "type": "object",
+        "required": [
+          "namespaces",
+          "complete"
+        ],
+        "properties": {
+          "namespaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceScanNamespaceReport"
+            }
+          },
+          "complete": {
+            "type": "boolean"
           }
         }
       }

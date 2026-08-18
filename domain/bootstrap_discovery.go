@@ -60,6 +60,22 @@ type ResourceSnapshot struct {
 	Health          *ResourceHealth          `json:"health,omitempty"`
 }
 
+// ResourceScanNamespaceReport describes discovery coverage without exposing
+// Kubernetes response bodies or credentials.
+type ResourceScanNamespaceReport struct {
+	Namespace  string   `json:"namespace"`
+	Scanned    []string `json:"scanned,omitempty"`
+	Forbidden  []string `json:"forbidden,omitempty"`
+	Unsupported []string `json:"unsupported,omitempty"`
+	Excluded   []string `json:"excluded,omitempty"`
+	Malformed  []string `json:"malformed,omitempty"`
+}
+
+type ResourceScanCompletenessReport struct {
+	Namespaces []ResourceScanNamespaceReport `json:"namespaces"`
+	Complete  bool                           `json:"complete"`
+}
+
 // ResourceHealth is the observed readiness of a discovered workload. It is
 // deliberately absent for resource kinds that do not have a stable readiness
 // contract, rather than treating unknown state as healthy.
@@ -224,6 +240,7 @@ type AgentResourceScanRequest struct {
 	ServiceGraph       ServiceGraph                `json:"serviceGraph"`
 	ServiceEnvs        ServiceEnvironmentVariables `json:"serviceEnvs"`
 	PermissionWarnings []string                    `json:"permissionWarnings,omitempty"`
+	Completeness       ResourceScanCompletenessReport `json:"completeness"`
 	ObservedAt         time.Time                   `json:"observedAt"`
 }
 
