@@ -190,10 +190,10 @@ type RenderPreview struct {
 	Environment Environment       `json:"environment"`
 	Values      map[string]string `json:"values"`
 	ValuesYAML  string            `json:"valuesYaml"`
-	Manifests   []RenderOutput    `json:"manifests"`
+	Manifests   []RenderPreviewManifest `json:"manifests"`
 }
 
-type RenderOutput struct {
+type RenderPreviewManifest struct {
 	Path string `json:"path"`
 	Kind string `json:"kind"`
 }

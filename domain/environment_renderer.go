@@ -36,7 +36,7 @@ func RenderEnvironmentReleasePlan(revision EnvironmentTemplateRevision, graph Se
 		return EnvironmentReleasePlan{}, fmt.Errorf("dependency graph unresolved: %s", issue.Message)
 	}
 	for _, edge := range graph.Edges {
-		if edge.Required && !nodes[edge.To] {
+		if _, ok := nodes[edge.To]; edge.Required && !ok {
 			return EnvironmentReleasePlan{}, fmt.Errorf("unresolved required link %s at %s", edge.To, edge.Path)
 		}
 		if target, ok := nodes[edge.To]; ok && sourceNamespaceIsBase(target.Namespace, revision.SourceNamespaces) {
