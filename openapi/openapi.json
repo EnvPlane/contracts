@@ -3830,6 +3830,18 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "renderedResources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenderedResource"
+            }
+          },
+          "transformations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransformationReport"
+            }
           }
         }
       },
@@ -4024,6 +4036,140 @@
             "items": {
               "$ref": "#/components/schemas/DependencyGraphIssue"
             }
+          }
+        }
+      },
+      "EnvironmentRenderInputs": {
+        "type": "object",
+        "required": [
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "namespaceMap",
+          "backend",
+          "immutableImages"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "branchSlug": {
+            "type": "string"
+          },
+          "changeId": {
+            "type": "string"
+          },
+          "commitSha": {
+            "type": "string"
+          },
+          "componentImages": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "namespaceMap": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "resourceNames": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "hostnames": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "projectDomain": {
+            "type": "string"
+          },
+          "backend": {
+            "type": "string"
+          },
+          "immutableImages": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RenderedResource": {
+        "type": "object",
+        "required": [
+          "resourceId",
+          "kind",
+          "name",
+          "manifest",
+          "digest"
+        ],
+        "properties": {
+          "resourceId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "manifest": {
+            "type": "object"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      },
+      "TransformationReport": {
+        "type": "object",
+        "required": [
+          "resourceId",
+          "path",
+          "type",
+          "fromDigest",
+          "toDigest",
+          "reason"
+        ],
+        "properties": {
+          "resourceId": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "fromDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "toDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "reason": {
+            "type": "string"
           }
         }
       }
