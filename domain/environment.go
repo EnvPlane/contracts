@@ -28,6 +28,8 @@ const (
 type Environment struct {
 	TenantID                  string                 `json:"tenant_id,omitempty"`
 	ID                        string                 `json:"id"`
+	DisplayName               string                 `json:"displayName,omitempty"`
+	CompatibilityAliases      []string               `json:"compatibilityAliases,omitempty"`
 	Project                   string                 `json:"project"`
 	Product                   string                 `json:"product"`
 	ClusterID                 string                 `json:"clusterId,omitempty"`
@@ -155,26 +157,28 @@ type EnvironmentComponent struct {
 }
 
 type CreateEnvironmentRequest struct {
-	TenantID           string              `json:"tenant_id,omitempty"`
-	ID                 string              `json:"id"`
-	Project            string              `json:"project"`
-	Product            string              `json:"product"`
-	ClusterID          string              `json:"clusterId,omitempty"`
-	Namespace          string              `json:"namespace"`
-	Mode               EnvironmentMode     `json:"mode"`
-	Domain             string              `json:"domain"`
-	Source             SCMSource           `json:"source"`
-	Base               BaseEnvironment     `json:"base"`
-	Charts             ChartVersions       `json:"charts"`
-	Infrastructure     Infrastructure      `json:"infrastructure"`
-	Services           []ServiceOverride   `json:"services"`
-	Components         []ComponentOverride `json:"components,omitempty"`
-	Overrides          map[string]string   `json:"overrides,omitempty"`
-	TTLHours           int                 `json:"ttlHours"`
-	Pinned             bool                `json:"pinned"`
-	TemplateRevisionID string              `json:"templateRevisionId,omitempty"`
-	TemplateDigest     string              `json:"templateDigest,omitempty"`
-	DesiredRevision    EnvironmentRevision `json:"desiredRevision,omitempty"`
+	TenantID             string              `json:"tenant_id,omitempty"`
+	ID                   string              `json:"id"`
+	Project              string              `json:"project"`
+	Product              string              `json:"product"`
+	ClusterID            string              `json:"clusterId,omitempty"`
+	Namespace            string              `json:"namespace"`
+	Mode                 EnvironmentMode     `json:"mode"`
+	Domain               string              `json:"domain"`
+	Source               SCMSource           `json:"source"`
+	Base                 BaseEnvironment     `json:"base"`
+	Charts               ChartVersions       `json:"charts"`
+	Infrastructure       Infrastructure      `json:"infrastructure"`
+	Services             []ServiceOverride   `json:"services"`
+	Components           []ComponentOverride `json:"components,omitempty"`
+	Overrides            map[string]string   `json:"overrides,omitempty"`
+	TTLHours             int                 `json:"ttlHours"`
+	Pinned               bool                `json:"pinned"`
+	TemplateRevisionID   string              `json:"templateRevisionId,omitempty"`
+	TemplateDigest       string              `json:"templateDigest,omitempty"`
+	DesiredRevision      EnvironmentRevision `json:"desiredRevision,omitempty"`
+	DisplayName          string              `json:"displayName,omitempty"`
+	CompatibilityAliases []string            `json:"compatibilityAliases,omitempty"`
 }
 
 type RenderPreview struct {

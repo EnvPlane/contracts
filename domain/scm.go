@@ -63,17 +63,24 @@ type PullRequestCommand struct {
 }
 
 func (e PullRequestEvent) EnvironmentID() string {
+	// Compatibility API: callers that still use the legacy accessor receive
+	// the old PR/MR key. New requests use EnvironmentName().ID.
 	switch e.Provider {
 	case ProviderGitHub:
 		return "pr-" + normalizeSCMIdentifier(e.ChangeID)
 	case ProviderGitLab:
 		return "mr-" + normalizeSCMIdentifier(e.ChangeID)
 	default:
-		if id := normalizeSCMIdentifier(e.ChangeID); id != "" {
-			return id
-		}
-		return normalizeSCMIdentifier(e.Branch)
+		return normalizeSCMIdentifier(e.ChangeID)
 	}
+}
+
+func (e PullRequestEvent) CanonicalEnvironmentID(project string) string {
+	return e.EnvironmentName(project).ID
+}
+
+func (e PullRequestEvent) EnvironmentName(project string) BranchEnvironmentName {
+	return BranchEnvironmentNameFor(project, e.Repo, e.Branch, string(e.Provider), e.ChangeID)
 }
 
 func (c PullRequestCommand) EnvironmentID() string {
@@ -109,7 +116,8 @@ func (e PullRequestEvent) CreateEnvironmentRequest(product, project string) Crea
 	if project == "" {
 		project = scmProjectName(e.Repo)
 	}
-	return CreateEnvironmentRequest{ID: e.EnvironmentID(), Project: project, Product: product, Mode: ModeFull, Source: SCMSource{Provider: string(e.Provider), Repository: e.Repo, PullRequestID: e.ChangeID, Branch: e.Branch, Commit: e.CommitSHA, Author: e.Author, URL: e.URL}, DesiredRevision: EnvironmentRevision{Provider: e.Provider, Repository: e.Repo, ChangeID: e.ChangeID, Commit: e.CommitSHA, ArtifactDigest: e.ArtifactDigest, Sequence: e.Sequence}}
+	naming := e.EnvironmentName(project)
+	return CreateEnvironmentRequest{ID: naming.ID, DisplayName: naming.DisplayName, CompatibilityAliases: naming.Compatibility, Project: project, Product: product, Mode: ModeFull, Source: SCMSource{Provider: string(e.Provider), Repository: e.Repo, PullRequestID: e.ChangeID, Branch: e.Branch, Commit: e.CommitSHA, Author: e.Author, URL: e.URL}, DesiredRevision: EnvironmentRevision{Provider: e.Provider, Repository: e.Repo, ChangeID: e.ChangeID, Commit: e.CommitSHA, ArtifactDigest: e.ArtifactDigest, Sequence: e.Sequence}}
 }
 
 func normalizeSCMIdentifier(value string) string {
