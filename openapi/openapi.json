@@ -725,6 +725,15 @@
           "releaseInputDigest": {
             "type": "string",
             "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "releasePlanDigest": {
+            "type": "string"
+          },
+          "releasePlanSignature": {
+            "type": "string"
+          },
+          "releasePlanKeyId": {
+            "type": "string"
           }
         },
         "required": [
@@ -4336,6 +4345,18 @@
           },
           "statefulExecutionPlanDigest": {
             "type": "string"
+          },
+          "releasePlanId": {
+            "type": "string"
+          },
+          "releasePlanDigest": {
+            "type": "string"
+          },
+          "releasePlanSignature": {
+            "type": "string"
+          },
+          "releasePlanKeyId": {
+            "type": "string"
           }
         }
       },
@@ -4436,6 +4457,64 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "ReleasePlanTransportReference": {
+        "type": "object",
+        "required": [
+          "planId",
+          "planDigest",
+          "templateDigest",
+          "inputDigest",
+          "signature",
+          "keyId"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string"
+          },
+          "planDigest": {
+            "type": "string"
+          },
+          "templateDigest": {
+            "type": "string"
+          },
+          "inputDigest": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          },
+          "keyId": {
+            "type": "string"
+          }
+        }
+      },
+      "ReleasePlanInventoryItem": {
+        "type": "object",
+        "required": [
+          "kind",
+          "namespace",
+          "name",
+          "digest",
+          "owned"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "owned": {
+            "type": "boolean"
           }
         }
       }

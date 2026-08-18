@@ -435,6 +435,10 @@ type RunnerCommand struct {
 	SecretMaterializationPlanDigest string        `json:"secretMaterializationPlanDigest,omitempty"`
 	StatefulExecutionPlanID         string        `json:"statefulExecutionPlanId,omitempty"`
 	StatefulExecutionPlanDigest     string        `json:"statefulExecutionPlanDigest,omitempty"`
+	ReleasePlanID                   string        `json:"releasePlanId,omitempty"`
+	ReleasePlanDigest               string        `json:"releasePlanDigest,omitempty"`
+	ReleasePlanSignature            string        `json:"releasePlanSignature,omitempty"`
+	ReleasePlanKeyID                string        `json:"releasePlanKeyId,omitempty"`
 }
 
 type RunnerCommandResult struct {
