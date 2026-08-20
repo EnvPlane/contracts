@@ -1,13 +1,104 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "canonicalProductName": "EnvPlane",
-  "deprecationPolicy": "Add a new envplane identifier, read the legacy envplane identifier, add dual-write only when safe, validate upgrade and rollback, announce deprecation for two minor releases, then remove only in a major release.",
+  "earliestRemovalMajor": 2,
+  "deprecationPolicy": "Machine identifiers remain compatibility contracts. New names must dual-read old identifiers, dual-write only when safe, publish migration telemetry, and remove old identifiers no earlier than the declared major version.",
   "categories": [
-    {"id":"environment_variables","match":"^ENVPLANE_[A-Z0-9_]+$","owners":["agent","bootstrap","control-plane","deploy","frontend","gitops","runner","webhook"],"risk":"configuration and credential injection","migration":"new ENVPLANE aliases with deterministic new-over-legacy precedence"},
-    {"id":"go_module_paths","match":"^github\\.com/envplane/[a-z-]+$","owners":["agent","bootstrap","contracts","control-plane","deploy","gitops","runner","webhook"],"risk":"public import compatibility","migration":"major-version module migration with compatibility modules"},
-    {"id":"kubernetes_api_and_ownership","match":"^(envplane\\.io/|app\\.kubernetes\\.io/managed-by=envplane|envplane-system$)","owners":["agent","bootstrap","control-plane","deploy","gitops","runner"],"risk":"resource ownership and cleanup safety","migration":"dual-read labels before any write migration; preserve rollback detection"},
-    {"id":"oci_helm_release_and_runtime_names","match":"^(envplane-|ghcr\\.io/envplane/)","owners":["agent","control-plane","deploy","frontend","runner","webhook"],"risk":"installed release and artifact resolution","migration":"publish aliases and signed compatibility manifests before major cutover"},
-    {"id":"cli_config_and_webhook_commands","match":"^(\\.envplane|/envplane|envplane-pr)","owners":["agent","bootstrap","control-plane","deploy","frontend","gitops","runner","webhook"],"risk":"operator automation and user commands","migration":"dual-parse and dual-read with explicit deprecation diagnostics"},
-    {"id":"persistence_metrics_and_queue_names","match":"^envplane(_|-)","owners":["bootstrap","control-plane","deploy","gitops","runner"],"risk":"durable data, dashboards and queue continuity","migration":"versioned data migration with rollback and metric aliases"}
+    {
+      "id": "environment_variables",
+      "description": "Environment variables consumed by services, agents, charts and CI.",
+      "match": "^ENVPLANE_[A-Z0-9_]+$",
+      "ownerRepos": ["control-plane", "agent", "runner", "webhook", "bootstrap", "deploy", "frontend"],
+      "compatibilityRisk": "Breaking configuration, credential injection or operator automation.",
+      "readPath": "Process environment at service, agent, runner, webhook and chart startup.",
+      "writePath": "Helm values, Kubernetes manifests and CI workflow environment configuration.",
+      "migrationStrategy": "Add a canonical alias with dual-read precedence, document the alias, and retain the legacy variable through the next major.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["ENVPLANE_API_TOKEN", "ENVPLANE_NAMESPACE", "ENVPLANE_DISCOVERY_READ_SECRETS"]
+    },
+    {
+      "id": "go_module_paths",
+      "description": "Go import and module paths under the compatibility namespace.",
+      "match": "^github\\.com/envplane/[a-z0-9._/-]+$",
+      "ownerRepos": ["contracts", "control-plane", "agent", "runner", "webhook", "gitops", "bootstrap", "deploy"],
+      "compatibilityRisk": "Breaking imports, generated SDK references and module consumers.",
+      "readPath": "Go module resolution and generated SDK imports.",
+      "writePath": "go.mod, go.sum, source imports and generated client metadata.",
+      "migrationStrategy": "Keep the module path stable; introduce any future path through a compatibility module and dual-publish generated clients.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["github.com/envplane/contracts", "github.com/envplane/control-plane"]
+    },
+    {
+      "id": "oci_helm_release_and_runtime_names",
+      "description": "OCI repositories, Helm chart names, releases and runtime artifact names.",
+      "match": "^(envplane-[a-z0-9._-]+|ghcr\\.io/envplane/[a-z0-9._/-]+)$",
+      "ownerRepos": ["deploy", "control-plane", "frontend", "agent", "runner", "webhook", "bootstrap"],
+      "compatibilityRisk": "Unavailable images/charts, failed upgrades or orphaned release ownership.",
+      "readPath": "Helm dependency resolution, OCI pulls, release plans and deployment values.",
+      "writePath": "Chart metadata, image values, OCI publication workflows and Kubernetes release labels.",
+      "migrationStrategy": "Publish aliases and immutable digests, resolve new references in release plans, and retain old repositories until the next major.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["ghcr.io/envplane/api", "ghcr.io/envplane/frontend", "envplane-control-plane"]
+    },
+    {
+      "id": "kubernetes_names_labels_and_api_groups",
+      "description": "Kubernetes namespaces, resource names, ownership labels and API groups.",
+      "match": "^(envplane\\.io/[A-Za-z0-9._/-]+|app\\.kubernetes\\.io/managed-by=envplane|envplane-system|envplane-[a-z0-9._-]+)$",
+      "ownerRepos": ["agent", "control-plane", "runner", "webhook", "bootstrap", "deploy"],
+      "compatibilityRisk": "Lost ownership, RBAC mismatch, resource adoption failure or cross-tenant leakage.",
+      "readPath": "Kubernetes discovery, admission, ownership and status reconciliation.",
+      "writePath": "Rendered manifests, labels, annotations, namespaces and API type metadata.",
+      "migrationStrategy": "Dual-read labels and API aliases, write canonical plus compatibility metadata only within the owning namespace, and remove legacy selectors after the next major.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["envplane.io/environment-id", "app.kubernetes.io/managed-by=envplane", "envplane-system"]
+    },
+    {
+      "id": "cli_config_paths_and_commands",
+      "description": "CLI names, local configuration paths, commands and generated identifiers.",
+      "match": "^(\\.envplane|/envplane[A-Za-z0-9._/-]*|envplane-pr-[A-Za-z0-9._-]+)$",
+      "ownerRepos": ["bootstrap", "webhook", "control-plane", "deploy"],
+      "compatibilityRisk": "Broken operator scripts, local state discovery or automation callbacks.",
+      "readPath": "CLI argument parsing, local config discovery and webhook payload handling.",
+      "writePath": "CLI output, local state directories, generated branch/preview names and callback commands.",
+      "migrationStrategy": "Accept canonical and legacy forms during dual-read, emit canonical forms for new resources, and retain aliases through the next major.",
+      "earliestRemovalMajor": 2,
+      "identifiers": [".envplane", "/envplane", "envplane-pr-preview"]
+    },
+    {
+      "id": "webhook_commands",
+      "description": "Webhook command paths and SCM callback command identifiers.",
+      "match": "^/envplane(/[A-Za-z0-9._/-]*)?$",
+      "ownerRepos": ["webhook", "control-plane"],
+      "compatibilityRisk": "Dropped SCM events or duplicate environment transitions.",
+      "readPath": "Webhook HTTP routing and event command dispatch.",
+      "writePath": "Webhook routes, SCM callback URLs and emitted command payloads.",
+      "migrationStrategy": "Dual-route old and canonical commands, use idempotent dispatch, and remove the old route only in the next major.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["/envplane", "/envplane/payment"]
+    },
+    {
+      "id": "persistence_metrics_and_queue_names",
+      "description": "Database, metrics, queue, job and durable state identifiers.",
+      "match": "^envplane([_-][a-z0-9._-]+)+$",
+      "ownerRepos": ["control-plane", "runner", "webhook", "gitops", "deploy"],
+      "compatibilityRisk": "Lost durable state, metric continuity, queue delivery or cleanup ownership.",
+      "readPath": "Database migrations, metric collectors, queue consumers and reconciliation state.",
+      "writePath": "Schema/table names, metric descriptors, queue topics, job names and release-plan state.",
+      "migrationStrategy": "Dual-read old and new durable identifiers, backfill or bridge records, preserve metric aliases, and remove old names only in the next major.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["envplane_preview_quota", "envplane-jobs", "envplane_environment_ready"]
+    },
+    {
+      "id": "external_urls",
+      "description": "External, documentation, callback and test URLs containing the compatibility namespace.",
+      "match": "^https?://[A-Za-z0-9._-]*envplane[A-Za-z0-9._:/?&=#%+-]*$",
+      "ownerRepos": ["contracts", "frontend", "webhook", "deploy", "bootstrap"],
+      "compatibilityRisk": "Broken callbacks, documentation links, probes or test fixtures.",
+      "readPath": "SCM/webhook configuration, browser routing, probes and integration fixtures.",
+      "writePath": "Configuration defaults, documentation, test fixtures and generated endpoint contracts.",
+      "migrationStrategy": "Publish canonical endpoints while dual-reading configured legacy URLs, then remove old URLs after consumers migrate and the next major is released.",
+      "earliestRemovalMajor": 2,
+      "identifiers": ["https://envplane.dev", "https://envplane.example.test", "http://envplane.local"]
+    }
   ]
 }
