@@ -1,18 +1,20 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "policyId": "EP-COM-003",
   "canonicalProductName": "EnvPlane",
   "licensePolicy": "No license or repository visibility change without legal checkpoint approval.",
-  "publicRepositories": [
+  "publicApacheRepositories": [
     {"name": "contracts", "responsibility": "versioned public contracts, OpenAPI and SDK"},
     {"name": "agent", "responsibility": "cluster discovery and observed inventory"},
     {"name": "runner", "responsibility": "constrained runtime transport and execution"},
     {"name": "webhook", "responsibility": "SCM webhook validation and normalization"},
     {"name": "bootstrap", "responsibility": "project onboarding and discovery"},
     {"name": "gitops", "responsibility": "rendering and repository-writing integrations"},
-    {"name": "control-plane", "responsibility": "community lifecycle and orchestration core"},
-    {"name": "frontend", "responsibility": "community web UI"},
     {"name": "deploy", "responsibility": "charts, installation and signed release metadata"}
+  ],
+  "commercialRepositories": [
+    {"name": "control-plane", "license": "BSL-1.1", "boundary": "commercial control-plane implementation"},
+    {"name": "frontend", "license": "Proprietary", "boundary": "commercial web UI implementation"}
   ],
   "privateModuleBoundaries": [
     {"id": "managed-operations", "dependsOn": ["contracts", "extension-interfaces"]},
@@ -29,14 +31,7 @@
     "plaintextCredentialsAcrossBoundary": false,
     "crossTenantDataAcrossBoundary": false
   },
-  "extensionInterfaces": [
-    "identity",
-    "entitlements",
-    "policy-evaluation",
-    "audit-sink",
-    "finops",
-    "managed-operations"
-  ],
+  "extensionInterfaces": ["identity", "entitlements", "policy-evaluation", "audit-sink", "finops", "managed-operations"],
   "releaseArtifactComposition": {
     "publicCompatibilitySetFirst": true,
     "enterpriseAdditionsSeparatelyVersioned": true,
@@ -44,12 +39,18 @@
     "credentialsInline": false,
     "compatibilityDeclarationRequired": true
   },
-  "legalCheckpoint": [
-    "apache-2.0-notices-and-third-party-provenance",
-    "cla-and-contributor-provenance",
-    "envplane-trademark-policy",
-    "independent-enterprise-authorship",
-    "public-private-support-and-upgrade-boundaries",
-    "release-artifact-and-customer-license-review"
-  ]
+  "legalCheckpoint": {
+    "decisionDate": "2026-08-20",
+    "repositoryBoundaryApproved": true,
+    "claPolicyApproved": false,
+    "trademarkPolicyApproved": false,
+    "requiredBeforeLicenseOrVisibilityChange": [
+      "apache-2.0-notices-and-third-party-provenance",
+      "cla-and-contributor-provenance",
+      "envplane-trademark-policy",
+      "independent-enterprise-authorship",
+      "public-private-support-and-upgrade-boundaries",
+      "release-artifact-and-customer-license-review"
+    ]
+  }
 }

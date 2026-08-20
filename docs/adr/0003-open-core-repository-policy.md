@@ -7,7 +7,7 @@ repository visibility, or already-published rights.
 
 ## Decision
 
-The nine current repositories are the public EnvPlane compatibility core:
+The Apache-2.0 public compatibility core has seven repositories:
 
 | Repository | Public responsibility |
 |---|---|
@@ -17,9 +17,12 @@ The nine current repositories are the public EnvPlane compatibility core:
 | `webhook` | SCM webhook validation and normalization |
 | `bootstrap` | Project onboarding and discovery |
 | `gitops` | Rendering and repository-writing integrations |
-| `control-plane` | Community lifecycle and orchestration core |
-| `frontend` | Community web UI |
 | `deploy` | Charts, installation and signed release metadata |
+
+The remaining current repositories are commercial code outside that Apache
+core: `control-plane` is licensed under Business Source License 1.1 and
+`frontend` under its proprietary license. They may consume and implement
+public contracts but must not become private forks of the Apache core.
 
 Future private Enterprise modules are separate implementation boundaries for
 managed operations, commercial policy and entitlements, fleet operations, and
@@ -66,6 +69,7 @@ visibility or publication policy is permitted.
 
 ## Consequences
 
-The public repositories remain useful and independently buildable. Enterprise
-features can evolve privately behind stable contracts, while the dependency
-direction, release composition and legal decision points remain auditable.
+The seven Apache repositories remain useful and independently buildable.
+Commercial repositories and future Enterprise features can evolve behind stable
+contracts, while the dependency direction, release composition and legal
+decision points remain auditable.

@@ -9,16 +9,20 @@ test -f "$policy"
 test -f "$adr"
 
 jq -e '
-  .schemaVersion == 1 and
+  .schemaVersion == 2 and
   .policyId == "EP-COM-003" and
   .canonicalProductName == "EnvPlane" and
-  (.publicRepositories | type == "array" and length == 9) and
-  ([.publicRepositories[].name] | sort) == [
-    "agent", "bootstrap", "contracts", "control-plane", "deploy",
-    "frontend", "gitops", "runner", "webhook"
+  (.publicApacheRepositories | type == "array" and length == 7) and
+  ([.publicApacheRepositories[].name] | sort) == [
+    "agent", "bootstrap", "contracts", "deploy", "gitops", "runner",
+    "webhook"
   ] and
-  all(.publicRepositories[]; (.name | type == "string" and length > 0) and
+  all(.publicApacheRepositories[]; (.name | type == "string" and length > 0) and
     (.responsibility | type == "string" and length > 0)) and
+  (.commercialRepositories | type == "array" and length == 2) and
+  ([.commercialRepositories[].name] | sort) == ["control-plane", "frontend"] and
+  (any(.commercialRepositories[]; .name == "control-plane" and .license == "BSL-1.1")) and
+  (any(.commercialRepositories[]; .name == "frontend" and .license == "Proprietary")) and
   (.privateModuleBoundaries | type == "array" and length > 0) and
   all(.privateModuleBoundaries[]; (.id | type == "string" and length > 0) and
     (.dependsOn | index("contracts") != null) and
@@ -37,7 +41,11 @@ jq -e '
   (.releaseArtifactComposition.publicMetadataMayContainPrivateSource == false) and
   (.releaseArtifactComposition.credentialsInline == false) and
   (.releaseArtifactComposition.compatibilityDeclarationRequired == true) and
-  (.legalCheckpoint | type == "array" and length == 6 and
+  (.legalCheckpoint.decisionDate == "2026-08-20") and
+  (.legalCheckpoint.repositoryBoundaryApproved == true) and
+  (.legalCheckpoint.claPolicyApproved == false) and
+  (.legalCheckpoint.trademarkPolicyApproved == false) and
+  (.legalCheckpoint.requiredBeforeLicenseOrVisibilityChange | type == "array" and length == 6 and
     all(type == "string" and length > 0))
 ' "$policy" >/dev/null
 
