@@ -8,6 +8,45 @@ import (
 
 const PlanSchemaVersion = "1"
 
+const (
+	FeatureAuthOIDC          = "auth.oidc"
+	FeatureAuthSAML          = "auth.saml"
+	FeatureIdentitySCIM      = "identity.scim"
+	FeatureRBACGranular      = "rbac.granular"
+	FeatureGitOpsFlux        = "gitops.flux"
+	FeatureGitOpsArgo        = "gitops.argo"
+	FeatureFinOpsAllocation  = "finops.allocation"
+	FeaturePolicyCustom      = "policy.custom"
+	FeatureFleetUpgradeWaves = "fleet.upgrade_waves"
+	FeatureSupportSLA        = "support.sla"
+)
+
+const (
+	LimitProjectsMax           = "projects.max"
+	LimitManagedClustersMax    = "clusters.managed.max"
+	LimitActiveEnvironmentsMax = "environments.active.max"
+	LimitEnvironmentTTLHours   = "environment.ttl.max_hours"
+	LimitEnvironmentPinHours   = "environment.pin.max_hours"
+	LimitOperatorsMax          = "users.operators.max"
+	LimitAuditRetentionDays    = "audit.retention_days"
+)
+
+var knownPlanFeatureKeys = map[string]struct{}{
+	FeatureAuthOIDC: {}, FeatureAuthSAML: {}, FeatureIdentitySCIM: {}, FeatureRBACGranular: {},
+	FeatureGitOpsFlux: {}, FeatureGitOpsArgo: {}, FeatureFinOpsAllocation: {}, FeaturePolicyCustom: {},
+	FeatureFleetUpgradeWaves: {}, FeatureSupportSLA: {},
+	// These aliases are retained for existing entitlement and quota callers.
+	"projects": {}, "environments": {}, "gitops": {}, "helmDirect": {}, "audit": {},
+}
+
+var knownPlanLimitKeys = map[string]struct{}{
+	LimitProjectsMax: {}, LimitManagedClustersMax: {}, LimitActiveEnvironmentsMax: {},
+	LimitEnvironmentTTLHours: {}, LimitEnvironmentPinHours: {}, LimitOperatorsMax: {}, LimitAuditRetentionDays: {},
+	// These aliases are retained for existing entitlement and quota callers.
+	"maxProjects": {}, "maxRemoteClusters": {}, "maxActiveEnvironments": {}, "maxMembers": {},
+	"maxTTLHours": {}, "maxPinDays": {},
+}
+
 type PlanDefinition struct {
 	ID               string           `json:"id"`
 	SchemaVersion    string           `json:"schemaVersion"`
@@ -25,19 +64,45 @@ func CommunityFreePlanCatalog() PlanCatalog {
 	return PlanCatalog{
 		SchemaVersion: PlanSchemaVersion,
 		Plans: []PlanDefinition{
-			{ID: "community", SchemaVersion: PlanSchemaVersion, EffectiveVersion: "1.0.0", Features: map[string]bool{
-				"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
-			}, Limits: map[string]int64{"maxProjects": 10, "maxActiveEnvironments": 25, "maxRemoteClusters": 3, "maxMembers": 10, "maxTTLHours": 720, "maxPinDays": 30}},
-			{ID: "free", SchemaVersion: PlanSchemaVersion, EffectiveVersion: "1.0.0", Features: map[string]bool{
-				"projects": true, "environments": true, "gitops": true, "helmDirect": false, "audit": true,
-			}, Limits: map[string]int64{"maxProjects": 3, "maxActiveEnvironments": 2, "maxRemoteClusters": 1, "maxMembers": 3, "maxTTLHours": 72, "maxPinDays": 7}},
+			communityPlan("1.0.0"),
+			freePlan("1.0.0"),
 		},
 	}
 }
 
+func communityPlan(version string) PlanDefinition {
+	return PlanDefinition{ID: "community", SchemaVersion: PlanSchemaVersion, EffectiveVersion: version,
+		Features: map[string]bool{
+			FeatureAuthOIDC: true, FeatureAuthSAML: false, FeatureIdentitySCIM: false, FeatureRBACGranular: false,
+			FeatureGitOpsFlux: true, FeatureGitOpsArgo: false, FeatureFinOpsAllocation: false, FeaturePolicyCustom: false,
+			FeatureFleetUpgradeWaves: false, FeatureSupportSLA: false,
+			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
+		}, Limits: map[string]int64{
+			LimitProjectsMax: 10, LimitManagedClustersMax: 3, LimitActiveEnvironmentsMax: 25,
+			LimitEnvironmentTTLHours: 720, LimitEnvironmentPinHours: 720, LimitOperatorsMax: 10, LimitAuditRetentionDays: 30,
+			"maxProjects": 10, "maxRemoteClusters": 3, "maxActiveEnvironments": 25, "maxMembers": 10,
+			"maxTTLHours": 720, "maxPinDays": 30,
+		}}
+}
+
+func freePlan(version string) PlanDefinition {
+	return PlanDefinition{ID: "free", SchemaVersion: PlanSchemaVersion, EffectiveVersion: version,
+		Features: map[string]bool{
+			FeatureAuthOIDC: true, FeatureAuthSAML: false, FeatureIdentitySCIM: false, FeatureRBACGranular: false,
+			FeatureGitOpsFlux: true, FeatureGitOpsArgo: false, FeatureFinOpsAllocation: false, FeaturePolicyCustom: false,
+			FeatureFleetUpgradeWaves: false, FeatureSupportSLA: false,
+			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
+		}, Limits: map[string]int64{
+			LimitProjectsMax: 3, LimitManagedClustersMax: 1, LimitActiveEnvironmentsMax: 2,
+			LimitEnvironmentTTLHours: 72, LimitEnvironmentPinHours: 168, LimitOperatorsMax: 3, LimitAuditRetentionDays: 7,
+			"maxProjects": 3, "maxRemoteClusters": 1, "maxActiveEnvironments": 2, "maxMembers": 3,
+			"maxTTLHours": 72, "maxPinDays": 7,
+		}}
+}
+
 func (c PlanCatalog) Validate() error {
-	if strings.TrimSpace(c.SchemaVersion) == "" {
-		return fmt.Errorf("plan catalog schema version is required")
+	if c.SchemaVersion != PlanSchemaVersion {
+		return fmt.Errorf("unsupported plan catalog schema version %q", c.SchemaVersion)
 	}
 	seen := map[string]struct{}{}
 	for _, plan := range c.Plans {
@@ -55,10 +120,16 @@ func (c PlanCatalog) Validate() error {
 			if strings.TrimSpace(key) == "" || limit < 0 {
 				return fmt.Errorf("invalid limit %q in plan %q", key, plan.ID)
 			}
+			if _, ok := knownPlanLimitKeys[key]; !ok {
+				return fmt.Errorf("unknown limit key %q in plan %q", key, plan.ID)
+			}
 		}
 		for key := range plan.Features {
 			if strings.TrimSpace(key) == "" {
 				return fmt.Errorf("empty feature key in plan %q", plan.ID)
+			}
+			if _, ok := knownPlanFeatureKeys[key]; !ok {
+				return fmt.Errorf("unknown feature key %q in plan %q", key, plan.ID)
 			}
 		}
 	}
@@ -66,7 +137,17 @@ func (c PlanCatalog) Validate() error {
 }
 
 func (c PlanCatalog) Deterministic() PlanCatalog {
-	copyCatalog := c
+	copyCatalog := PlanCatalog{SchemaVersion: c.SchemaVersion, Plans: make([]PlanDefinition, len(c.Plans))}
+	for i, plan := range c.Plans {
+		copyCatalog.Plans[i] = PlanDefinition{ID: plan.ID, SchemaVersion: plan.SchemaVersion, EffectiveVersion: plan.EffectiveVersion,
+			Features: make(map[string]bool, len(plan.Features)), Limits: make(map[string]int64, len(plan.Limits))}
+		for key, value := range plan.Features {
+			copyCatalog.Plans[i].Features[key] = value
+		}
+		for key, value := range plan.Limits {
+			copyCatalog.Plans[i].Limits[key] = value
+		}
+	}
 	sort.Slice(copyCatalog.Plans, func(i, j int) bool { return copyCatalog.Plans[i].ID < copyCatalog.Plans[j].ID })
 	return copyCatalog
 }
