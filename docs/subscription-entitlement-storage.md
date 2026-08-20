@@ -16,3 +16,10 @@ Entitlements are materialized per tenant with plan/version, copied feature and
 limit maps, source subscription ID, and update time. Reads and writes require
 the tenant key in both JSON and SQL stores. This ticket adds persistence only;
 quota evaluation and subscription enforcement remain outside its scope.
+
+The control-plane `EntitlementResolver` is the only runtime composition path:
+plan defaults are applied first, then licensed overrides, then tenant-specific
+overrides. Expired overlays are ignored, snapshots are defensively copied,
+revisions hash only the effective state, and the bounded cache is invalidated
+per tenant or globally. Resolver input must carry the same tenant identity as
+the request; it is never inferred from an untrusted override.
