@@ -1,14 +1,14 @@
 # EP-BRAND-006: shared contract migration
 
 The contracts module keeps its established import path
-`github.com/envpilot/contracts` during the migration window. Renaming the Go
+`github.com/envplane/contracts` during the migration window. Renaming the Go
 module or package paths in place would break every component, so a future major
 version must provide an explicit compatibility module before removal.
 
 The v1 JSON wire contract is also stable: API paths, JSON field names, enum
 values, authentication schemes and generated SDK symbols are not renamed for
 branding. OpenAPI now records EnvPlane as the canonical product and exposes
-`x-branding` deprecation metadata. `ENVPILOT_*` names in security descriptions
+`x-branding` deprecation metadata. `ENVPLANE_*` names in security descriptions
 are documented as legacy aliases, not new wire fields.
 
 Sequencing:

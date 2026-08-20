@@ -1,6 +1,6 @@
 # EnvPlane public SDK
 
-The Go SDK lives at `github.com/envpilot/contracts/sdk/go/envplanesdk` and is
+The Go SDK lives at `github.com/envplane/contracts/sdk/go/envplanesdk` and is
 versioned independently using SemVer. Patch releases preserve wire behavior;
 minor releases may add optional fields/features; breaking OpenAPI or interface
 changes require a new major version. The SDK sends credentials only from a

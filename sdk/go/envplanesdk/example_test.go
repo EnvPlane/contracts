@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/envpilot/contracts/sdk/go/envplanesdk"
+	"github.com/envplane/contracts/sdk/go/envplanesdk"
 )
 
 // ExampleClient demonstrates runtime-only credentials; no token is persisted.
