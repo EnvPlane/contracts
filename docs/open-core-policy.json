@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "policyId": "EP-COM-003",
-  "canonicalProductName": "EnvPlane",
+  "canonicalProductSlug": "envplane",
   "licensePolicy": "No license or repository visibility change without legal checkpoint approval.",
   "publicApacheRepositories": [
     {"name": "contracts", "responsibility": "versioned public contracts, OpenAPI and SDK"},
@@ -44,6 +44,14 @@
     "repositoryBoundaryApproved": true,
     "claPolicyApproved": false,
     "trademarkPolicyApproved": false,
+    "copyrightOwner": {"name": "Oleksandr Zaiats", "country": "Germany"},
+    "currentHistoryThirdPartyContributors": false,
+    "contributorAgreement": {
+      "type": "individual-cla-draft",
+      "externalPullRequestLabel": "cla-signed",
+      "corporateContributionsAccepted": false
+    },
+    "trademarkTerritories": ["Europe", "United States", "Singapore", "India", "China"],
     "requiredBeforeLicenseOrVisibilityChange": [
       "apache-2.0-notices-and-third-party-provenance",
       "cla-and-contributor-provenance",

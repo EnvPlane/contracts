@@ -59,7 +59,7 @@ private module publication, obtain explicit legal and business approval for:
 
 1. Apache-2.0 notices, attribution and third-party provenance;
 2. CLA scope, contributor provenance and copyright ownership;
-3. EnvPlane trademark usage, naming and redistribution policy;
+3. product trademark usage, naming and redistribution policy;
 4. separation and independent authorship of Enterprise code;
 5. public/private upgrade, support, rollback and security boundaries;
 6. release artifact contents and customer license terms.

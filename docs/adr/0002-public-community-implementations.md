@@ -6,7 +6,7 @@ Accepted.
 
 ## Decision
 
-EnvPlane adopts the public-core interpretation only for repositories licensed
+The project adopts the public-core interpretation only for repositories licensed
 under Apache-2.0. `control-plane` is licensed under Business Source License
 1.1 and `frontend` is proprietary; their commercial code is not part of the
 Apache public compatibility core. ADR-0003 records the canonical repository

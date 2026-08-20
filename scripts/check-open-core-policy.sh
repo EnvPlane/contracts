@@ -11,7 +11,7 @@ test -f "$adr"
 jq -e '
   .schemaVersion == 2 and
   .policyId == "EP-COM-003" and
-  .canonicalProductName == "EnvPlane" and
+  .canonicalProductSlug == "envplane" and
   (.publicApacheRepositories | type == "array" and length == 7) and
   ([.publicApacheRepositories[].name] | sort) == [
     "agent", "bootstrap", "contracts", "deploy", "gitops", "runner",
@@ -45,6 +45,13 @@ jq -e '
   (.legalCheckpoint.repositoryBoundaryApproved == true) and
   (.legalCheckpoint.claPolicyApproved == false) and
   (.legalCheckpoint.trademarkPolicyApproved == false) and
+  (.legalCheckpoint.copyrightOwner.name == "Oleksandr Zaiats") and
+  (.legalCheckpoint.copyrightOwner.country == "Germany") and
+  (.legalCheckpoint.currentHistoryThirdPartyContributors == false) and
+  (.legalCheckpoint.contributorAgreement.type == "individual-cla-draft") and
+  (.legalCheckpoint.contributorAgreement.externalPullRequestLabel == "cla-signed") and
+  (.legalCheckpoint.contributorAgreement.corporateContributionsAccepted == false) and
+  (.legalCheckpoint.trademarkTerritories | sort) == ["China", "Europe", "India", "Singapore", "United States"] and
   (.legalCheckpoint.requiredBeforeLicenseOrVisibilityChange | type == "array" and length == 6 and
     all(type == "string" and length > 0))
 ' "$policy" >/dev/null

@@ -1,0 +1,22 @@
+name: Contributor agreement
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  cla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Require verified CLA for external pull requests
+        run: >-
+          ./scripts/check-external-contributor-cla.sh
+          --association '${{ github.event.pull_request.author_association }}'
+          --labels '${{ join(github.event.pull_request.labels.*.name, ',') }}'
