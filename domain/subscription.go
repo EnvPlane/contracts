@@ -44,6 +44,12 @@ type Entitlement struct {
 }
 
 func ValidateSubscriptionTransition(from, to SubscriptionState) error {
+	if from != "" && !validSubscriptionState(from) {
+		return fmt.Errorf("invalid current subscription state %q", from)
+	}
+	if !validSubscriptionState(to) {
+		return fmt.Errorf("invalid subscription state %q", to)
+	}
 	if from == "" {
 		if to == SubscriptionTrialing || to == SubscriptionActive {
 			return nil
@@ -65,4 +71,13 @@ func ValidateSubscriptionTransition(from, to SubscriptionState) error {
 		return fmt.Errorf("invalid subscription transition %q -> %q", from, to)
 	}
 	return nil
+}
+
+func validSubscriptionState(state SubscriptionState) bool {
+	switch state {
+	case SubscriptionTrialing, SubscriptionActive, SubscriptionPastDue, SubscriptionGrace, SubscriptionCanceled, SubscriptionDowngraded:
+		return true
+	default:
+		return false
+	}
 }

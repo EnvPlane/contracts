@@ -12,6 +12,8 @@ func TestSubscriptionTransitions(t *testing.T) {
 		{SubscriptionGrace, SubscriptionActive, true},
 		{SubscriptionCanceled, SubscriptionActive, false},
 		{SubscriptionActive, SubscriptionTrialing, false},
+		{SubscriptionState("unknown"), SubscriptionState("unknown"), false},
+		{"", SubscriptionState("unknown"), false},
 	} {
 		err := ValidateSubscriptionTransition(test.from, test.to)
 		if (err == nil) != test.valid {
