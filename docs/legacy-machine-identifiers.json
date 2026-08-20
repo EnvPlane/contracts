@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "canonicalProductName": "EnvPlane",
-  "deprecationPolicy": "Add a new envplane identifier, read the legacy envpilot identifier, add dual-write only when safe, validate upgrade and rollback, announce deprecation for two minor releases, then remove only in a major release.",
+  "deprecationPolicy": "Add a new envplane identifier, read the legacy envplane identifier, add dual-write only when safe, validate upgrade and rollback, announce deprecation for two minor releases, then remove only in a major release.",
   "categories": [
-    {"id":"environment_variables","match":"^ENVPILOT_[A-Z0-9_]+$","owners":["agent","bootstrap","control-plane","deploy","frontend","gitops","runner","webhook"],"risk":"configuration and credential injection","migration":"new ENVPLANE aliases with deterministic new-over-legacy precedence"},
-    {"id":"go_module_paths","match":"^github\\.com/envpilot/[a-z-]+$","owners":["agent","bootstrap","contracts","control-plane","deploy","gitops","runner","webhook"],"risk":"public import compatibility","migration":"major-version module migration with compatibility modules"},
-    {"id":"kubernetes_api_and_ownership","match":"^(envpilot\\.io/|app\\.kubernetes\\.io/managed-by=envpilot|envpilot-system$)","owners":["agent","bootstrap","control-plane","deploy","gitops","runner"],"risk":"resource ownership and cleanup safety","migration":"dual-read labels before any write migration; preserve rollback detection"},
-    {"id":"oci_helm_release_and_runtime_names","match":"^(envpilot-|ghcr\\.io/envpilot/)","owners":["agent","control-plane","deploy","frontend","runner","webhook"],"risk":"installed release and artifact resolution","migration":"publish aliases and signed compatibility manifests before major cutover"},
-    {"id":"cli_config_and_webhook_commands","match":"^(\\.envpilot|/envpilot|envpilot-pr)","owners":["agent","bootstrap","control-plane","deploy","frontend","gitops","runner","webhook"],"risk":"operator automation and user commands","migration":"dual-parse and dual-read with explicit deprecation diagnostics"},
-    {"id":"persistence_metrics_and_queue_names","match":"^envpilot(_|-)","owners":["bootstrap","control-plane","deploy","gitops","runner"],"risk":"durable data, dashboards and queue continuity","migration":"versioned data migration with rollback and metric aliases"}
+    {"id":"environment_variables","match":"^ENVPLANE_[A-Z0-9_]+$","owners":["agent","bootstrap","control-plane","deploy","frontend","gitops","runner","webhook"],"risk":"configuration and credential injection","migration":"new ENVPLANE aliases with deterministic new-over-legacy precedence"},
+    {"id":"go_module_paths","match":"^github\\.com/envplane/[a-z-]+$","owners":["agent","bootstrap","contracts","control-plane","deploy","gitops","runner","webhook"],"risk":"public import compatibility","migration":"major-version module migration with compatibility modules"},
+    {"id":"kubernetes_api_and_ownership","match":"^(envplane\\.io/|app\\.kubernetes\\.io/managed-by=envplane|envplane-system$)","owners":["agent","bootstrap","control-plane","deploy","gitops","runner"],"risk":"resource ownership and cleanup safety","migration":"dual-read labels before any write migration; preserve rollback detection"},
+    {"id":"oci_helm_release_and_runtime_names","match":"^(envplane-|ghcr\\.io/envplane/)","owners":["agent","control-plane","deploy","frontend","runner","webhook"],"risk":"installed release and artifact resolution","migration":"publish aliases and signed compatibility manifests before major cutover"},
+    {"id":"cli_config_and_webhook_commands","match":"^(\\.envplane|/envplane|envplane-pr)","owners":["agent","bootstrap","control-plane","deploy","frontend","gitops","runner","webhook"],"risk":"operator automation and user commands","migration":"dual-parse and dual-read with explicit deprecation diagnostics"},
+    {"id":"persistence_metrics_and_queue_names","match":"^envplane(_|-)","owners":["bootstrap","control-plane","deploy","gitops","runner"],"risk":"durable data, dashboards and queue continuity","migration":"versioned data migration with rollback and metric aliases"}
   ]
 }

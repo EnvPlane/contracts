@@ -22,7 +22,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "Bearer <token> with optional ENVPLANE_API_READ_TOKEN / ENVPLANE_API_WRITE_TOKEN; ENVPILOT_* names remain accepted during migration"
+        "description": "Bearer <token> with optional ENVPLANE_API_READ_TOKEN / ENVPLANE_API_WRITE_TOKEN; ENVPLANE_* names remain accepted during migration"
       },
       "bearerAuth": {
         "type": "http",
@@ -3469,7 +3469,7 @@
                 "strategy": "external secret",
                 "required": true,
                 "backend": "vault",
-                "reference": "kv/data/envpilot/payment#token"
+                "reference": "kv/data/envplane/payment#token"
               }
             }
           }
@@ -5209,7 +5209,7 @@
                           "strategy": "external secret",
                           "required": true,
                           "backend": "vault",
-                          "reference": "kv/data/envpilot/payment#token"
+                          "reference": "kv/data/envplane/payment#token"
                         }
                       }
                     }
@@ -5252,7 +5252,7 @@
                             "strategy": "external secret",
                             "required": true,
                             "backend": "vault",
-                            "reference": "kv/data/envpilot/payment#token"
+                            "reference": "kv/data/envplane/payment#token"
                           }
                         }
                       },
@@ -10509,7 +10509,7 @@
                           "strategy": "external secret",
                           "required": true,
                           "backend": "vault",
-                          "reference": "kv/data/envpilot/payment#token"
+                          "reference": "kv/data/envplane/payment#token"
                         }
                       }
                     }
@@ -10552,7 +10552,7 @@
                             "strategy": "external secret",
                             "required": true,
                             "backend": "vault",
-                            "reference": "kv/data/envpilot/payment#token"
+                            "reference": "kv/data/envplane/payment#token"
                           }
                         }
                       },

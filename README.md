@@ -16,7 +16,7 @@ plane, frontend, agent, runner, webhook, and deployment components.
 The Go module keeps its established path for compatibility:
 
 ```go
-import "github.com/envpilot/contracts/domain"
+import "github.com/envplane/contracts/domain"
 ```
 
 Service repositories should consume these types instead of maintaining private

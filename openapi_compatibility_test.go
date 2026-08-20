@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/envpilot/contracts/sdk/go/envplanesdk"
+	"github.com/envplane/contracts/sdk/go/envplanesdk"
 )
 
 func TestCanonicalOpenAPIBrandingAndGeneratedSDKStayInSync(t *testing.T) {
