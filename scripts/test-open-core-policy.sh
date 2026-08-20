@@ -2,21 +2,22 @@
 set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"
-policy="$repo_root/docs/adr/0001-open-core-and-enterprise-boundary.md"
+check="$repo_root/scripts/check-open-core-policy.sh"
+fixture_dir="$(mktemp -d)"
+trap 'rm -rf "$fixture_dir"' EXIT
 
-contains() {
-  if command -v rg >/dev/null 2>&1; then
-    rg -q -- "$1" "$policy"
-  else
-    grep -Fq -- "$1" "$policy"
-  fi
-}
+"$(dirname "$0")/check-module-boundary.sh" "$repo_root"
+"$check"
 
-for repository in contracts agent runner webhook bootstrap gitops control-plane frontend deploy; do
-  contains "\`$repository\`"
-done
+cp "$repo_root/docs/open-core-policy.json" "$fixture_dir/policy.json"
+jq '.dependencyRules.publicMayDependOnPrivate = true' "$fixture_dir/policy.json" > "$fixture_dir/bad-dependency.json"
+if jq -e '.dependencyRules.publicMayDependOnPrivate == false' "$fixture_dir/bad-dependency.json" >/dev/null; then
+  echo "policy fixture accepted public-to-commercial dependency" >&2
+  exit 1
+fi
 
-for section in "Private Enterprise modules" "must not import private modules" "Legal and release checklist" "read, delete, cleanup or export"; do
-  contains "$section"
-done
-"$(dirname "$0")/check-module-boundary.sh" "$(git rev-parse --show-toplevel)"
+jq '.commercialRepositories[0].license = "Apache-2.0"' "$fixture_dir/policy.json" > "$fixture_dir/bad-license.json"
+if jq -e 'any(.commercialRepositories[]; .name == "control-plane" and .license == "BSL-1.1")' "$fixture_dir/bad-license.json" >/dev/null; then
+  echo "policy fixture accepted incorrect control-plane license" >&2
+  exit 1
+fi

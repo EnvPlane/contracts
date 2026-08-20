@@ -3,18 +3,19 @@
 ## Status
 
 Accepted; boundary interpretation superseded by ADR-0002 for already-published
-community implementations.
+community implementations and corrected by ADR-0003 for repository licensing.
 
 ## Context
 
 EnvPlane is a Kubernetes environment control plane. The cluster-side runtime
 must remain inspectable by customers, while identity, compliance and managed
-service operations provide commercial Enterprise value. All current component
-repositories are Apache-2.0 and already-published rights cannot be revoked.
+service operations provide commercial value. The Apache-2.0 repositories have
+already-published rights that cannot be revoked. The control-plane and frontend
+have distinct commercial licenses; ADR-0003 is the canonical repository matrix.
 
 ## Decision
 
-The following repositories form the public compatibility core:
+The following repositories form the Apache-2.0 public compatibility core:
 
 | Repository | Public responsibility |
 |---|---|
@@ -24,14 +25,11 @@ The following repositories form the public compatibility core:
 | `webhook` | SCM webhook validation and normalization |
 | `bootstrap` | onboarding/discovery core |
 | `gitops` | rendering and repository-writing core |
-| `control-plane` | Community lifecycle control-plane core |
-| `frontend` | Community UI |
 | `deploy` | Community installation and signed release metadata |
 
-Future Private Enterprise modules may provide managed SaaS operations,
-commercial-only policy, fleet operations and air-gapped packaging. Existing
-implementations already published in the Community control-plane remain public
-under Apache-2.0; ADR-0002 records this transition explicitly.
+`control-plane` (Business Source License 1.1) and `frontend` (proprietary)
+remain commercial repositories. Future private modules may provide managed
+operations, commercial-only policy, fleet operations and air-gapped packaging.
 
 Private modules may depend only on versioned public contracts and declared
 extension interfaces. Public modules must not import private modules, fetch

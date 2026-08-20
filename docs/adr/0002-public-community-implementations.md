@@ -6,11 +6,11 @@ Accepted.
 
 ## Decision
 
-EnvPlane adopts the public-core interpretation of the open-core boundary for
-the code already published under Apache-2.0. Existing billing, entitlement,
-identity, policy, audit, FinOps, fleet, DR and air-gap implementations in the
-public control-plane repository remain part of the Community compatibility
-core. Their publication rights are not revoked or retroactively restricted.
+The project adopts the public-core interpretation only for repositories licensed
+under Apache-2.0. `control-plane` is licensed under Business Source License
+1.1 and `frontend` is proprietary; their commercial code is not part of the
+Apache public compatibility core. ADR-0003 records the canonical repository
+matrix and does not alter already-published Apache-2.0 rights.
 
 Future commercial value is delivered through managed operations, support,
 separately distributed Enterprise services, and new Enterprise-only modules.
@@ -22,11 +22,11 @@ production builds through the `e2e` Go build tag.
 
 ## Consequences
 
-- Existing public code remains legally and technically usable under
-  Apache-2.0.
-- Monetization documents must describe already-published control-plane
-  capabilities as public compatibility code, not as code scheduled for
-  retroactive privatization.
+- The seven Apache-2.0 public-core repositories remain legally and technically
+  usable under Apache-2.0.
+- Commercial control-plane and frontend capabilities retain their declared
+  licenses and must integrate with public contracts without becoming a private
+  fork of the public core.
 - New Enterprise features require a separate module or service boundary and
   a public-contract compatibility entry before implementation begins.
 - License, provenance and contributor review remain mandatory for every new
@@ -39,4 +39,3 @@ integration boundaries in public repositories. Put managed-service operations,
 commercial-only policy, fleet orchestration and private deployment tooling in
 separately versioned Enterprise repositories. A public package must never
 import a private package or load private code dynamically.
-
