@@ -10134,6 +10134,13 @@
       }
     },
     "/scim/v2/{tenantID}/Users/{id}": {
+      "patch": {
+        "summary": "Partially update or deactivate a tenant SCIM user",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}}, {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCIMUser"}}}},
+        "responses": {"200": {"description": "Provisioned SCIM user"}, "401": {"description": "Invalid SCIM credential"}}
+      },
       "put": {
         "summary": "Provision or update a tenant SCIM user",
         "security": [
@@ -10240,6 +10247,13 @@
       }
     },
     "/scim/v2/{tenantID}/Groups/{id}": {
+      "patch": {
+        "summary": "Partially update a tenant SCIM group",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}}, {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCIMGroup"}}}},
+        "responses": {"200": {"description": "Provisioned SCIM group"}, "401": {"description": "Invalid SCIM credential"}}
+      },
       "put": {
         "summary": "Provision or update a tenant SCIM group",
         "security": [
