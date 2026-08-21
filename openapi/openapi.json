@@ -2449,6 +2449,10 @@
                 "name": {
                   "type": "string"
                 },
+                "kind": {
+                  "type": "string",
+                  "enum": ["image", "chart"]
+                },
                 "sourceRef": {
                   "type": "string"
                 },
@@ -2458,7 +2462,11 @@
                 "signature": {
                   "type": "string"
                 },
+                "keyId": {"type": "string"},
                 "registryPath": {
+                  "type": "string"
+                },
+                "archivePath": {
                   "type": "string"
                 }
               }
@@ -2467,6 +2475,12 @@
           "licenseRef": {
             "$ref": "#/components/schemas/SecretReference"
           },
+          "registryRemap": {
+            "type": "object",
+            "additionalProperties": {"type": "string"}
+          },
+          "manifestKeyId": {"type": "string"},
+          "manifestSignature": {"type": "string"},
           "runbookRef": {
             "type": "string"
           }
