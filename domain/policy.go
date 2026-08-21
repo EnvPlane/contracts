@@ -24,6 +24,9 @@ type PolicyInput struct {
 	TTLAllowed     bool   `json:"ttlAllowed"`
 	PinAllowed     bool   `json:"pinAllowed"`
 	RepairApproved bool   `json:"repairApproved"`
+	BudgetChecked  bool   `json:"budgetChecked"`
+	BudgetAllowed  bool   `json:"budgetAllowed"`
+	BudgetWarning  bool   `json:"budgetWarning"`
 }
 
 type PolicyDecision struct {
@@ -76,7 +79,7 @@ func (b PolicyBundle) Validate() error {
 		}
 		seen[rule.ID] = struct{}{}
 		switch rule.Check {
-		case "project_ready", "quota_allowed", "ttl_allowed", "pin_allowed", "repair_approved":
+		case "project_ready", "quota_allowed", "ttl_allowed", "pin_allowed", "repair_approved", "budget_allowed":
 		default:
 			return fmt.Errorf("unknown policy check %q", rule.Check)
 		}

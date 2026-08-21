@@ -2087,6 +2087,18 @@
           "source": {"type": "string"}
         }
       },
+      "MonthlyBudget": {
+        "type": "object",
+        "required": ["tenantId", "currency", "amountCents", "monthStart", "anomalyThresholdPercent", "enforcement"],
+        "properties": {
+          "tenantId": {"type": "string"},
+          "currency": {"type": "string"},
+          "amountCents": {"type": "integer", "format": "int64"},
+          "monthStart": {"type": "string", "format": "date-time"},
+          "anomalyThresholdPercent": {"type": "integer", "format": "int64"},
+          "enforcement": {"type": "string", "enum": ["warn", "deny"]}
+        }
+      },
       "BudgetForecast": {
         "type": "object",
         "required": [
@@ -2094,9 +2106,13 @@
           "currency",
           "actualCents",
           "forecastCents",
+          "budgetCents",
+          "elapsedHours",
+          "periodHours",
           "periodStart",
           "periodEnd",
-          "method"
+          "method",
+          "formula"
         ],
         "properties": {
           "tenantId": {
@@ -2113,6 +2129,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "budgetCents": {"type": "integer", "format": "int64"},
+          "elapsedHours": {"type": "integer", "format": "int64"},
+          "periodHours": {"type": "integer", "format": "int64"},
           "periodStart": {
             "type": "string",
             "format": "date-time"
@@ -2122,6 +2141,9 @@
             "format": "date-time"
           },
           "method": {
+            "type": "string"
+          },
+          "formula": {
             "type": "string"
           }
         }
@@ -2157,6 +2179,25 @@
             "type": "string",
             "format": "date-time"
           }
+        }
+      },
+      "BudgetDecision": {
+        "type": "object",
+        "required": ["tenantId", "effect", "allowed", "ruleId", "currency", "currentCents", "forecastCents", "budgetCents", "message", "observedAt"],
+        "properties": {
+          "tenantId": {"type": "string"}, "effect": {"type": "string"}, "allowed": {"type": "boolean"},
+          "ruleId": {"type": "string"}, "currency": {"type": "string"},
+          "currentCents": {"type": "integer", "format": "int64"}, "forecastCents": {"type": "integer", "format": "int64"},
+          "budgetCents": {"type": "integer", "format": "int64"}, "message": {"type": "string"},
+          "observedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "BudgetNotification": {
+        "type": "object",
+        "required": ["tenantId", "ruleId", "severity", "message", "observedAt"],
+        "properties": {
+          "tenantId": {"type": "string"}, "ruleId": {"type": "string"}, "severity": {"type": "string"},
+          "message": {"type": "string"}, "observedAt": {"type": "string", "format": "date-time"}
         }
       },
       "FleetGroup": {

@@ -63,6 +63,18 @@ cannot be counted twice for one tenant. Missing or incomplete prices produce
 `costEstimateDay` string remains a presentation compatibility field while
 structured `costEstimate` is canonical.
 
+## Budget forecast and anomaly policy
+
+Monthly budgets are tenant-scoped and use the explicitly stored ISO currency and
+UTC month start. Forecasts use the deterministic elapsed-month formula shown in
+the typed `BudgetForecast` (`actual / elapsed_period_hours * period_hours`), so a
+consumer can explain every projection without resource names or source metadata.
+Anomaly rules compare the forecast or actual amount with the budget using a
+bounded percentage threshold and emit only the stable rule ID and generic
+message. Optional `warn` or `deny` enforcement is evaluated for new resource
+creation only; it never removes or mutates existing environments. Notifications
+are metadata-only and must remain tenant-scoped.
+
 ## Policy evaluation
 
 Policy bundles are versioned and deterministic. Built-in declarative rules run
