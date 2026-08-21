@@ -1632,6 +1632,15 @@
           "keyId": {
             "type": "string"
           },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "ed25519",
+              "ecdsa-p256",
+              "ecdsa-p384",
+              "ecdsa-p521"
+            ]
+          },
           "grant": {
             "$ref": "#/components/schemas/LicenseGrant"
           },

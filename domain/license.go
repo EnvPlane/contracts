@@ -19,6 +19,7 @@ type LicenseGrant struct {
 
 type SignedLicense struct {
 	KeyID     string       `json:"keyId"`
+	Algorithm string       `json:"algorithm,omitempty"`
 	Grant     LicenseGrant `json:"grant"`
 	Signature string       `json:"signature"`
 }
