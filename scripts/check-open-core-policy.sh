@@ -56,8 +56,25 @@ jq -e '
     all(type == "string" and length > 0))
 ' "$policy" >/dev/null
 
+contains() {
+  local pattern="$1"
+  local file="$2"
+  local mode="${3:-case-sensitive}"
+  if command -v rg >/dev/null 2>&1; then
+    if [[ "$mode" == "case-insensitive" ]]; then
+      rg -qi -- "$pattern" "$file"
+    else
+      rg -q -- "$pattern" "$file"
+    fi
+  elif [[ "$mode" == "case-insensitive" ]]; then
+    grep -qiE -- "$pattern" "$file"
+  else
+    grep -qE -- "$pattern" "$file"
+  fi
+}
+
 for repository in contracts agent runner webhook bootstrap gitops control-plane frontend deploy; do
-  rg -q -- "\`$repository\`" "$adr"
+  contains "\`$repository\`" "$adr"
 done
 
 for required in \
@@ -69,7 +86,7 @@ for required in \
   "Apache-2.0" \
   "CLA" \
   "trademark"; do
-  rg -qi -- "$required" "$adr"
+  contains "$required" "$adr" case-insensitive
 done
 
 echo "open-core policy check passed"
