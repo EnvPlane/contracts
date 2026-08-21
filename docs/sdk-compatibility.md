@@ -18,6 +18,16 @@ the server adds compatible minor capabilities.
 |---|---:|---|
 | `v1.x` | `1` | `1.x`, including additive fields and operations |
 
+The published SDK exposes the transport primitives required by integrations:
+runtime `TokenProvider` authentication, opaque cursor pagination, typed API
+errors, caller-supplied idempotency keys, HMAC webhook verification and
+bounded capability negotiation. It does not expose or depend on Enterprise
+implementations.
+
+The compatibility matrix is exercised by the SDK tests for: authenticated
+paginated requests, idempotent JSON mutations, additive minor responses,
+structured quota errors, webhook signature verification and capability headers.
+
 `openapi/openapi.json` is the canonical source. `go generate
 ./sdk/go/envplanesdk` deterministically publishes its version, SHA-256 and
 method/path inventory into the SDK. CI rejects a stale generated file. A

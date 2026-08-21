@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -63,6 +64,39 @@ func TestClientDoJSONProvidesTypedTransport(t *testing.T) {
 	}
 	if response.Status != "ready" {
 		t.Fatalf("response = %#v", response)
+	}
+}
+
+func TestClientKeepsOldMinorClientCompatibleWithAdditiveResponse(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"status":"ready","newMinorField":"ignored-by-old-client"}`)
+	}))
+	defer server.Close()
+	var response struct {
+		Status string `json:"status"`
+	}
+	if err := (Client{BaseURL: server.URL}).DoJSON(context.Background(), http.MethodGet, "/v1/items", nil, &response, ""); err != nil {
+		t.Fatal(err)
+	}
+	if response.Status != "ready" {
+		t.Fatalf("old client failed additive response compatibility: %#v", response)
+	}
+}
+
+func TestClientReturnsStructuredAPIErrorWithoutRawPayload(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusTooManyRequests)
+		_, _ = io.WriteString(w, `{"code":"quota_exhausted","feature":"environments","limit":"maxActiveEnvironments","current":2,"requested":1,"plan":"free","request_id":"req-1","secret":"must-not-be-retained"}`)
+	}))
+	defer server.Close()
+	err := (Client{BaseURL: server.URL}).DoJSON(context.Background(), http.MethodPost, "/v1/items", map[string]string{}, nil, "idempotent-1")
+	apiErr, ok := err.(*APIError)
+	if !ok || apiErr.Status != http.StatusTooManyRequests || apiErr.Code != "quota_exhausted" || apiErr.RequestID != "req-1" {
+		t.Fatalf("unexpected structured error: %#v", err)
+	}
+	if strings.Contains(err.Error(), "secret") {
+		t.Fatalf("API error exposed raw payload: %v", err)
 	}
 }
 

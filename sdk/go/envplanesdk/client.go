@@ -84,8 +84,12 @@ func (c Client) DoJSON(ctx context.Context, method, path string, request any, re
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		message, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-		return fmt.Errorf("SDK request failed: status=%d body=%s", resp.StatusCode, strings.TrimSpace(string(message)))
+		var apiError APIError
+		if err := json.NewDecoder(io.LimitReader(resp.Body, 4096)).Decode(&apiError); err != nil {
+			apiError = APIError{Status: resp.StatusCode}
+		}
+		apiError.Status = resp.StatusCode
+		return &apiError
 	}
 	if response == nil || resp.StatusCode == http.StatusNoContent {
 		return nil
@@ -101,6 +105,8 @@ type Page struct {
 	Cursor string
 }
 
+func (p Page) Encode() string { return p.Values().Encode() }
+
 func (p Page) Values() url.Values {
 	v := url.Values{}
 	if p.Limit > 0 {
@@ -110,6 +116,40 @@ func (p Page) Values() url.Values {
 		v.Set("cursor", p.Cursor)
 	}
 	return v
+}
+
+// NextPage reads the opaque cursor emitted by the API without interpreting it.
+func NextPage(r *http.Response) (Page, bool) {
+	if r == nil {
+		return Page{}, false
+	}
+	cursor := strings.TrimSpace(r.Header.Get("X-EnvPlane-Next-Cursor"))
+	if cursor == "" {
+		return Page{}, false
+	}
+	return Page{Cursor: cursor}, true
+}
+
+type APIError struct {
+	Status     int    `json:"-"`
+	Code       string `json:"code,omitempty"`
+	Feature    string `json:"feature,omitempty"`
+	Limit      string `json:"limit,omitempty"`
+	Current    int64  `json:"current,omitempty"`
+	Requested  int64  `json:"requested,omitempty"`
+	Plan       string `json:"plan,omitempty"`
+	UpgradeURL string `json:"upgrade_url,omitempty"`
+	RequestID  string `json:"request_id,omitempty"`
+}
+
+func (e *APIError) Error() string {
+	if e == nil {
+		return "EnvPlane API request failed"
+	}
+	if e.Code != "" {
+		return fmt.Sprintf("EnvPlane API request failed: status=%d code=%s", e.Status, e.Code)
+	}
+	return fmt.Sprintf("EnvPlane API request failed: status=%d", e.Status)
 }
 
 type Capabilities struct {
@@ -126,13 +166,28 @@ func NegotiateCapabilities(r *http.Response) Capabilities {
 
 func splitHeader(raw string) []string {
 	parts := strings.Split(raw, ",")
-	out := make([]string, 0, len(parts))
+	out := make([]string, 0, min(len(parts), 64))
+	seen := make(map[string]struct{}, len(out))
 	for _, part := range parts {
 		if value := strings.TrimSpace(part); value != "" {
+			if len(out) >= 64 {
+				break
+			}
+			if _, exists := seen[value]; exists {
+				continue
+			}
+			seen[value] = struct{}{}
 			out = append(out, value)
 		}
 	}
 	return out
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func VerifyWebhook(secret, signature string, payload []byte) bool {
