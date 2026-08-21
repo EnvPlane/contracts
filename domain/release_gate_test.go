@@ -16,7 +16,7 @@ func TestReleaseGateRejectsPlaceholderAndStaleArtifacts(t *testing.T) {
 }
 
 func TestReleaseGateComparesInventoryAndGraphForBothBackends(t *testing.T) {
-	for _, backend := range []DeploymentBackend{DeploymentBackendHelmDirect, DeploymentBackendFluxCD} {
+	for _, backend := range []DeploymentBackend{DeploymentBackendHelmDirect, DeploymentBackendFluxCD, DeploymentBackendArgoCD} {
 		gate := validReleaseGate()
 		gate.Backend = backend
 		if err := gate.Validate(); err != nil {

@@ -51,7 +51,7 @@ func (g ReleaseGate) Validate() error {
 	if g.Provider != ProviderGitHub && g.Provider != ProviderGitLab {
 		return fmt.Errorf("unsupported release gate provider %q", g.Provider)
 	}
-	if g.Backend != DeploymentBackendHelmDirect && g.Backend != DeploymentBackendFluxCD {
+	if g.Backend != DeploymentBackendHelmDirect && g.Backend != DeploymentBackendFluxCD && g.Backend != DeploymentBackendArgoCD {
 		return fmt.Errorf("unsupported release gate backend %q", g.Backend)
 	}
 	if g.Stage == "" {

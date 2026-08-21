@@ -4911,7 +4911,8 @@
             "type": "string",
             "enum": [
               "helm_direct",
-              "fluxcd"
+              "fluxcd",
+              "argocd"
             ]
           },
           "tenantId": {
