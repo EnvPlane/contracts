@@ -4970,6 +4970,49 @@
         }
       }
     },
+    "/api/v1/oidc/providers": {
+      "get": {
+        "summary": "List tenant-scoped OIDC providers",
+        "responses": {
+          "200": {
+            "description": "Redacted provider configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/OIDCProviderConfig"}
+                }
+              }
+            }
+          },
+          "403": {"description": "Tenant settings permission required"}
+        }
+      }
+    },
+    "/api/v1/oidc/providers/{providerID}": {
+      "put": {
+        "summary": "Create or replace a tenant-scoped OIDC provider",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OIDCProviderConfig"}}}
+        },
+        "responses": {
+          "200": {"description": "Redacted provider configuration", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OIDCProviderConfig"}}}},
+          "400": {"description": "Invalid configuration or failed discovery"},
+          "403": {"description": "Tenant settings permission required"}
+        }
+      },
+      "delete": {
+        "summary": "Delete a tenant-scoped OIDC provider",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "204": {"description": "Provider deleted"},
+          "403": {"description": "Tenant settings permission required"},
+          "404": {"description": "Provider not found"}
+        }
+      }
+    },
     "/auth/logout": {
       "get": {
         "responses": {

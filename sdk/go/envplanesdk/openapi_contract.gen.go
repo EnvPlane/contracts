@@ -3,11 +3,12 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "2a43d8133214f2b2e30a473ffb66fe239a46422dedd0173297b63faf6c1ed8fb"
+const CanonicalOpenAPISHA256 = "df97aebdfd0bfb9bd8ea94c5b3b5e3e60b7fbf7fa775d7bc1c20c37e6cdd0c08"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
 	"DELETE /api/v1/environments/{id}",
+	"DELETE /api/v1/oidc/providers/{providerID}",
 	"DELETE /api/v1/products/{name}",
 	"DELETE /api/v1/projects/{id}",
 	"DELETE /api/v1/remote-clusters/{id}",
@@ -52,6 +53,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/me",
 	"GET /api/v1/me/tenants",
 	"GET /api/v1/metrics",
+	"GET /api/v1/oidc/providers",
 	"GET /api/v1/openapi.json",
 	"GET /api/v1/products",
 	"GET /api/v1/products/{name}",
@@ -180,6 +182,7 @@ var CanonicalOperations = []string{
 	"PUT /api/projects/{id}/components",
 	"PUT /api/v1/license",
 	"PUT /api/v1/management-endpoint-profile",
+	"PUT /api/v1/oidc/providers/{providerID}",
 	"PUT /api/v1/products/{name}",
 	"PUT /api/v1/projects/",
 	"PUT /api/v1/projects/{id}",
