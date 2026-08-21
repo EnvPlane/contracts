@@ -1714,6 +1714,8 @@
           "audience",
           "metadataRef",
           "signingKeyRef",
+          "destination",
+          "ssoUrl",
           "enabled"
         ],
         "properties": {
@@ -1734,6 +1736,14 @@
           },
           "signingKeyRef": {
             "$ref": "#/components/schemas/SecretReference"
+          },
+          "destination": {
+            "type": "string",
+            "format": "uri"
+          },
+          "ssoUrl": {
+            "type": "string",
+            "format": "uri"
           },
           "attributeMapping": {
             "type": "object",
@@ -4968,6 +4978,44 @@
             "description": "OAuth callback redirect"
           }
         }
+      }
+    },
+    "/auth/saml/{providerID}/login": {
+      "get": {
+        "summary": "Start SP-initiated tenant SAML login",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}, {"name": "tenant", "in": "query", "schema": {"type": "string"}}],
+        "responses": {"302": {"description": "Redirect to configured SAML IdP"}, "404": {"description": "Provider not configured"}}
+      }
+    },
+    "/auth/saml/{providerID}/callback": {
+      "get": {
+        "summary": "Receive a SAML response",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {"302": {"description": "Tenant-bound session redirect"}, "400": {"description": "Invalid relay state or response"}, "401": {"description": "Invalid assertion"}}
+      },
+      "post": {
+        "summary": "Receive a SAML response via HTTP POST binding",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {"302": {"description": "Tenant-bound session redirect"}, "400": {"description": "Invalid relay state or response"}, "401": {"description": "Invalid assertion"}}
+      }
+    },
+    "/api/v1/saml/providers": {
+      "get": {
+        "summary": "List redacted tenant SAML providers",
+        "responses": {"200": {"description": "Redacted provider metadata"}, "403": {"description": "Tenant settings permission required"}}
+      }
+    },
+    "/api/v1/saml/providers/{providerID}": {
+      "put": {
+        "summary": "Create or replace a tenant SAML provider",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SAMLProviderConfig"}}}},
+        "responses": {"200": {"description": "Redacted provider metadata"}, "400": {"description": "Invalid provider or inline signing material"}, "403": {"description": "Tenant settings permission required"}}
+      },
+      "delete": {
+        "summary": "Delete a tenant SAML provider",
+        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {"204": {"description": "Provider deleted"}, "403": {"description": "Tenant settings permission required"}, "404": {"description": "Provider not found"}}
       }
     },
     "/api/v1/oidc/providers": {

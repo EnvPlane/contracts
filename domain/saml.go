@@ -11,6 +11,7 @@ type SAMLProviderConfig struct {
 	SigningKeyRef    SecretReference   `json:"signingKeyRef"`
 	SigningCertificatePEM string         `json:"signingCertificatePem"`
 	Destination      string            `json:"destination"`
+	SSOURL           string            `json:"ssoUrl"`
 	AttributeMapping map[string]string `json:"attributeMapping"`
 	Enabled          bool              `json:"enabled"`
 }

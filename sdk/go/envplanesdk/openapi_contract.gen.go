@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "df97aebdfd0bfb9bd8ea94c5b3b5e3e60b7fbf7fa775d7bc1c20c37e6cdd0c08"
+const CanonicalOpenAPISHA256 = "42bf15fd6a81a26f1c1d39ebf03c2626021170c96537e1aa77fd156001117c8d"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -12,6 +12,7 @@ var CanonicalOperations = []string{
 	"DELETE /api/v1/products/{name}",
 	"DELETE /api/v1/projects/{id}",
 	"DELETE /api/v1/remote-clusters/{id}",
+	"DELETE /api/v1/saml/providers/{providerID}",
 	"DELETE /api/v1/settings/authentication",
 	"DELETE /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"DELETE /scim/v2/{tenantID}/Users/{id}",
@@ -74,6 +75,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/runners/commands/next",
 	"GET /api/v1/runners/health",
 	"GET /api/v1/runners/runtime-access",
+	"GET /api/v1/saml/providers",
 	"GET /api/v1/settings",
 	"GET /api/v1/settings/authentication",
 	"GET /api/v1/settings/authentication/setup/status",
@@ -87,6 +89,8 @@ var CanonicalOperations = []string{
 	"GET /auth/logout",
 	"GET /auth/oidc/callback",
 	"GET /auth/oidc/login",
+	"GET /auth/saml/{providerID}/callback",
+	"GET /auth/saml/{providerID}/login",
 	"GET /openapi.json",
 	"GET /scim/v2/{tenantID}/Groups",
 	"GET /scim/v2/{tenantID}/Users",
@@ -178,6 +182,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/webhooks/github",
 	"POST /api/v1/webhooks/gitlab",
 	"POST /auth/logout",
+	"POST /auth/saml/{providerID}/callback",
 	"POST /webhook/github",
 	"PUT /api/projects/{id}/components",
 	"PUT /api/v1/license",
@@ -189,6 +194,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/projects/{id}/components",
 	"PUT /api/v1/projects/{id}/hybrid-config",
 	"PUT /api/v1/remote-clusters/{id}",
+	"PUT /api/v1/saml/providers/{providerID}",
 	"PUT /api/v1/settings",
 	"PUT /api/v1/settings/authentication",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
