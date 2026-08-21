@@ -2330,12 +2330,18 @@
               "type": "string"
             }
           },
+          "projectIds": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
           "postgresqlStateRef": {
             "type": "string"
           },
           "kubernetesMetadataRef": {
             "type": "string"
           },
+          "subscriptionStateRef": {"type": "string"},
+          "auditStateRef": {"type": "string"},
           "secretReferences": {
             "type": "array",
             "items": {
@@ -2390,12 +2396,22 @@
               "type": "string"
             }
           },
+          "secretRebindRequired": {"type": "boolean"},
           "passed": {
             "type": "boolean"
           },
           "failureReason": {
             "type": "string"
           }
+        }
+      },
+      "DRDrillSchedule": {
+        "type": "object",
+        "required": ["tenantId", "intervalHours"],
+        "properties": {
+          "tenantId": {"type": "string"}, "intervalHours": {"type": "integer", "minimum": 1},
+          "lastVerifiedAt": {"type": "string", "format": "date-time"},
+          "nextDueAt": {"type": "string", "format": "date-time"}
         }
       },
       "AirgapBundleManifest": {
