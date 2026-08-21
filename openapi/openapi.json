@@ -1832,7 +1832,8 @@
           "tenantId",
           "purgeBefore",
           "candidates",
-          "bounded"
+          "bounded",
+          "legalHold"
         ],
         "properties": {
           "tenantId": {
@@ -1873,6 +1874,10 @@
           },
           "tenantId": {
             "type": "string"
+          },
+          "cursor": {
+            "type": "integer",
+            "format": "int64"
           },
           "occurredAt": {
             "type": "string",

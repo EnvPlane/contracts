@@ -19,6 +19,7 @@ const (
 	FeaturePolicyCustom      = "policy.custom"
 	FeatureFleetUpgradeWaves = "fleet.upgrade_waves"
 	FeatureSupportSLA        = "support.sla"
+	FeatureAuditSIEM        = "audit.siem_export"
 )
 
 const (
@@ -35,6 +36,7 @@ var knownPlanFeatureKeys = map[string]struct{}{
 	FeatureAuthOIDC: {}, FeatureAuthSAML: {}, FeatureIdentitySCIM: {}, FeatureRBACGranular: {},
 	FeatureGitOpsFlux: {}, FeatureGitOpsArgo: {}, FeatureFinOpsAllocation: {}, FeaturePolicyCustom: {},
 	FeatureFleetUpgradeWaves: {}, FeatureSupportSLA: {},
+	FeatureAuditSIEM: {},
 	// These aliases are retained for existing entitlement and quota callers.
 	"projects": {}, "environments": {}, "gitops": {}, "helmDirect": {}, "audit": {},
 }
@@ -76,6 +78,7 @@ func communityPlan(version string) PlanDefinition {
 			FeatureAuthOIDC: true, FeatureAuthSAML: false, FeatureIdentitySCIM: false, FeatureRBACGranular: false,
 			FeatureGitOpsFlux: true, FeatureGitOpsArgo: false, FeatureFinOpsAllocation: false, FeaturePolicyCustom: false,
 			FeatureFleetUpgradeWaves: false, FeatureSupportSLA: false,
+			FeatureAuditSIEM: true,
 			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
 		}, Limits: map[string]int64{
 			LimitProjectsMax: 10, LimitManagedClustersMax: 3, LimitActiveEnvironmentsMax: 25,
@@ -91,6 +94,7 @@ func freePlan(version string) PlanDefinition {
 			FeatureAuthOIDC: true, FeatureAuthSAML: false, FeatureIdentitySCIM: false, FeatureRBACGranular: false,
 			FeatureGitOpsFlux: true, FeatureGitOpsArgo: false, FeatureFinOpsAllocation: false, FeaturePolicyCustom: false,
 			FeatureFleetUpgradeWaves: false, FeatureSupportSLA: false,
+			FeatureAuditSIEM: false,
 			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
 		}, Limits: map[string]int64{
 			LimitProjectsMax: 3, LimitManagedClustersMax: 1, LimitActiveEnvironmentsMax: 2,

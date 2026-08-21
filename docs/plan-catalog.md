@@ -40,8 +40,10 @@ using UTC. Free retains seven days; a paid plan uses its
 `audit.retention_days` limit. Audit reads apply the same lower time boundary as
 purge, so API and UI cannot read records outside the tenant entitlement.
 Purge runs in bounded tenant-scoped batches. A record marked `legalHold` is
-never eligible for deletion. The reconciler has no archive or SIEM export
-side-effect; archiving, if required, is an explicit external boundary.
+never eligible for deletion. SIEM export is a separate opt-in capability,
+`audit.siem_export`; it is enabled only by entitlement and an explicit audit
+export permission. The exporter sends redacted metadata only and never blocks
+primary audit writes.
 
 ## Keys and compatibility
 
