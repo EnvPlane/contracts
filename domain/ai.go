@@ -46,9 +46,12 @@ const (
 	AIProviderErrorTransient      AIProviderErrorClass = "transient"
 	AIProviderErrorRateLimited    AIProviderErrorClass = "rate_limited"
 	AIProviderErrorInvalidRequest AIProviderErrorClass = "invalid_request"
+	AIProviderErrorAuthentication AIProviderErrorClass = "authentication"
 	AIProviderErrorUnauthorized   AIProviderErrorClass = "unauthorized"
 	AIProviderErrorUnavailable    AIProviderErrorClass = "unavailable"
+	AIProviderErrorProviderUnavailable AIProviderErrorClass = "provider_unavailable"
 	AIProviderErrorTimeout        AIProviderErrorClass = "timeout"
+	AIProviderErrorInvalidResponse AIProviderErrorClass = "invalid_response"
 	AIProviderErrorPolicyBlocked  AIProviderErrorClass = "policy_blocked"
 	AIProviderErrorUnknown        AIProviderErrorClass = "unknown"
 )
@@ -135,7 +138,8 @@ type AIProviderError struct {
 func (e AIProviderError) Validate() error {
 	switch e.Class {
 	case AIProviderErrorTransient, AIProviderErrorRateLimited, AIProviderErrorInvalidRequest,
-		AIProviderErrorUnauthorized, AIProviderErrorUnavailable, AIProviderErrorTimeout,
+		AIProviderErrorAuthentication, AIProviderErrorUnauthorized, AIProviderErrorUnavailable,
+		AIProviderErrorProviderUnavailable, AIProviderErrorTimeout, AIProviderErrorInvalidResponse,
 		AIProviderErrorPolicyBlocked, AIProviderErrorUnknown:
 		return nil
 	default:
