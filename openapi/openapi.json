@@ -11901,7 +11901,7 @@
     "/api/projects/{id}/bootstrap-session/runner-status": {
       "get": {
         "summary": "Compatibility route GET /api/projects/{id}/bootstrap-session/runner-status",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -11921,7 +11921,7 @@
     "/api/projects/{id}/config": {
       "get": {
         "summary": "Compatibility route GET /api/projects/{id}/config",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -11941,7 +11941,7 @@
     "/api/v1/agents/runtime-access": {
       "get": {
         "summary": "Compatibility route GET /api/v1/agents/runtime-access",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -11961,7 +11961,7 @@
     "/api/v1/audit": {
       "get": {
         "summary": "Compatibility route GET /api/v1/audit",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -11981,7 +11981,7 @@
     "/api/v1/runners/commands/next": {
       "get": {
         "summary": "Compatibility route GET /api/v1/runners/commands/next",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12001,7 +12001,7 @@
     "/api/v1/runners/health": {
       "get": {
         "summary": "Compatibility route GET /api/v1/runners/health",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12021,7 +12021,7 @@
     "/api/v1/runners/runtime-access": {
       "get": {
         "summary": "Compatibility route GET /api/v1/runners/runtime-access",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12041,7 +12041,7 @@
     "/api/environments/{id}/refresh": {
       "post": {
         "summary": "Compatibility route POST /api/environments/{id}/refresh",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12061,7 +12061,7 @@
     "/api/projects/{id}/bootstrap-session/helm-direct/preflight": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/helm-direct/preflight",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12081,7 +12081,7 @@
     "/api/projects/{id}/bootstrap-session/runner-deploy": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deploy",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12101,7 +12101,7 @@
     "/api/projects/{id}/bootstrap-session/runner-deployment-instructions": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12121,7 +12121,7 @@
     "/api/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12141,7 +12141,7 @@
     "/api/projects/{id}/bootstrap-session/scm-offline": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/scm-offline",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12192,7 +12192,7 @@
     "/api/v1/environments/{id}/delete/retry": {
       "post": {
         "summary": "Compatibility route POST /api/v1/environments/{id}/delete/retry",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12212,7 +12212,7 @@
     "/api/v1/environments/{id}/force-clean": {
       "post": {
         "summary": "Compatibility route POST /api/v1/environments/{id}/force-clean",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12232,7 +12232,7 @@
     "/api/v1/environments/{id}/recreate": {
       "post": {
         "summary": "Compatibility route POST /api/v1/environments/{id}/recreate",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12252,7 +12252,7 @@
     "/api/v1/environments/{id}/refresh": {
       "post": {
         "summary": "Compatibility route POST /api/v1/environments/{id}/refresh",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12272,7 +12272,7 @@
     "/api/v1/products/validate": {
       "post": {
         "summary": "Compatibility route POST /api/v1/products/validate",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12292,7 +12292,7 @@
     "/api/v1/remote-clusters/{id}/credentials": {
       "post": {
         "summary": "Compatibility route POST /api/v1/remote-clusters/{id}/credentials",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12312,7 +12312,7 @@
     "/api/v1/remote-clusters/{id}/credentials/validate": {
       "post": {
         "summary": "Compatibility route POST /api/v1/remote-clusters/{id}/credentials/validate",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12332,7 +12332,7 @@
     "/api/v1/remote-clusters/{id}/migrate": {
       "post": {
         "summary": "Compatibility route POST /api/v1/remote-clusters/{id}/migrate",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12352,7 +12352,7 @@
     "/api/v1/runners/commands/{id}/result": {
       "post": {
         "summary": "Compatibility route POST /api/v1/runners/commands/{id}/result",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12372,7 +12372,7 @@
     "/api/v1/runners/register": {
       "post": {
         "summary": "Compatibility route POST /api/v1/runners/register",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12392,7 +12392,7 @@
     "/api/projects/{id}/components": {
       "put": {
         "summary": "Compatibility route PUT /api/projects/{id}/components",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12412,7 +12412,7 @@
     "/api/v1/projects/": {
       "put": {
         "summary": "Compatibility route PUT /api/v1/projects/",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -12431,7 +12431,7 @@
     },
     "/api/v1/me": {
       "get": {
-        "summary": "Get current EnvPlane identity",
+        "summary": "Get current envplane identity",
         "responses": {
           "200": {
             "description": "Current identity"
@@ -14441,7 +14441,7 @@
     "/api/v1/projects/{id}/bootstrap-session/runner-status": {
       "get": {
         "summary": "Compatibility route GET /api/projects/{id}/bootstrap-session/runner-status",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14461,7 +14461,7 @@
     "/api/v1/projects/{id}/config": {
       "get": {
         "summary": "Compatibility route GET /api/projects/{id}/config",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14481,7 +14481,7 @@
     "/api/v1/projects/{id}/bootstrap-session/helm-direct/preflight": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/helm-direct/preflight",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14501,7 +14501,7 @@
     "/api/v1/projects/{id}/bootstrap-session/runner-deploy": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deploy",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14521,7 +14521,7 @@
     "/api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14541,7 +14541,7 @@
     "/api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14561,7 +14561,7 @@
     "/api/v1/projects/{id}/bootstrap-session/scm-offline": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/scm-offline",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"
@@ -14612,7 +14612,7 @@
     "/api/v1/projects/{id}/components": {
       "put": {
         "summary": "Compatibility route PUT /api/projects/{id}/components",
-        "description": "Canonical route registered by the EnvPlane control plane.",
+        "description": "Canonical route registered by the envplane control plane.",
         "responses": {
           "200": {
             "description": "Successful response"

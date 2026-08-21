@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/envpilot/contracts/sdk/go/envplanesdk"
+	"github.com/envplane/contracts/sdk/go/envplanesdk"
 )
 
 func main() {
