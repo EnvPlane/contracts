@@ -61,6 +61,26 @@ type AIContextInput struct {
 	RunnerHealth []RunnerStatusResponse
 	Capabilities []ClusterCapabilities
 	Resources    []ResourceSnapshot
+	Bootstrap    []AIBootstrapSnapshot
+}
+
+// AIBootstrapSnapshot is the explicit non-secret allowlist for troubleshooting.
+type AIBootstrapSnapshot struct {
+	TenantID              string `json:"tenantId"`
+	ProjectID             string `json:"projectId"`
+	SessionID             string `json:"sessionId"`
+	CurrentStep           int    `json:"currentStep"`
+	SessionStatus         string `json:"sessionStatus"`
+	SCMStatus             string `json:"scmStatus"`
+	AgentStatus           string `json:"agentStatus"`
+	AgentError            string `json:"agentError,omitempty"`
+	RunnerStatus          string `json:"runnerStatus"`
+	RunnerError           string `json:"runnerError,omitempty"`
+	ResourceScanStatus    string `json:"resourceScanStatus"`
+	ResourceScanError     string `json:"resourceScanError,omitempty"`
+	CapabilityReportStale bool   `json:"capabilityReportStale"`
+	FailedCheck           string `json:"failedCheck,omitempty"`
+	FailureMessage        string `json:"failureMessage,omitempty"`
 }
 
 type AIContextBuilder struct {
@@ -120,6 +140,12 @@ func (b AIContextBuilder) Build(input AIContextInput) (AIContext, error) {
 	for _, resource := range input.Resources {
 		appendEntry(resourceContextEntry(resource, b.limits.MaxStringBytes, &truncated))
 	}
+	for _, snapshot := range input.Bootstrap {
+		if snapshot.TenantID != input.TenantID {
+			return AIContext{}, errors.New("AI bootstrap tenant does not match context tenant")
+		}
+		appendEntry(bootstrapContextEntry(snapshot, b.limits.MaxStringBytes, &truncated))
+	}
 	sort.Slice(context.Entries, func(i, j int) bool {
 		left, right := context.Entries[i], context.Entries[j]
 		if left.SourceType != right.SourceType {
@@ -155,6 +181,24 @@ func (b AIContextBuilder) Build(input AIContextInput) (AIContext, error) {
 		return AIContext{}, errors.New("AI context byte limit is too small for its envelope")
 	}
 	return context, nil
+}
+
+func bootstrapContextEntry(snapshot AIBootstrapSnapshot, maxBytes int, truncated *bool) AIContextEntry {
+	return aiEntry("bootstrap_session", snapshot.SessionID, []AIContextField{
+		aiField("projectId", snapshot.ProjectID, maxBytes, truncated),
+		aiField("currentStep", strconv.Itoa(snapshot.CurrentStep), maxBytes, truncated),
+		aiField("sessionStatus", snapshot.SessionStatus, maxBytes, truncated),
+		aiField("scmStatus", snapshot.SCMStatus, maxBytes, truncated),
+		aiField("agentStatus", snapshot.AgentStatus, maxBytes, truncated),
+		aiField("agentError", snapshot.AgentError, maxBytes, truncated),
+		aiField("runnerStatus", snapshot.RunnerStatus, maxBytes, truncated),
+		aiField("runnerError", snapshot.RunnerError, maxBytes, truncated),
+		aiField("resourceScanStatus", snapshot.ResourceScanStatus, maxBytes, truncated),
+		aiField("resourceScanError", snapshot.ResourceScanError, maxBytes, truncated),
+		aiField("capabilityReportStale", strconv.FormatBool(snapshot.CapabilityReportStale), maxBytes, truncated),
+		aiField("failedCheck", snapshot.FailedCheck, maxBytes, truncated),
+		aiField("failureMessage", snapshot.FailureMessage, maxBytes, truncated),
+	})
 }
 
 var (

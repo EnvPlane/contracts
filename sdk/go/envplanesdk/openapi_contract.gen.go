@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "71e3710dc534c9d4078b2a620e1bce5d87965f4c8984caf189f84abb1d37cf77"
+const CanonicalOpenAPISHA256 = "fb3fbacc3b2c881648e8a95c43df5cf6f56c90839d5aa0e317389cfde0691044"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -43,6 +43,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/environment-records",
 	"GET /api/v1/environments",
 	"GET /api/v1/environments/{id}",
+	"GET /api/v1/environments/{id}/diagnosis/{runID}",
 	"GET /api/v1/environments/{id}/events",
 	"GET /api/v1/environments/{id}/flux-status",
 	"GET /api/v1/environments/{id}/kubernetes-events",
@@ -62,11 +63,14 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}",
 	"GET /api/v1/projects/{id}/bootstrap-session",
 	"GET /api/v1/projects/{id}/bootstrap-session/agent-status",
+	"GET /api/v1/projects/{id}/bootstrap-session/diagnosis/{runID}",
 	"GET /api/v1/projects/{id}/bootstrap-session/manifest-templates",
+	"GET /api/v1/projects/{id}/bootstrap-session/repo-profile",
 	"GET /api/v1/projects/{id}/bootstrap-session/runner-status",
 	"GET /api/v1/projects/{id}/config",
 	"GET /api/v1/projects/{id}/cost-policy",
 	"GET /api/v1/projects/{id}/environments",
+	"GET /api/v1/projects/{id}/finops/explanation",
 	"GET /api/v1/projects/{id}/hybrid-config",
 	"GET /api/v1/projects/{id}/runtime-bundle",
 	"GET /api/v1/remote-clusters",
@@ -80,6 +84,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/settings/authentication",
 	"GET /api/v1/settings/authentication/setup/status",
 	"GET /api/v1/settings/clusters/{id}/health",
+	"GET /api/v1/tenants/{tenantID}/ai-policy",
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
 	"GET /api/v1/tenants/{tenantID}/memberships",
 	"GET /auth/github/callback",
@@ -132,6 +137,8 @@ var CanonicalOperations = []string{
 	"POST /api/v1/environments/reconcile",
 	"POST /api/v1/environments/status:batch",
 	"POST /api/v1/environments/{id}/delete/retry",
+	"POST /api/v1/environments/{id}/diagnosis",
+	"POST /api/v1/environments/{id}/diagnosis/{runID}/feedback",
 	"POST /api/v1/environments/{id}/events",
 	"POST /api/v1/environments/{id}/extend-ttl",
 	"POST /api/v1/environments/{id}/flux-status",
@@ -149,6 +156,8 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/bootstrap-session",
 	"POST /api/v1/projects/{id}/bootstrap-session/agent-token",
 	"POST /api/v1/projects/{id}/bootstrap-session/compile",
+	"POST /api/v1/projects/{id}/bootstrap-session/configuration-proposal",
+	"POST /api/v1/projects/{id}/bootstrap-session/diagnosis",
 	"POST /api/v1/projects/{id}/bootstrap-session/executor-reconciliation/retry",
 	"POST /api/v1/projects/{id}/bootstrap-session/helm-direct/preflight",
 	"POST /api/v1/projects/{id}/bootstrap-session/resource-scan/start",
@@ -158,6 +167,8 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/bootstrap-session/scm-offline",
 	"POST /api/v1/projects/{id}/bootstrap-session/simulate-pr",
 	"POST /api/v1/projects/{id}/bootstrap-session/validate-scm",
+	"POST /api/v1/projects/{id}/configuration-proposals/actions",
+	"POST /api/v1/projects/{id}/configuration-proposals/preview",
 	"POST /api/v1/projects/{id}/runner-config",
 	"POST /api/v1/projects/{id}/runtime-tokens/revoke",
 	"POST /api/v1/remote-clusters",
@@ -200,6 +211,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/saml/providers/{providerID}",
 	"PUT /api/v1/settings",
 	"PUT /api/v1/settings/authentication",
+	"PUT /api/v1/tenants/{tenantID}/ai-policy",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"PUT /scim/v2/{tenantID}/Groups/{id}",
 	"PUT /scim/v2/{tenantID}/Users/{id}",

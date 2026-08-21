@@ -12,7 +12,10 @@ const AIContractVersion = "1"
 
 type AIRequestKind string
 
-const AIRequestKindDiagnosis AIRequestKind = "diagnosis"
+const (
+	AIRequestKindDiagnosis AIRequestKind = "diagnosis"
+	AIRequestKindBootstrap AIRequestKind = "bootstrap"
+)
 
 type AIRunStatus string
 
@@ -43,17 +46,17 @@ const (
 type AIProviderErrorClass string
 
 const (
-	AIProviderErrorTransient      AIProviderErrorClass = "transient"
-	AIProviderErrorRateLimited    AIProviderErrorClass = "rate_limited"
-	AIProviderErrorInvalidRequest AIProviderErrorClass = "invalid_request"
-	AIProviderErrorAuthentication AIProviderErrorClass = "authentication"
-	AIProviderErrorUnauthorized   AIProviderErrorClass = "unauthorized"
-	AIProviderErrorUnavailable    AIProviderErrorClass = "unavailable"
+	AIProviderErrorTransient           AIProviderErrorClass = "transient"
+	AIProviderErrorRateLimited         AIProviderErrorClass = "rate_limited"
+	AIProviderErrorInvalidRequest      AIProviderErrorClass = "invalid_request"
+	AIProviderErrorAuthentication      AIProviderErrorClass = "authentication"
+	AIProviderErrorUnauthorized        AIProviderErrorClass = "unauthorized"
+	AIProviderErrorUnavailable         AIProviderErrorClass = "unavailable"
 	AIProviderErrorProviderUnavailable AIProviderErrorClass = "provider_unavailable"
-	AIProviderErrorTimeout        AIProviderErrorClass = "timeout"
-	AIProviderErrorInvalidResponse AIProviderErrorClass = "invalid_response"
-	AIProviderErrorPolicyBlocked  AIProviderErrorClass = "policy_blocked"
-	AIProviderErrorUnknown        AIProviderErrorClass = "unknown"
+	AIProviderErrorTimeout             AIProviderErrorClass = "timeout"
+	AIProviderErrorInvalidResponse     AIProviderErrorClass = "invalid_response"
+	AIProviderErrorPolicyBlocked       AIProviderErrorClass = "policy_blocked"
+	AIProviderErrorUnknown             AIProviderErrorClass = "unknown"
 )
 
 type AIEvidenceReference struct {
@@ -86,7 +89,7 @@ func (r AIRequest) Validate() error {
 	if r.SchemaVersion != AIContractVersion || strings.TrimSpace(r.RequestID) == "" || strings.TrimSpace(r.TenantID) == "" {
 		return errors.New("AI request identity or schema version is invalid")
 	}
-	if r.Kind != AIRequestKindDiagnosis || strings.TrimSpace(r.SubjectType) == "" || strings.TrimSpace(r.SubjectID) == "" {
+	if (r.Kind != AIRequestKindDiagnosis && r.Kind != AIRequestKindBootstrap) || strings.TrimSpace(r.SubjectType) == "" || strings.TrimSpace(r.SubjectID) == "" {
 		return errors.New("AI request kind or subject is invalid")
 	}
 	for _, evidence := range r.Evidence {
@@ -148,14 +151,32 @@ func (e AIProviderError) Validate() error {
 }
 
 type AIDiagnosisResult struct {
-	SchemaVersion string                `json:"schemaVersion"`
-	RequestID     string                `json:"requestId"`
-	TenantID      string                `json:"tenantId"`
-	Outcome       AIDiagnosisOutcome    `json:"outcome"`
-	Summary       string                `json:"summary,omitempty"`
-	Confidence    AIConfidence          `json:"confidence"`
-	Evidence      []AIEvidenceReference `json:"evidence"`
-	ProviderError *AIProviderError      `json:"providerError,omitempty"`
+	SchemaVersion  string                 `json:"schemaVersion"`
+	RequestID      string                 `json:"requestId"`
+	TenantID       string                 `json:"tenantId"`
+	Outcome        AIDiagnosisOutcome     `json:"outcome"`
+	Summary        string                 `json:"summary,omitempty"`
+	Observed       []string               `json:"observed,omitempty"`
+	Confidence     AIConfidence           `json:"confidence"`
+	Evidence       []AIEvidenceReference  `json:"evidence"`
+	LikelyCauses   []AIDiagnosisCause     `json:"likelyCauses,omitempty"`
+	SafeChecks     []AIDiagnosisSafeCheck `json:"safeChecks,omitempty"`
+	UserChecks     []AIDiagnosisSafeCheck `json:"userChecks,omitempty"`
+	PlatformChecks []AIDiagnosisSafeCheck `json:"platformChecks,omitempty"`
+	ProviderError  *AIProviderError       `json:"providerError,omitempty"`
+}
+
+type AIDiagnosisCause struct {
+	ID         string                `json:"id"`
+	Summary    string                `json:"summary"`
+	Evidence   []AIEvidenceReference `json:"evidence,omitempty"`
+	Hypothesis bool                  `json:"hypothesis"`
+}
+
+type AIDiagnosisSafeCheck struct {
+	ID       string `json:"id"`
+	Summary  string `json:"summary"`
+	ReadOnly bool   `json:"readOnly"`
 }
 
 func (r AIDiagnosisResult) Validate() error {
@@ -174,6 +195,28 @@ func (r AIDiagnosisResult) Validate() error {
 		}
 		if evidence.TenantID != r.TenantID {
 			return errors.New("AI diagnosis evidence tenant does not match result tenant")
+		}
+	}
+	if len(r.Observed) > 20 || len(r.LikelyCauses) > 20 || len(r.SafeChecks) > 20 || len(r.UserChecks) > 20 || len(r.PlatformChecks) > 20 {
+		return errors.New("AI diagnosis result exceeds bounded cause or check count")
+	}
+	for _, cause := range r.LikelyCauses {
+		if strings.TrimSpace(cause.ID) == "" || strings.TrimSpace(cause.Summary) == "" {
+			return errors.New("AI diagnosis cause requires an ID and summary")
+		}
+		if !cause.Hypothesis && len(cause.Evidence) == 0 {
+			return errors.New("unsupported AI cause must be marked as a hypothesis")
+		}
+		for _, evidence := range cause.Evidence {
+			if err := evidence.Validate(); err != nil || evidence.TenantID != r.TenantID {
+				return errors.New("AI diagnosis cause evidence tenant is invalid")
+			}
+		}
+	}
+	allChecks := append(append(append([]AIDiagnosisSafeCheck{}, r.SafeChecks...), r.UserChecks...), r.PlatformChecks...)
+	for _, check := range allChecks {
+		if strings.TrimSpace(check.ID) == "" || strings.TrimSpace(check.Summary) == "" || !check.ReadOnly || strings.Contains(strings.ToLower(check.Summary), "kubectl") || strings.Contains(strings.ToLower(check.Summary), "helm") || strings.Contains(strings.ToLower(check.Summary), "shell") {
+			return errors.New("AI safe checks must be named, read-only, and non-executable")
 		}
 	}
 	if r.ProviderError != nil {

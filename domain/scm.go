@@ -29,6 +29,7 @@ const (
 	CommandRecreate PRCommand = "recreate"
 	CommandDestroy  PRCommand = "destroy"
 	CommandPin      PRCommand = "pin"
+	CommandAICreate PRCommand = "ai-create"
 )
 
 // PullRequestEvent is the versioned webhook-to-control-plane contract.
@@ -60,6 +61,8 @@ type PullRequestCommand struct {
 	InstallationID string        `json:"installationId"`
 	PinDuration    time.Duration `json:"pinDuration,omitempty"`
 	PinRaw         string        `json:"pinRaw,omitempty"`
+	Branch         string        `json:"branch,omitempty"`
+	ChangedPaths   []string      `json:"changedPaths,omitempty"`
 }
 
 func (e PullRequestEvent) EnvironmentID() string {

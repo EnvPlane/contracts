@@ -610,6 +610,9 @@
           },
           "cost_policy": {
             "$ref": "#/components/schemas/ProjectCostPolicy"
+          },
+          "ai_environment_create_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -1937,22 +1940,56 @@
       },
       "PolicyRule": {
         "type": "object",
-        "required": ["id", "action", "check", "effect", "explanation"],
+        "required": [
+          "id",
+          "action",
+          "check",
+          "effect",
+          "explanation"
+        ],
         "properties": {
-          "id": {"type": "string"},
-          "action": {"type": "string"},
-          "check": {"type": "string"},
-          "effect": {"type": "string", "enum": ["allow", "deny", "warn"]},
-          "explanation": {"type": "string"}
+          "id": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "check": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "deny",
+              "warn"
+            ]
+          },
+          "explanation": {
+            "type": "string"
+          }
         }
       },
       "PolicyBundle": {
         "type": "object",
-        "required": ["schemaVersion", "bundleVersion", "rules"],
+        "required": [
+          "schemaVersion",
+          "bundleVersion",
+          "rules"
+        ],
         "properties": {
-          "schemaVersion": {"type": "string"},
-          "bundleVersion": {"type": "string"},
-          "rules": {"type": "array", "items": {"$ref": "#/components/schemas/PolicyRule"}}
+          "schemaVersion": {
+            "type": "string"
+          },
+          "bundleVersion": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolicyRule"
+            }
+          }
         }
       },
       "ApprovalRequest": {
@@ -2069,34 +2106,89 @@
       },
       "Money": {
         "type": "object",
-        "required": ["currency", "minorUnits", "known"],
+        "required": [
+          "currency",
+          "minorUnits",
+          "known"
+        ],
         "properties": {
-          "currency": {"type": "string"},
-          "minorUnits": {"type": "integer", "format": "int64"},
-          "known": {"type": "boolean"}
+          "currency": {
+            "type": "string"
+          },
+          "minorUnits": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "known": {
+            "type": "boolean"
+          }
         }
       },
       "CostEstimate": {
         "type": "object",
-        "required": ["amount", "period", "periodStart", "periodEnd", "source"],
+        "required": [
+          "amount",
+          "period",
+          "periodStart",
+          "periodEnd",
+          "source"
+        ],
         "properties": {
-          "amount": {"$ref": "#/components/schemas/Money"},
-          "period": {"type": "string"},
-          "periodStart": {"type": "string", "format": "date-time"},
-          "periodEnd": {"type": "string", "format": "date-time"},
-          "source": {"type": "string"}
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "period": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string"
+          }
         }
       },
       "MonthlyBudget": {
         "type": "object",
-        "required": ["tenantId", "currency", "amountCents", "monthStart", "anomalyThresholdPercent", "enforcement"],
+        "required": [
+          "tenantId",
+          "currency",
+          "amountCents",
+          "monthStart",
+          "anomalyThresholdPercent",
+          "enforcement"
+        ],
         "properties": {
-          "tenantId": {"type": "string"},
-          "currency": {"type": "string"},
-          "amountCents": {"type": "integer", "format": "int64"},
-          "monthStart": {"type": "string", "format": "date-time"},
-          "anomalyThresholdPercent": {"type": "integer", "format": "int64"},
-          "enforcement": {"type": "string", "enum": ["warn", "deny"]}
+          "tenantId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "amountCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "monthStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "anomalyThresholdPercent": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": [
+              "warn",
+              "deny"
+            ]
+          }
         }
       },
       "BudgetForecast": {
@@ -2129,9 +2221,18 @@
             "type": "integer",
             "format": "int64"
           },
-          "budgetCents": {"type": "integer", "format": "int64"},
-          "elapsedHours": {"type": "integer", "format": "int64"},
-          "periodHours": {"type": "integer", "format": "int64"},
+          "budgetCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "elapsedHours": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "periodHours": {
+            "type": "integer",
+            "format": "int64"
+          },
           "periodStart": {
             "type": "string",
             "format": "date-time"
@@ -2183,21 +2284,81 @@
       },
       "BudgetDecision": {
         "type": "object",
-        "required": ["tenantId", "effect", "allowed", "ruleId", "currency", "currentCents", "forecastCents", "budgetCents", "message", "observedAt"],
+        "required": [
+          "tenantId",
+          "effect",
+          "allowed",
+          "ruleId",
+          "currency",
+          "currentCents",
+          "forecastCents",
+          "budgetCents",
+          "message",
+          "observedAt"
+        ],
         "properties": {
-          "tenantId": {"type": "string"}, "effect": {"type": "string"}, "allowed": {"type": "boolean"},
-          "ruleId": {"type": "string"}, "currency": {"type": "string"},
-          "currentCents": {"type": "integer", "format": "int64"}, "forecastCents": {"type": "integer", "format": "int64"},
-          "budgetCents": {"type": "integer", "format": "int64"}, "message": {"type": "string"},
-          "observedAt": {"type": "string", "format": "date-time"}
+          "tenantId": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string"
+          },
+          "allowed": {
+            "type": "boolean"
+          },
+          "ruleId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "currentCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "forecastCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "budgetCents": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "message": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "BudgetNotification": {
         "type": "object",
-        "required": ["tenantId", "ruleId", "severity", "message", "observedAt"],
+        "required": [
+          "tenantId",
+          "ruleId",
+          "severity",
+          "message",
+          "observedAt"
+        ],
         "properties": {
-          "tenantId": {"type": "string"}, "ruleId": {"type": "string"}, "severity": {"type": "string"},
-          "message": {"type": "string"}, "observedAt": {"type": "string", "format": "date-time"}
+          "tenantId": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "FleetGroup": {
@@ -2235,25 +2396,57 @@
           },
           "maintenanceWindows": {
             "type": "array",
-            "items": {"$ref": "#/components/schemas/FleetMaintenanceWindow"}
+            "items": {
+              "$ref": "#/components/schemas/FleetMaintenanceWindow"
+            }
           }
         }
       },
       "FleetMaintenanceWindow": {
         "type": "object",
-        "required": ["weekday", "startMinuteUtc", "durationMinutes"],
+        "required": [
+          "weekday",
+          "startMinuteUtc",
+          "durationMinutes"
+        ],
         "properties": {
-          "weekday": {"type": "integer", "minimum": 0, "maximum": 6},
-          "startMinuteUtc": {"type": "integer", "minimum": 0, "maximum": 1439},
-          "durationMinutes": {"type": "integer", "minimum": 1}
+          "weekday": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "startMinuteUtc": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1439
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "minimum": 1
+          }
         }
       },
       "SignedArtifactSet": {
         "type": "object",
-        "required": ["reference", "digest", "signature", "keyId"],
+        "required": [
+          "reference",
+          "digest",
+          "signature",
+          "keyId"
+        ],
         "properties": {
-          "reference": {"type": "string"}, "digest": {"type": "string"},
-          "signature": {"type": "string"}, "keyId": {"type": "string"}
+          "reference": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          },
+          "keyId": {
+            "type": "string"
+          }
         }
       },
       "UpgradeWave": {
@@ -2283,10 +2476,18 @@
           "previousSignedSet": {
             "type": "string"
           },
-          "signedArtifact": {"$ref": "#/components/schemas/SignedArtifactSet"},
-          "agentVersion": {"type": "string"},
-          "runnerVersion": {"type": "string"},
-          "status": {"type": "string"},
+          "signedArtifact": {
+            "$ref": "#/components/schemas/SignedArtifactSet"
+          },
+          "agentVersion": {
+            "type": "string"
+          },
+          "runnerVersion": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
           "paused": {
             "type": "boolean"
           },
@@ -2297,13 +2498,48 @@
       },
       "WavePlan": {
         "type": "object",
-        "required": ["waveId", "tenantId", "clusterIds", "maintenanceWindowOpen", "healthGatePassed", "blocked"],
+        "required": [
+          "waveId",
+          "tenantId",
+          "clusterIds",
+          "maintenanceWindowOpen",
+          "healthGatePassed",
+          "blocked"
+        ],
         "properties": {
-          "waveId": {"type": "string"}, "tenantId": {"type": "string"},
-          "clusterIds": {"type": "array", "items": {"type": "string"}},
-          "artifactSet": {"type": "string"}, "agentVersion": {"type": "string"}, "runnerVersion": {"type": "string"},
-          "maintenanceWindowOpen": {"type": "boolean"}, "healthGatePassed": {"type": "boolean"},
-          "blocked": {"type": "boolean"}, "reason": {"type": "string"}
+          "waveId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "clusterIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "artifactSet": {
+            "type": "string"
+          },
+          "agentVersion": {
+            "type": "string"
+          },
+          "runnerVersion": {
+            "type": "string"
+          },
+          "maintenanceWindowOpen": {
+            "type": "boolean"
+          },
+          "healthGatePassed": {
+            "type": "boolean"
+          },
+          "blocked": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
         }
       },
       "BackupManifest": {
@@ -2332,7 +2568,9 @@
           },
           "projectIds": {
             "type": "array",
-            "items": {"type": "string"}
+            "items": {
+              "type": "string"
+            }
           },
           "postgresqlStateRef": {
             "type": "string"
@@ -2340,8 +2578,12 @@
           "kubernetesMetadataRef": {
             "type": "string"
           },
-          "subscriptionStateRef": {"type": "string"},
-          "auditStateRef": {"type": "string"},
+          "subscriptionStateRef": {
+            "type": "string"
+          },
+          "auditStateRef": {
+            "type": "string"
+          },
           "secretReferences": {
             "type": "array",
             "items": {
@@ -2396,7 +2638,9 @@
               "type": "string"
             }
           },
-          "secretRebindRequired": {"type": "boolean"},
+          "secretRebindRequired": {
+            "type": "boolean"
+          },
           "passed": {
             "type": "boolean"
           },
@@ -2407,11 +2651,26 @@
       },
       "DRDrillSchedule": {
         "type": "object",
-        "required": ["tenantId", "intervalHours"],
+        "required": [
+          "tenantId",
+          "intervalHours"
+        ],
         "properties": {
-          "tenantId": {"type": "string"}, "intervalHours": {"type": "integer", "minimum": 1},
-          "lastVerifiedAt": {"type": "string", "format": "date-time"},
-          "nextDueAt": {"type": "string", "format": "date-time"}
+          "tenantId": {
+            "type": "string"
+          },
+          "intervalHours": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "lastVerifiedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nextDueAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "AirgapBundleManifest": {
@@ -2451,7 +2710,10 @@
                 },
                 "kind": {
                   "type": "string",
-                  "enum": ["image", "chart"]
+                  "enum": [
+                    "image",
+                    "chart"
+                  ]
                 },
                 "sourceRef": {
                   "type": "string"
@@ -2462,7 +2724,9 @@
                 "signature": {
                   "type": "string"
                 },
-                "keyId": {"type": "string"},
+                "keyId": {
+                  "type": "string"
+                },
                 "registryPath": {
                   "type": "string"
                 },
@@ -2477,10 +2741,16 @@
           },
           "registryRemap": {
             "type": "object",
-            "additionalProperties": {"type": "string"}
+            "additionalProperties": {
+              "type": "string"
+            }
           },
-          "manifestKeyId": {"type": "string"},
-          "manifestSignature": {"type": "string"},
+          "manifestKeyId": {
+            "type": "string"
+          },
+          "manifestSignature": {
+            "type": "string"
+          },
           "runbookRef": {
             "type": "string"
           }
@@ -2522,7 +2792,13 @@
             "properties": {
               "scmOfflineBootstrap": {
                 "type": "boolean"
+              },
+              "aiDiagnosis": {
+                "type": "boolean"
               }
+            },
+            "aiBootstrap": {
+              "type": "boolean"
             }
           },
           "planCatalog": {
@@ -5090,6 +5366,1410 @@
             "type": "string"
           }
         }
+      },
+      "AIDiagnosisResult": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "likelyCauses": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "observed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "outcome": {
+            "enum": [
+              "diagnosis",
+              "insufficient_evidence"
+            ],
+            "type": "string"
+          },
+          "platformChecks": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "providerError": {
+            "type": "object"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "safeChecks": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "userChecks": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "requestId",
+          "tenantId",
+          "outcome",
+          "confidence",
+          "evidence"
+        ],
+        "type": "object"
+      },
+      "AIFeedback": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "helpful": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "reason": {
+            "enum": [
+              "inaccurate",
+              "missing_evidence",
+              "too_vague",
+              "not_actionable",
+              "other"
+            ],
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "id",
+          "runId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "helpful",
+          "reason",
+          "createdAt"
+        ],
+        "type": "object"
+      },
+      "AIFeedbackRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "comment": {
+            "maxLength": 500,
+            "type": "string"
+          },
+          "helpful": {
+            "type": "boolean"
+          },
+          "reason": {
+            "enum": [
+              "inaccurate",
+              "missing_evidence",
+              "too_vague",
+              "not_actionable",
+              "other"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "helpful",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "AIFinOpsEvidence": {
+        "properties": {
+          "digest": {
+            "type": "string"
+          },
+          "observedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "sourceType": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceType",
+          "sourceId",
+          "tenantId"
+        ],
+        "type": "object"
+      },
+      "AIFinOpsExplanation": {
+        "properties": {
+          "anomalies": {
+            "items": {
+              "properties": {
+                "deviation": {
+                  "$ref": "#/components/schemas/AIFinOpsMoney"
+                },
+                "evidence": {
+                  "items": {
+                    "$ref": "#/components/schemas/AIFinOpsEvidence"
+                  },
+                  "type": "array"
+                },
+                "ruleId": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "string"
+                },
+                "thresholdPercent": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "ruleId",
+                "severity",
+                "deviation",
+                "thresholdPercent"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "dataQuality": {
+            "properties": {
+              "missingPrice": {
+                "type": "boolean"
+              },
+              "partialData": {
+                "type": "boolean"
+              },
+              "priceKnown": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "priceKnown",
+              "missingPrice",
+              "partialData"
+            ],
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AIFinOpsEvidence"
+            },
+            "type": "array"
+          },
+          "forecast": {
+            "properties": {
+              "amount": {
+                "$ref": "#/components/schemas/AIFinOpsMoney"
+              },
+              "formula": {
+                "type": "string"
+              },
+              "known": {
+                "type": "boolean"
+              },
+              "method": {
+                "type": "string"
+              },
+              "periodEnd": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "periodStart": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "periodStart",
+              "periodEnd",
+              "method",
+              "formula",
+              "known"
+            ],
+            "type": "object"
+          },
+          "generatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "periodEnd": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "periodStart": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "recommendations": {
+            "items": {
+              "properties": {
+                "evidence": {
+                  "items": {
+                    "$ref": "#/components/schemas/AIFinOpsEvidence"
+                  },
+                  "type": "array"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "proposalFields": {
+                  "$ref": "#/components/schemas/ConfigurationProposalFields"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "reason",
+                "proposalFields"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "variance": {
+            "properties": {
+              "actual": {
+                "$ref": "#/components/schemas/AIFinOpsMoney"
+              },
+              "budget": {
+                "$ref": "#/components/schemas/AIFinOpsMoney"
+              },
+              "forecast": {
+                "$ref": "#/components/schemas/AIFinOpsMoney"
+              },
+              "known": {
+                "type": "boolean"
+              },
+              "variance": {
+                "$ref": "#/components/schemas/AIFinOpsMoney"
+              }
+            },
+            "required": [
+              "budget",
+              "actual",
+              "forecast",
+              "variance",
+              "known"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "projectId",
+          "generatedAt",
+          "currency",
+          "periodStart",
+          "periodEnd",
+          "summary",
+          "variance",
+          "forecast",
+          "dataQuality"
+        ],
+        "type": "object"
+      },
+      "AIFinOpsMoney": {
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "known": {
+            "type": "boolean"
+          },
+          "minorUnits": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "currency",
+          "minorUnits",
+          "known"
+        ],
+        "type": "object"
+      },
+      "AIRun": {
+        "additionalProperties": false,
+        "properties": {
+          "completedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "errorCategory": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "inputTokens": {
+            "type": "integer"
+          },
+          "latencyMilliseconds": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "outputTokens": {
+            "type": "integer"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "promptTemplateVersion": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "requestedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AIDiagnosisResult"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "startedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "failed",
+              "canceled"
+            ],
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "subjectType": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "id",
+          "idempotencyKey",
+          "tenantId",
+          "projectId",
+          "purpose",
+          "status",
+          "provider",
+          "model",
+          "promptTemplateVersion",
+          "contextHash",
+          "requestedAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "BootstrapConfigProposal": {
+        "properties": {
+          "contextHash": {
+            "type": "string"
+          },
+          "diff": {
+            "items": {
+              "properties": {
+                "after": {
+                  "type": "string"
+                },
+                "before": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "field"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/BootstrapConfigProposalFields"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "proposalVersion": {
+            "type": "string"
+          },
+          "rejectedFields": {
+            "items": {
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "field",
+                "reason"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "repoProfileVersion": {
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "proposalVersion",
+          "kind",
+          "tenantId",
+          "projectId",
+          "fields",
+          "valid",
+          "contextHash",
+          "repoProfileVersion"
+        ],
+        "type": "object"
+      },
+      "BootstrapConfigProposalFields": {
+        "properties": {
+          "componentRefs": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigurationProposalComponentRef"
+            },
+            "type": "array"
+          },
+          "gitOpsRepositoryTarget": {
+            "$ref": "#/components/schemas/RepositoryReference"
+          },
+          "mode": {
+            "enum": [
+              "full",
+              "hybrid"
+            ],
+            "type": "string"
+          },
+          "policyDefaults": {
+            "properties": {
+              "defaultTTLHours": {
+                "type": "integer"
+              },
+              "maxActiveEnvironments": {
+                "type": "integer"
+              },
+              "maxCPUPerEnvironment": {
+                "type": "integer"
+              },
+              "maxMemoryPerEnvironment": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "secretStrategies": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "ttlHours": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "BootstrapConfigProposalRequest": {
+        "properties": {
+          "intent": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "intent"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposal": {
+        "properties": {
+          "diff": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigurationProposalDiff"
+            },
+            "type": "array"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ConfigurationProposalFields"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/PolicyDecision"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "proposalVersion": {
+            "type": "string"
+          },
+          "quotaAllowed": {
+            "type": "boolean"
+          },
+          "quotaReason": {
+            "type": "string"
+          },
+          "rejectedFields": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigurationProposalRejectedField"
+            },
+            "type": "array"
+          },
+          "renderPreview": {
+            "$ref": "#/components/schemas/ConfigurationProposalRenderPreview"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "proposalVersion",
+          "tenantId",
+          "projectId",
+          "fields",
+          "quotaAllowed",
+          "policy",
+          "renderPreview",
+          "valid"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalActionRequest": {
+        "properties": {
+          "action": {
+            "enum": [
+              "retry_job"
+            ],
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "intent": {
+            "maxLength": 4000,
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "proposal": {
+            "$ref": "#/components/schemas/ConfigurationProposal"
+          }
+        },
+        "required": [
+          "action",
+          "intent",
+          "proposal",
+          "idempotencyKey"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalActionResult": {
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "executed"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "action",
+          "idempotencyKey",
+          "contextHash"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalComponentRef": {
+        "properties": {
+          "componentId": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "componentId"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalDiff": {
+        "properties": {
+          "after": {
+            "type": "string"
+          },
+          "before": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "field"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalFields": {
+        "properties": {
+          "componentRefs": {
+            "items": {
+              "$ref": "#/components/schemas/ConfigurationProposalComponentRef"
+            },
+            "type": "array"
+          },
+          "hybridServices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "full",
+              "hybrid"
+            ],
+            "type": "string"
+          },
+          "resourceLimits": {
+            "$ref": "#/components/schemas/ConfigurationProposalResourceLimits"
+          },
+          "ttlHours": {
+            "maximum": 720,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ConfigurationProposalRejectedField": {
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalRenderPreview": {
+        "properties": {
+          "componentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "hybridServices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "full",
+              "hybrid"
+            ],
+            "type": "string"
+          },
+          "resourceSummary": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "ttlHours": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "mode",
+          "ttlHours"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalRequest": {
+        "properties": {
+          "intent": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "intent"
+        ],
+        "type": "object"
+      },
+      "ConfigurationProposalResourceLimits": {
+        "properties": {
+          "cpu": {
+            "type": "string"
+          },
+          "memory": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DiagnosisStartRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotencyKey": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "refresh": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RepoProfile": {
+        "properties": {
+          "bootstrapFieldNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "componentCatalogIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "declaredPorts": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "environmentNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "manifests": {
+            "items": {
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "TenantAIPolicy": {
+        "properties": {
+          "allowedEndpoints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowedModels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowedRegions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxContextClassification": {
+            "enum": [
+              "safe_metadata"
+            ],
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "disabled",
+              "external",
+              "self_hosted"
+            ],
+            "type": "string"
+          },
+          "purposes": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object"
+          },
+          "retentionMode": {
+            "enum": [
+              "metadata_only",
+              "none"
+            ],
+            "type": "string"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "mode",
+          "retentionMode",
+          "maxContextClassification"
+        ],
+        "type": "object"
+      },
+      "EnvironmentCreateProposalRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "intent"
+        ],
+        "properties": {
+          "intent": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "branch": {
+            "type": "string"
+          },
+          "pullRequestId": {
+            "type": "string"
+          },
+          "changedPaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "EnvironmentCreateProposalFields": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "full",
+              "hybrid"
+            ]
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "componentId"
+              ],
+              "properties": {
+                "componentId": {
+                  "type": "string"
+                },
+                "branch": {
+                  "type": "string"
+                },
+                "pullRequestId": {
+                  "type": "string"
+                },
+                "commit": {
+                  "type": "string"
+                },
+                "imageTag": {
+                  "type": "string"
+                },
+                "imageDigest": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "branch": {
+            "type": "string"
+          },
+          "pullRequestId": {
+            "type": "string"
+          },
+          "ttlHours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 720
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "resourceLimits": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "cpu": {
+                "type": "string"
+              },
+              "memory": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "EnvironmentCreateProposal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "proposalVersion",
+          "kind",
+          "tenantId",
+          "projectId",
+          "fields",
+          "quotaAllowed",
+          "policy",
+          "approvalRequired",
+          "valid",
+          "contextHash",
+          "targetStateVersion"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "proposalVersion": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/EnvironmentCreateProposalFields"
+          },
+          "rejectedFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigurationProposalRejectedField"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "quotaAllowed": {
+            "type": "boolean"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/PolicyDecision"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "targetStateVersion": {
+            "type": "string"
+          },
+          "quotaGuidance": {
+            "$ref": "#/components/schemas/EnvironmentCreateQuotaGuidance"
+          }
+        }
+      },
+      "EnvironmentCreateProposalActionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proposal",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "proposal": {
+            "$ref": "#/components/schemas/EnvironmentCreateProposal"
+          },
+          "approvalId": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentCreateProposalActionResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "contextHash",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "approval_pending",
+              "created"
+            ]
+          },
+          "approvalId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "failure": {
+            "$ref": "#/components/schemas/EnvironmentCreateFailure"
+          }
+        }
+      },
+      "EnvironmentCreateProposalDiff": {
+        "type": "object",
+        "required": [
+          "field",
+          "reason"
+        ],
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "before": {
+            "type": "string"
+          },
+          "after": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentCreateFailure": {
+        "type": "object",
+        "required": [
+          "category",
+          "diagnosis",
+          "suggestionsLeft"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "render_error",
+              "quota_block",
+              "invalid_override",
+              "job_timeout",
+              "unknown"
+            ]
+          },
+          "diagnosis": {
+            "$ref": "#/components/schemas/AIDiagnosisResult"
+          },
+          "followUp": {
+            "$ref": "#/components/schemas/EnvironmentCreateProposal"
+          },
+          "diff": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentCreateProposalDiff"
+            }
+          },
+          "suggestionsLeft": {
+            "type": "integer"
+          }
+        }
+      },
+      "EnvironmentCreateQuotaImpact": {
+        "type": "object",
+        "required": [
+          "resource",
+          "allowed",
+          "known",
+          "explanation"
+        ],
+        "properties": {
+          "resource": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "requested": {
+            "type": "integer"
+          },
+          "allowed": {
+            "type": "boolean"
+          },
+          "known": {
+            "type": "boolean"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentCreateCostGuidance": {
+        "type": "object",
+        "required": [
+          "currentKnown",
+          "projectedKnown",
+          "explanation"
+        ],
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "currentMinorUnits": {
+            "type": "integer"
+          },
+          "currentKnown": {
+            "type": "boolean"
+          },
+          "projectedMinorUnits": {
+            "type": "integer"
+          },
+          "projectedKnown": {
+            "type": "boolean"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentCreateQuotaGuidance": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "quota",
+          "cost",
+          "dataSufficient"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "quota": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentCreateQuotaImpact"
+            }
+          },
+          "cost": {
+            "$ref": "#/components/schemas/EnvironmentCreateCostGuidance"
+          },
+          "dataSufficient": {
+            "type": "boolean"
+          }
+        }
       }
     }
   },
@@ -5151,39 +6831,201 @@
     "/auth/saml/{providerID}/login": {
       "get": {
         "summary": "Start SP-initiated tenant SAML login",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}, {"name": "tenant", "in": "query", "schema": {"type": "string"}}],
-        "responses": {"302": {"description": "Redirect to configured SAML IdP"}, "404": {"description": "Provider not configured"}}
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tenant",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to configured SAML IdP"
+          },
+          "404": {
+            "description": "Provider not configured"
+          }
+        }
       }
     },
     "/auth/saml/{providerID}/callback": {
       "get": {
         "summary": "Receive a SAML response",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
-        "responses": {"302": {"description": "Tenant-bound session redirect"}, "400": {"description": "Invalid relay state or response"}, "401": {"description": "Invalid assertion"}}
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Tenant-bound session redirect"
+          },
+          "400": {
+            "description": "Invalid relay state or response"
+          },
+          "401": {
+            "description": "Invalid assertion"
+          }
+        }
       },
       "post": {
         "summary": "Receive a SAML response via HTTP POST binding",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
-        "responses": {"302": {"description": "Tenant-bound session redirect"}, "400": {"description": "Invalid relay state or response"}, "401": {"description": "Invalid assertion"}}
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Tenant-bound session redirect"
+          },
+          "400": {
+            "description": "Invalid relay state or response"
+          },
+          "401": {
+            "description": "Invalid assertion"
+          }
+        }
       }
     },
     "/api/v1/saml/providers": {
       "get": {
         "summary": "List redacted tenant SAML providers",
-        "responses": {"200": {"description": "Redacted provider metadata"}, "403": {"description": "Tenant settings permission required"}}
+        "responses": {
+          "200": {
+            "description": "Redacted provider metadata"
+          },
+          "403": {
+            "description": "Tenant settings permission required"
+          }
+        }
       }
     },
     "/api/v1/saml/providers/{providerID}": {
       "put": {
         "summary": "Create or replace a tenant SAML provider",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SAMLProviderConfig"}}}},
-        "responses": {"200": {"description": "Redacted provider metadata"}, "400": {"description": "Invalid provider or inline signing material"}, "403": {"description": "Tenant settings permission required"}}
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SAMLProviderConfig"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redacted provider metadata"
+          },
+          "400": {
+            "description": "Invalid provider or inline signing material"
+          },
+          "403": {
+            "description": "Tenant settings permission required"
+          }
+        }
       },
       "delete": {
         "summary": "Delete a tenant SAML provider",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
-        "responses": {"204": {"description": "Provider deleted"}, "403": {"description": "Tenant settings permission required"}, "404": {"description": "Provider not found"}}
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Provider deleted"
+          },
+          "403": {
+            "description": "Tenant settings permission required"
+          },
+          "404": {
+            "description": "Provider not found"
+          }
+        }
       }
     },
     "/api/v1/oidc/providers": {
@@ -5196,36 +7038,99 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {"$ref": "#/components/schemas/OIDCProviderConfig"}
+                  "items": {
+                    "$ref": "#/components/schemas/OIDCProviderConfig"
+                  }
                 }
               }
             }
           },
-          "403": {"description": "Tenant settings permission required"}
+          "403": {
+            "description": "Tenant settings permission required"
+          }
         }
       }
     },
     "/api/v1/oidc/providers/{providerID}": {
       "put": {
         "summary": "Create or replace a tenant-scoped OIDC provider",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
-          "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OIDCProviderConfig"}}}
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OIDCProviderConfig"
+              }
+            }
+          }
         },
         "responses": {
-          "200": {"description": "Redacted provider configuration", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OIDCProviderConfig"}}}},
-          "400": {"description": "Invalid configuration or failed discovery"},
-          "403": {"description": "Tenant settings permission required"}
+          "200": {
+            "description": "Redacted provider configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OIDCProviderConfig"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid configuration or failed discovery"
+          },
+          "403": {
+            "description": "Tenant settings permission required"
+          }
         }
       },
       "delete": {
         "summary": "Delete a tenant-scoped OIDC provider",
-        "parameters": [{"name": "providerID", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "parameters": [
+          {
+            "name": "providerID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "providerID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "204": {"description": "Provider deleted"},
-          "403": {"description": "Tenant settings permission required"},
-          "404": {"description": "Provider not found"}
+          "204": {
+            "description": "Provider deleted"
+          },
+          "403": {
+            "description": "Tenant settings permission required"
+          },
+          "404": {
+            "description": "Provider not found"
+          }
         }
       }
     },
@@ -5315,6 +7220,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -5410,6 +7323,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -5613,6 +7534,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -5672,6 +7601,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "post": {
@@ -5723,6 +7660,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -5792,6 +7737,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "post": {
@@ -5846,6 +7799,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -5915,6 +7876,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -5956,6 +7925,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -6022,6 +7999,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6059,6 +8044,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -6161,6 +8154,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -6255,6 +8256,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -6365,6 +8374,54 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "in": "query",
+            "name": "project",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "owner",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "failed",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "idle",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -6389,6 +8446,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -6443,6 +8508,14 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "in": "query",
+            "name": "force",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -6484,6 +8557,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -6533,6 +8614,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6565,6 +8654,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6593,6 +8690,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -6635,6 +8740,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -6683,6 +8796,26 @@
                 "Warning"
               ]
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "enum": [
+                "Normal",
+                "Warning"
+              ],
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -6711,6 +8844,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -6755,6 +8896,14 @@
           {
             "name": "capabilityID",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "capabilityID",
             "required": true,
             "schema": {
               "type": "string"
@@ -6939,6 +9088,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -7051,6 +9208,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -7112,6 +9277,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -7144,6 +9317,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -7172,6 +9353,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -7279,6 +9468,14 @@
         {
           "name": "name",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "name",
           "required": true,
           "schema": {
             "type": "string"
@@ -7412,6 +9609,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -7556,6 +9761,14 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "in": "query",
+            "name": "force",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -7607,6 +9820,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -7772,6 +9993,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "post": {
@@ -7923,6 +10152,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -7952,11 +10189,11 @@
           "401": {
             "description": "Scoped setup session required"
           },
-          "412": {
-            "description": "Canonical public URL required"
-          },
           "409": {
             "description": "Activation transaction unavailable"
+          },
+          "412": {
+            "description": "Canonical public URL required"
           }
         }
       },
@@ -7971,6 +10208,14 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
             "required": true,
             "schema": {
               "type": "string"
@@ -8018,6 +10263,14 @@
           {
             "name": "Idempotency-Key",
             "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
             "required": true,
             "schema": {
               "type": "string"
@@ -8100,6 +10353,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "post": {
@@ -8138,6 +10399,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -8474,6 +10743,30 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "clusterId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "agentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -8553,6 +10846,31 @@
           {
             "name": "before_id",
             "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before_created_at",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "before_id",
             "schema": {
               "type": "string"
             }
@@ -8687,6 +11005,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -8732,6 +11058,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -8903,6 +11237,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -8950,6 +11292,14 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "in": "query",
+            "name": "force",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -8978,6 +11328,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -9014,6 +11372,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -9042,6 +11408,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -9172,6 +11546,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -9214,6 +11596,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -9244,6 +11634,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -9265,6 +11663,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -9295,6 +11701,14 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -9345,8 +11759,8 @@
               }
             }
           },
-          "401": {
-            "description": "Invalid token",
+          "400": {
+            "description": "Invalid payload",
             "content": {
               "application/json": {
                 "schema": {
@@ -9355,8 +11769,8 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid payload",
+          "401": {
+            "description": "Invalid token",
             "content": {
               "application/json": {
                 "schema": {
@@ -9383,8 +11797,8 @@
               }
             }
           },
-          "401": {
-            "description": "Invalid signature",
+          "400": {
+            "description": "Invalid payload",
             "content": {
               "application/json": {
                 "schema": {
@@ -9393,8 +11807,8 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid payload",
+          "401": {
+            "description": "Invalid signature",
             "content": {
               "application/json": {
                 "schema": {
@@ -10148,6 +12562,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "Stripe-Signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -10261,6 +12683,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10289,6 +12719,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10304,10 +12742,63 @@
     "/scim/v2/{tenantID}/Users/{id}": {
       "patch": {
         "summary": "Partially update or deactivate a tenant SCIM user",
-        "security": [{"bearerAuth": []}],
-        "parameters": [{"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}}, {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCIMUser"}}}},
-        "responses": {"200": {"description": "Provisioned SCIM user"}, "401": {"description": "Invalid SCIM credential"}}
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SCIMUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provisioned SCIM user"
+          },
+          "401": {
+            "description": "Invalid SCIM credential"
+          }
+        }
       },
       "put": {
         "summary": "Provision or update a tenant SCIM user",
@@ -10328,6 +12819,22 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -10380,6 +12887,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10405,6 +12928,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10417,10 +12948,63 @@
     "/scim/v2/{tenantID}/Groups/{id}": {
       "patch": {
         "summary": "Partially update a tenant SCIM group",
-        "security": [{"bearerAuth": []}],
-        "parameters": [{"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}}, {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCIMGroup"}}}},
-        "responses": {"200": {"description": "Provisioned SCIM group"}, "401": {"description": "Invalid SCIM credential"}}
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SCIMGroup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provisioned SCIM group"
+          },
+          "401": {
+            "description": "Invalid SCIM credential"
+          }
+        }
       },
       "put": {
         "summary": "Provision or update a tenant SCIM group",
@@ -10441,6 +13025,22 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -10490,6 +13090,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10525,6 +13141,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10556,6 +13188,22 @@
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
             "required": true,
             "schema": {
               "type": "string"
@@ -10598,6 +13246,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10621,12 +13285,53 @@
       "post": {
         "summary": "Cancel a pending tenant approval request",
         "parameters": [
-          {"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}},
-          {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": {"description": "Canceled request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ApprovalRequest"}}}},
-          "409": {"description": "Requester or state conflict"}
+          "200": {
+            "description": "Canceled request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalRequest"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Requester or state conflict"
+          }
         }
       }
     },
@@ -10637,6 +13342,14 @@
           {
             "name": "tenantID",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
             "required": true,
             "schema": {
               "type": "string"
@@ -10672,6 +13385,22 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "userID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -10697,6 +13426,22 @@
           {
             "name": "userID",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "userID",
             "required": true,
             "schema": {
               "type": "string"
@@ -10740,6 +13485,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -10943,6 +13696,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -11002,6 +13763,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "post": {
@@ -11053,6 +13822,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -11122,6 +13899,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "post": {
@@ -11176,6 +13961,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -11245,6 +14038,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -11286,6 +14087,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -11352,6 +14161,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -11389,6 +14206,14 @@
         {
           "name": "id",
           "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "in": "path",
+          "name": "id",
           "required": true,
           "schema": {
             "type": "string"
@@ -11491,6 +14316,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -11568,6 +14401,26 @@
                 "Normal",
                 "Warning"
               ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "enum": [
+                "Normal",
+                "Warning"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -11772,6 +14625,649 @@
           },
           "403": {
             "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/environments/{id}/diagnosis": {
+      "post": {
+        "operationId": "startEnvironmentDiagnosis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisStartRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            },
+            "description": "Deterministic degraded fallback when AI is disabled"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            },
+            "description": "Diagnosis queued"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Environment not found"
+          },
+          "503": {
+            "description": "Diagnosis unavailable"
+          }
+        },
+        "summary": "Start an asynchronous read-only environment diagnosis"
+      }
+    },
+    "/api/v1/environments/{id}/diagnosis/{runID}": {
+      "get": {
+        "operationId": "getEnvironmentDiagnosis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "runID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            },
+            "description": "Diagnosis run"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Diagnosis run not found"
+          },
+          "503": {
+            "description": "Diagnosis unavailable"
+          }
+        },
+        "summary": "Read an environment diagnosis run"
+      }
+    },
+    "/api/v1/environments/{id}/diagnosis/{runID}/feedback": {
+      "post": {
+        "operationId": "submitEnvironmentDiagnosisFeedback",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "runID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIFeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIFeedback"
+                }
+              }
+            },
+            "description": "Saved feedback"
+          },
+          "400": {
+            "description": "Invalid feedback"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Diagnosis run not found"
+          },
+          "503": {
+            "description": "Feedback unavailable"
+          }
+        },
+        "summary": "Submit bounded feedback for an environment diagnosis"
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/configuration-proposal": {
+      "post": {
+        "operationId": "previewBootstrapConfigProposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BootstrapConfigProposalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BootstrapConfigProposal"
+                }
+              }
+            },
+            "description": "Bootstrap proposal"
+          },
+          "400": {
+            "description": "Invalid proposal"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "Proposal unavailable"
+          }
+        },
+        "summary": "Preview typed bootstrap configuration proposal"
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/diagnosis": {
+      "post": {
+        "operationId": "startBootstrapDiagnosis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiagnosisStartRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            },
+            "description": "Deterministic degraded fallback"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            },
+            "description": "Assistant queued"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Bootstrap session not found"
+          },
+          "503": {
+            "description": "Assistant unavailable"
+          }
+        },
+        "summary": "Start a read-only bootstrap troubleshooting assistant"
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/diagnosis/{runID}": {
+      "get": {
+        "operationId": "getBootstrapDiagnosis",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "runID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            },
+            "description": "Bootstrap diagnosis run"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Diagnosis run not found"
+          },
+          "503": {
+            "description": "Assistant unavailable"
+          }
+        },
+        "summary": "Read a bootstrap troubleshooting run"
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/repo-profile": {
+      "get": {
+        "operationId": "getBootstrapRepoProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepoProfile"
+                }
+              }
+            },
+            "description": "Repository profile"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "Repository scan unavailable"
+          }
+        },
+        "summary": "Get safe bootstrap repository profile"
+      }
+    },
+    "/api/v1/projects/{id}/configuration-proposals/actions": {
+      "post": {
+        "operationId": "executeConfigurationProposalAction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigurationProposalActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationProposalActionResult"
+                }
+              }
+            },
+            "description": "Idempotent action result"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationProposalActionResult"
+                }
+              }
+            },
+            "description": "Action queued"
+          },
+          "400": {
+            "description": "Unsupported action"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Stale proposal or invalid current state"
+          },
+          "503": {
+            "description": "Action executor unavailable"
+          }
+        },
+        "summary": "Execute an approved allowlisted AI configuration action"
+      }
+    },
+    "/api/v1/projects/{id}/configuration-proposals/preview": {
+      "post": {
+        "operationId": "previewConfigurationProposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfigurationProposalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationProposal"
+                }
+              }
+            },
+            "description": "Typed proposal preview"
+          },
+          "400": {
+            "description": "Invalid or unsupported intent"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Project not found"
+          },
+          "503": {
+            "description": "Proposal preview unavailable"
+          }
+        },
+        "summary": "Preview a typed configuration proposal without applying it"
+      }
+    },
+    "/api/v1/projects/{id}/finops/explanation": {
+      "get": {
+        "operationId": "getProjectFinOpsExplanation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIFinOpsExplanation"
+                }
+              }
+            },
+            "description": "FinOps explanation"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "FinOps explanation unavailable"
+          }
+        },
+        "summary": "Get deterministic FinOps explanation"
+      }
+    },
+    "/api/v1/tenants/{tenantID}/ai-policy": {
+      "get": {
+        "operationId": "getTenantAIPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantAIPolicy"
+                }
+              }
+            },
+            "description": "Tenant AI policy"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Read tenant AI privacy policy"
+      },
+      "put": {
+        "operationId": "putTenantAIPolicy",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenantID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TenantAIPolicy"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantAIPolicy"
+                }
+              }
+            },
+            "description": "Updated tenant AI policy"
+          },
+          "400": {
+            "description": "Invalid policy or endpoint"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Update tenant AI privacy policy without provider secrets"
+      }
+    },
+    "/api/v1/projects/{id}/environment-proposals/preview": {
+      "post": {
+        "summary": "Preview typed environment creation proposal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentCreateProposalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Environment proposal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentCreateProposal"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid proposal"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/environment-proposals/actions": {
+      "post": {
+        "summary": "Submit approved environment creation proposal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnvironmentCreateProposalActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Approval pending or environment accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentCreateProposalActionResult"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale or unapproved proposal"
           }
         }
       }
