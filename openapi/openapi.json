@@ -2218,6 +2218,12 @@
           "name": {
             "type": "string"
           },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
           "selector": {
             "type": "object",
             "additionalProperties": {
@@ -2226,7 +2232,28 @@
           },
           "maintenanceWindow": {
             "type": "string"
+          },
+          "maintenanceWindows": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/FleetMaintenanceWindow"}
           }
+        }
+      },
+      "FleetMaintenanceWindow": {
+        "type": "object",
+        "required": ["weekday", "startMinuteUtc", "durationMinutes"],
+        "properties": {
+          "weekday": {"type": "integer", "minimum": 0, "maximum": 6},
+          "startMinuteUtc": {"type": "integer", "minimum": 0, "maximum": 1439},
+          "durationMinutes": {"type": "integer", "minimum": 1}
+        }
+      },
+      "SignedArtifactSet": {
+        "type": "object",
+        "required": ["reference", "digest", "signature", "keyId"],
+        "properties": {
+          "reference": {"type": "string"}, "digest": {"type": "string"},
+          "signature": {"type": "string"}, "keyId": {"type": "string"}
         }
       },
       "UpgradeWave": {
@@ -2256,12 +2283,27 @@
           "previousSignedSet": {
             "type": "string"
           },
+          "signedArtifact": {"$ref": "#/components/schemas/SignedArtifactSet"},
+          "agentVersion": {"type": "string"},
+          "runnerVersion": {"type": "string"},
+          "status": {"type": "string"},
           "paused": {
             "type": "boolean"
           },
           "rolledBack": {
             "type": "boolean"
           }
+        }
+      },
+      "WavePlan": {
+        "type": "object",
+        "required": ["waveId", "tenantId", "clusterIds", "maintenanceWindowOpen", "healthGatePassed", "blocked"],
+        "properties": {
+          "waveId": {"type": "string"}, "tenantId": {"type": "string"},
+          "clusterIds": {"type": "array", "items": {"type": "string"}},
+          "artifactSet": {"type": "string"}, "agentVersion": {"type": "string"}, "runnerVersion": {"type": "string"},
+          "maintenanceWindowOpen": {"type": "boolean"}, "healthGatePassed": {"type": "boolean"},
+          "blocked": {"type": "boolean"}, "reason": {"type": "string"}
         }
       },
       "BackupManifest": {

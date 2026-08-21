@@ -75,6 +75,18 @@ message. Optional `warn` or `deny` enforcement is evaluated for new resource
 creation only; it never removes or mutates existing environments. Notifications
 are metadata-only and must remain tenant-scoped.
 
+## Fleet groups and upgrade waves
+
+Fleet groups are tenant-scoped selector sets. Their optional maintenance
+windows are expressed as UTC weekday/minute intervals, making rollout decisions
+deterministic across control-plane replicas. Waves carry only opaque cluster
+IDs, compatibility versions and signed artifact references; credential bytes
+are never part of wave state. `PlanWaves` sorts wave IDs and claims selected
+clusters in one planning pass, so concurrent waves cannot select the same
+cluster. A failed health gate or closed maintenance window blocks the wave.
+Pause/resume is represented by the wave state, while rollback selects the
+previous signed set and does not delete or mutate the source cluster.
+
 ## Policy evaluation
 
 Policy bundles are versioned and deterministic. Built-in declarative rules run
