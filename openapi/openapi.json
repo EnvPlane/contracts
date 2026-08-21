@@ -10477,6 +10477,19 @@
         }
       }
     },
+    "/api/v1/tenants/{tenantID}/approvals/{id}/cancel": {
+      "post": {
+        "summary": "Cancel a pending tenant approval request",
+        "parameters": [
+          {"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Canceled request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ApprovalRequest"}}}},
+          "409": {"description": "Requester or state conflict"}
+        }
+      }
+    },
     "/api/v1/tenants/{tenantID}/memberships": {
       "get": {
         "summary": "List tenant memberships",
