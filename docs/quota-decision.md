@@ -13,6 +13,11 @@ reads billing credentials.
   rejected. Arithmetic overflow is treated as exhausted, never as allowed.
 - A missing limit key is explicitly unlimited.
 
+The Free bundle enforces 3 operator memberships, 3 projects, 1 managed
+cluster, 2 active environments, 72 hours maximum TTL, and 168 hours (7 days)
+maximum pin duration. Reservations are tenant-scoped and must be released on
+failed writes; deletion and read paths do not consume quota.
+
 The canonical `QuotaError` fields are `code`, `feature`, `limit`, `current`,
 `requested`, `plan`, `upgrade_url`, and `request_id`. None may contain payment
 instrument data or provider credentials. The legacy generic `Error` response
