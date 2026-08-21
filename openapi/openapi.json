@@ -208,6 +208,52 @@
           }
         }
       },
+      "QuotaError": {
+        "type": "object",
+        "required": [
+          "code",
+          "feature",
+          "limit",
+          "current",
+          "requested",
+          "plan",
+          "upgrade_url",
+          "request_id"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "quota_feature_disabled",
+              "quota_exhausted"
+            ]
+          },
+          "feature": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "string"
+          },
+          "current": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requested": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "plan": {
+            "type": "string"
+          },
+          "upgrade_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
       "EmptyObject": {
         "type": "object",
         "additionalProperties": true

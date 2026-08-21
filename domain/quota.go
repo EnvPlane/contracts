@@ -21,13 +21,13 @@ type QuotaDecisionInput struct {
 
 type QuotaError struct {
 	Code       string `json:"code"`
-	Feature    string `json:"feature,omitempty"`
-	Limit      string `json:"limit,omitempty"`
-	Current    int64  `json:"current,omitempty"`
-	Requested  int64  `json:"requested,omitempty"`
-	Plan       string `json:"plan,omitempty"`
-	UpgradeURL string `json:"upgrade_url,omitempty"`
-	RequestID  string `json:"request_id,omitempty"`
+	Feature    string `json:"feature"`
+	Limit      string `json:"limit"`
+	Current    int64  `json:"current"`
+	Requested  int64  `json:"requested"`
+	Plan       string `json:"plan"`
+	UpgradeURL string `json:"upgrade_url"`
+	RequestID  string `json:"request_id"`
 }
 
 func (e QuotaError) Error() string { return fmt.Sprintf("%s: %s", e.Code, e.Limit) }
