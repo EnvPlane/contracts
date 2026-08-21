@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "9fe23e769ad409bc94a7e3e1c855683ec32957e325df9930886d9d087df521c4"
+const CanonicalOpenAPISHA256 = "3f0528fc0810834dacb2889baefd42e12e884f558e6c826872539a3e47a9a296"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -46,7 +46,6 @@ var CanonicalOperations = []string{
 	"GET /api/v1/environments/{id}/diagnosis/{runID}",
 	"GET /api/v1/environments/{id}/events",
 	"GET /api/v1/environments/{id}/flux-status",
-	"GET /api/v1/environments/{id}/kubernetes-events",
 	"GET /api/v1/health",
 	"GET /api/v1/jobs",
 	"GET /api/v1/jobs/{id}",
@@ -62,12 +61,8 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects",
 	"GET /api/v1/projects/{id}",
 	"GET /api/v1/projects/{id}/bootstrap-session",
-	"GET /api/v1/projects/{id}/bootstrap-session/agent-status",
 	"GET /api/v1/projects/{id}/bootstrap-session/diagnosis/{runID}",
-	"GET /api/v1/projects/{id}/bootstrap-session/manifest-templates",
 	"GET /api/v1/projects/{id}/bootstrap-session/repo-profile",
-	"GET /api/v1/projects/{id}/bootstrap-session/runner-status",
-	"GET /api/v1/projects/{id}/config",
 	"GET /api/v1/projects/{id}/cost-policy",
 	"GET /api/v1/projects/{id}/environments",
 	"GET /api/v1/projects/{id}/finops/explanation",
@@ -91,7 +86,6 @@ var CanonicalOperations = []string{
 	"GET /auth/github/login",
 	"GET /auth/gitlab/callback",
 	"GET /auth/gitlab/login",
-	"GET /auth/logout",
 	"GET /auth/oidc/callback",
 	"GET /auth/oidc/login",
 	"GET /auth/saml/{providerID}/callback",
@@ -151,21 +145,12 @@ var CanonicalOperations = []string{
 	"POST /api/v1/jobs",
 	"POST /api/v1/jobs/commands",
 	"POST /api/v1/jobs/{id}/retry",
-	"POST /api/v1/products",
 	"POST /api/v1/products/validate",
 	"POST /api/v1/projects/{id}/bootstrap-session",
-	"POST /api/v1/projects/{id}/bootstrap-session/agent-token",
 	"POST /api/v1/projects/{id}/bootstrap-session/compile",
 	"POST /api/v1/projects/{id}/bootstrap-session/configuration-proposal",
 	"POST /api/v1/projects/{id}/bootstrap-session/diagnosis",
-	"POST /api/v1/projects/{id}/bootstrap-session/executor-reconciliation/retry",
-	"POST /api/v1/projects/{id}/bootstrap-session/helm-direct/preflight",
-	"POST /api/v1/projects/{id}/bootstrap-session/resource-scan/start",
-	"POST /api/v1/projects/{id}/bootstrap-session/runner-deploy",
-	"POST /api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions",
-	"POST /api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate",
 	"POST /api/v1/projects/{id}/bootstrap-session/scm-offline",
-	"POST /api/v1/projects/{id}/bootstrap-session/simulate-pr",
 	"POST /api/v1/projects/{id}/bootstrap-session/validate-scm",
 	"POST /api/v1/projects/{id}/configuration-proposals/actions",
 	"POST /api/v1/projects/{id}/configuration-proposals/preview",

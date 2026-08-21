@@ -7072,13 +7072,6 @@
       }
     },
     "/auth/logout": {
-      "get": {
-        "responses": {
-          "302": {
-            "description": "Logout redirect"
-          }
-        }
-      },
       "post": {
         "responses": {
           "204": {
@@ -9069,46 +9062,6 @@
                   "items": {
                     "$ref": "#/components/schemas/EmptyObject"
                   }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Validate product payload",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmptyObject"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Validation result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EmptyObject"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -12885,54 +12838,7 @@
             "type": "string"
           }
         }
-      ],
-      "get": {
-        "summary": "Get generated bootstrap manifest templates for project",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Bootstrap manifest templates",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "projectId": {
-                      "type": "string"
-                    },
-                    "bootstrapSessionId": {
-                      "type": "string"
-                    },
-                    "manifestTemplates": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/BootstrapManifestTemplate"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Project or session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+      ]
     },
     "/api/v1/projects/{id}/bootstrap-session/compile": {
       "parameters": [
@@ -12999,60 +12905,7 @@
             "type": "string"
           }
         }
-      ],
-      "post": {
-        "summary": "Simulate PR creation and return validation and generated templates",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BootstrapSessionSimulatePRRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "PR simulation result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BootstrapSessionSimulatePRResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Project or session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+      ]
     },
     "/api/v1/projects/{id}/bootstrap-session/validate-scm": {
       "parameters": [
@@ -13122,60 +12975,7 @@
             "type": "string"
           }
         }
-      ],
-      "post": {
-        "summary": "Generate one-time bootstrap agent registration token",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmptyObject"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Bootstrap agent token response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AgentRegistrationTokenResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Project or session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+      ]
     },
     "/api/v1/projects/{id}/bootstrap-session/agent-status": {
       "parameters": [
@@ -13187,40 +12987,7 @@
             "type": "string"
           }
         }
-      ],
-      "get": {
-        "summary": "Get bootstrap agent connection and scan status",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Bootstrap agent status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BootstrapAgentStatusResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Project or session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+      ]
     },
     "/api/v1/projects/{id}/bootstrap-session/resource-scan/start": {
       "parameters": [
@@ -13232,50 +12999,7 @@
             "type": "string"
           }
         }
-      ],
-      "post": {
-        "summary": "Schedule bootstrap resource scan task",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Resource scan task scheduled",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BootstrapSession"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Project or session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
+      ]
     },
     "/api/v1/projects/{id}/environments": {
       "get": {
@@ -13482,170 +13206,6 @@
         }
       }
     },
-    "/api/v1/environments/{id}/kubernetes-events": {
-      "get": {
-        "summary": "List Kubernetes events for environment",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "type",
-            "required": false,
-            "schema": {
-              "enum": [
-                "Normal",
-                "Warning"
-              ],
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Kubernetes events",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EventsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/bootstrap-session/runner-status": {
-      "get": {
-        "summary": "Compatibility route GET /api/projects/{id}/bootstrap-session/runner-status",
-        "description": "Canonical route registered by the envplane control plane.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Invalid request"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/config": {
-      "get": {
-        "summary": "Compatibility route GET /api/projects/{id}/config",
-        "description": "Canonical route registered by the envplane control plane.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Invalid request"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/bootstrap-session/helm-direct/preflight": {
-      "post": {
-        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/helm-direct/preflight",
-        "description": "Canonical route registered by the envplane control plane.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Invalid request"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/bootstrap-session/runner-deploy": {
-      "post": {
-        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deploy",
-        "description": "Canonical route registered by the envplane control plane.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Invalid request"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions": {
-      "post": {
-        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions",
-        "description": "Canonical route registered by the envplane control plane.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Invalid request"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate": {
-      "post": {
-        "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/runner-deployment-instructions/rotate",
-        "description": "Canonical route registered by the envplane control plane.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Invalid request"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          }
-        }
-      }
-    },
     "/api/v1/projects/{id}/bootstrap-session/scm-offline": {
       "post": {
         "summary": "Compatibility route POST /api/projects/{id}/bootstrap-session/scm-offline",
@@ -13662,37 +13222,6 @@
           },
           "403": {
             "description": "Permission denied"
-          }
-        }
-      }
-    },
-    "/api/v1/projects/{id}/bootstrap-session/executor-reconciliation/retry": {
-      "post": {
-        "summary": "Retry failed same-cluster project executor reconciliation",
-        "description": "Queues a retry only for a failed Draft bootstrap operation. The response never contains bootstrap or registry credentials.",
-        "security": [
-          {
-            "apiToken": []
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Reconciliation retry queued"
-          },
-          "400": {
-            "description": "Reconciliation is not retryable"
-          },
-          "401": {
-            "description": "Authentication required"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "404": {
-            "description": "Project or bootstrap session not found"
-          },
-          "503": {
-            "description": "Bootstrap session service unavailable"
           }
         }
       }
