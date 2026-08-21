@@ -21,6 +21,25 @@ Sequencing:
 3. Future major release: only after downstream repositories have migrated, add
    a versioned module/API schema and announce removal of legacy machine names.
 
+EP-COM-039 starts the low-risk environment-variable slice. The control plane
+reads these aliases with canonical-over-legacy precedence:
+
+| Canonical | Legacy | Scope |
+| --- | --- | --- |
+| `ENVPLANE_ADDR` | `ENVPILOT_ADDR` | listen address |
+| `ENVPLANE_DATA_DIR` | `ENVPILOT_DATA_DIR` | local data path |
+| `ENVPLANE_GITOPS_DIR` | `ENVPILOT_GITOPS_DIR` | local GitOps path |
+| `ENVPLANE_DOMAIN_ROOT` | `ENVPILOT_DOMAIN_ROOT` | preview domain root |
+| `ENVPLANE_METRICS_ADDR` | `ENVPILOT_METRICS_ADDR` | metrics listener |
+| `ENVPLANE_DEPLOYMENT_BACKEND` | `ENVPILOT_DEPLOYMENT_BACKEND` | backend selector |
+
+The Helm chart emits only the canonical names. When a legacy name is read, the
+control plane records a name-only diagnostic and increments
+`envplane_legacy_environment_variable_uses_total`. If both names are set, the
+diagnostic records only the two names and the fixed canonical precedence; no
+environment value is logged or exported. Credential-bearing variables and
+module, OCI, Kubernetes, persisted, and queue identifiers remain unchanged.
+
 The generated Go SDK embeds the SHA-256 of `openapi/openapi.json`; tests reject
 stale generated output. Domain JSON round-trip tests remain the guard against
 accidental field or enum changes.
