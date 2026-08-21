@@ -47,5 +47,16 @@ jobs:
           set -euo pipefail
           git config user.name "envplane automation"
           git config user.email "automation@envplane.dev"
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            git fetch origin "refs/tags/$TAG:refs/tags/$TAG"
+            existing_commit="$(git rev-parse "$TAG^{commit}")"
+            current_commit="$(git rev-parse HEAD)"
+            if [[ "$existing_commit" != "$current_commit" ]]; then
+              echo "tag $TAG already exists on a different commit" >&2
+              exit 1
+            fi
+            echo "tag $TAG already points at HEAD; nothing to publish"
+            exit 0
+          fi
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
