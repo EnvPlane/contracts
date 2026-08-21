@@ -56,6 +56,7 @@ type Environment struct {
 	Idle                        bool                       `json:"idle,omitempty"`
 	TTLHours                    int                        `json:"ttlHours"`
 	CostEstimateDay             string                     `json:"costEstimateDay,omitempty"`
+	CostEstimate                *CostEstimate              `json:"costEstimate,omitempty"`
 	IdleSince                   *time.Time                 `json:"idleSince,omitempty"`
 	LastActivityAt              *time.Time                 `json:"lastActivityAt,omitempty"`
 	ExpiresAt                   *time.Time                 `json:"expiresAt,omitempty"`

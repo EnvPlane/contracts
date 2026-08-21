@@ -794,6 +794,9 @@
           "costEstimateDay": {
             "type": "string"
           },
+          "costEstimate": {
+            "$ref": "#/components/schemas/CostEstimate"
+          },
           "source": {
             "type": "object",
             "properties": {
@@ -2048,6 +2051,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "cost": {
+            "$ref": "#/components/schemas/Money"
+          },
           "priceKnown": {
             "type": "boolean"
           },
@@ -2059,6 +2065,26 @@
             "type": "string",
             "format": "date-time"
           }
+        }
+      },
+      "Money": {
+        "type": "object",
+        "required": ["currency", "minorUnits", "known"],
+        "properties": {
+          "currency": {"type": "string"},
+          "minorUnits": {"type": "integer", "format": "int64"},
+          "known": {"type": "boolean"}
+        }
+      },
+      "CostEstimate": {
+        "type": "object",
+        "required": ["amount", "period", "periodStart", "periodEnd", "source"],
+        "properties": {
+          "amount": {"$ref": "#/components/schemas/Money"},
+          "period": {"type": "string"},
+          "periodStart": {"type": "string", "format": "date-time"},
+          "periodEnd": {"type": "string", "format": "date-time"},
+          "source": {"type": "string"}
         }
       },
       "BudgetForecast": {

@@ -11,6 +11,8 @@ type ResourceUsageSample struct {
 	CPUCoreHours   float64   `json:"cpuCoreHours"`
 	MemoryGiBHours float64   `json:"memoryGiBHours"`
 	OccurredAt     time.Time `json:"occurredAt"`
+	PeriodStart    time.Time `json:"periodStart,omitempty"`
+	PeriodEnd      time.Time `json:"periodEnd,omitempty"`
 }
 
 type ResourcePriceTable struct {
@@ -29,7 +31,22 @@ type CostAllocation struct {
 	CPUCoreHours   float64   `json:"cpuCoreHours"`
 	MemoryGiBHours float64   `json:"memoryGiBHours"`
 	AmountCents    int64     `json:"amountCents"`
+	Cost           Money     `json:"cost"`
 	PriceKnown     bool      `json:"priceKnown"`
 	PeriodStart    time.Time `json:"periodStart"`
 	PeriodEnd      time.Time `json:"periodEnd"`
+}
+
+type Money struct {
+	Currency   string `json:"currency"`
+	MinorUnits int64  `json:"minorUnits"`
+	Known      bool   `json:"known"`
+}
+
+type CostEstimate struct {
+	Amount      Money     `json:"amount"`
+	Period      string    `json:"period"`
+	PeriodStart time.Time `json:"periodStart"`
+	PeriodEnd   time.Time `json:"periodEnd"`
+	Source      string    `json:"source"`
 }

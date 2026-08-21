@@ -53,6 +53,16 @@ explicitly allowlisted as compatibility aliases for current callers. Unknown
 keys are rejected. JSON maps cannot contain duplicate keys by representation;
 duplicate plan IDs are rejected as well.
 
+## FinOps allocation
+
+FinOps ingestion is provider-neutral and tenant-scoped. Kubernetes CPU
+core-hours and memory GiB-hours are allocated with an explicit currency and
+minor-unit amount over an explicit UTC period. A snapshot ID is idempotent and
+cannot be counted twice for one tenant. Missing or incomplete prices produce
+`known: false`; the result is an estimate, not a cloud invoice. The legacy
+`costEstimateDay` string remains a presentation compatibility field while
+structured `costEstimate` is canonical.
+
 ## Policy evaluation
 
 Policy bundles are versioned and deterministic. Built-in declarative rules run
