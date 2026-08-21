@@ -1932,6 +1932,26 @@
           }
         }
       },
+      "PolicyRule": {
+        "type": "object",
+        "required": ["id", "action", "check", "effect", "explanation"],
+        "properties": {
+          "id": {"type": "string"},
+          "action": {"type": "string"},
+          "check": {"type": "string"},
+          "effect": {"type": "string", "enum": ["allow", "deny", "warn"]},
+          "explanation": {"type": "string"}
+        }
+      },
+      "PolicyBundle": {
+        "type": "object",
+        "required": ["schemaVersion", "bundleVersion", "rules"],
+        "properties": {
+          "schemaVersion": {"type": "string"},
+          "bundleVersion": {"type": "string"},
+          "rules": {"type": "array", "items": {"$ref": "#/components/schemas/PolicyRule"}}
+        }
+      },
       "ApprovalRequest": {
         "type": "object",
         "required": [

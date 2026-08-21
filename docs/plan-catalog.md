@@ -52,3 +52,12 @@ domain package. Existing short feature names and `max*` limit names remain
 explicitly allowlisted as compatibility aliases for current callers. Unknown
 keys are rejected. JSON maps cannot contain duplicate keys by representation;
 duplicate plan IDs are rejected as well.
+
+## Policy evaluation
+
+Policy bundles are versioned and deterministic. Built-in declarative rules run
+after authentication and quota checks and before resource side effects for
+environment creation and cluster onboarding. Denials include stable rule IDs,
+the bundle version, and a safe explanation; denials are audit-recorded without
+request payloads. Create evaluation failures are fail-closed. Cleanup/recovery
+may fail open with a warning so cleanup cannot strand resources.
