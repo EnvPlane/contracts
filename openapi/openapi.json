@@ -6833,21 +6833,6 @@
         "summary": "Start SP-initiated tenant SAML login",
         "parameters": [
           {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "tenant",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "providerID",
             "required": true,
@@ -6878,14 +6863,6 @@
         "summary": "Receive a SAML response",
         "parameters": [
           {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "providerID",
             "required": true,
@@ -6909,14 +6886,6 @@
       "post": {
         "summary": "Receive a SAML response via HTTP POST binding",
         "parameters": [
-          {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "providerID",
@@ -6957,14 +6926,6 @@
         "summary": "Create or replace a tenant SAML provider",
         "parameters": [
           {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "providerID",
             "required": true,
@@ -6998,14 +6959,6 @@
       "delete": {
         "summary": "Delete a tenant SAML provider",
         "parameters": [
-          {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "providerID",
@@ -7056,14 +7009,6 @@
         "summary": "Create or replace a tenant-scoped OIDC provider",
         "parameters": [
           {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "providerID",
             "required": true,
@@ -7104,14 +7049,6 @@
       "delete": {
         "summary": "Delete a tenant-scoped OIDC provider",
         "parameters": [
-          {
-            "name": "providerID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "providerID",
@@ -7218,14 +7155,6 @@
     "/api/projects/{id}": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -7320,14 +7249,6 @@
     },
     "/api/projects/{id}/bootstrap-session": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -7528,14 +7449,6 @@
     "/api/projects/{id}/bootstrap-session/manifest-templates": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -7595,14 +7508,6 @@
     "/api/projects/{id}/bootstrap-session/compile": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -7657,14 +7562,6 @@
     },
     "/api/projects/{id}/bootstrap-session/simulate-pr": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -7731,14 +7628,6 @@
     "/api/projects/{id}/bootstrap-session/validate-scm": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -7796,14 +7685,6 @@
     },
     "/api/projects/{id}/bootstrap-session/agent-token": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -7870,14 +7751,6 @@
     "/api/projects/{id}/bootstrap-session/agent-status": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -7922,14 +7795,6 @@
     },
     "/api/projects/{id}/bootstrap-session/resource-scan/start": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -7993,14 +7858,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -8041,14 +7898,6 @@
     },
     "/api/projects/{id}/hybrid-config": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -8148,14 +7997,6 @@
     "/api/projects/{id}/cost-policy": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -8254,14 +8095,6 @@
     "/api/projects/{id}/runtime-bundle": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -8327,54 +8160,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "project",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "mode",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "failed",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "idle",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
           {
             "in": "query",
             "name": "project",
@@ -8444,14 +8229,6 @@
     "/api/environments/{id}": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -8502,14 +8279,6 @@
         ],
         "parameters": [
           {
-            "name": "force",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "in": "query",
             "name": "force",
             "required": false,
@@ -8554,14 +8323,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -8608,14 +8369,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -8648,14 +8401,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -8687,14 +8432,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -8738,14 +8475,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -8777,26 +8506,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "Normal",
-                "Warning"
-              ]
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -8842,14 +8551,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -8893,14 +8594,6 @@
       "get": {
         "summary": "Read one enterprise capability",
         "parameters": [
-          {
-            "name": "capabilityID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "capabilityID",
@@ -9082,14 +8775,6 @@
     "/api/v1/remote-clusters/{id}": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -9202,14 +8887,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -9271,14 +8948,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -9311,14 +8980,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -9350,14 +9011,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -9465,14 +9118,6 @@
     },
     "/api/v1/products/{name}": {
       "parameters": [
-        {
-          "name": "name",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "name",
@@ -9606,14 +9251,6 @@
     },
     "/api/v1/projects/{id}": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -9755,14 +9392,6 @@
         ],
         "parameters": [
           {
-            "name": "force",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "in": "query",
             "name": "force",
             "required": false,
@@ -9817,14 +9446,6 @@
     },
     "/api/v1/projects/{id}/hybrid-config": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -9987,14 +9608,6 @@
     "/api/v1/projects/{id}/runner-config": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -10146,14 +9759,6 @@
         "description": "Initial setup requires a scoped setup session; subsequent updates require settings.write. Effective interactive authentication remains disabled until a later runtime activation release.",
         "parameters": [
           {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "header",
             "name": "Idempotency-Key",
             "required": true,
@@ -10206,14 +9811,6 @@
         ],
         "parameters": [
           {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "header",
             "name": "Idempotency-Key",
             "required": true,
@@ -10260,14 +9857,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "header",
             "name": "Idempotency-Key",
@@ -10347,14 +9936,6 @@
     "/api/v1/settings/secret-refs/{id}/validate": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -10396,14 +9977,6 @@
     },
     "/api/v1/settings/clusters/{id}/health": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -10721,30 +10294,6 @@
         ],
         "parameters": [
           {
-            "name": "projectId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "clusterId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "agentId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "query",
             "name": "projectId",
             "required": true,
@@ -10825,31 +10374,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200,
-              "default": 50
-            }
-          },
-          {
-            "name": "before_created_at",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "before_id",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "query",
             "name": "limit",
@@ -10999,14 +10523,6 @@
     "/api/v1/jobs/{id}": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -11055,14 +10571,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -11231,14 +10739,6 @@
     "/api/v1/environments/{id}": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -11286,14 +10786,6 @@
         ],
         "parameters": [
           {
-            "name": "force",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
             "in": "query",
             "name": "force",
             "required": false,
@@ -11325,14 +10817,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -11366,14 +10850,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -11405,14 +10881,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -11540,14 +11008,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -11590,14 +11050,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -11628,14 +11080,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -11660,14 +11104,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -11698,14 +11134,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "id",
@@ -12556,14 +11984,6 @@
         "summary": "Accept a Stripe billing webhook",
         "parameters": [
           {
-            "name": "Stripe-Signature",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "header",
             "name": "Stripe-Signature",
             "required": true,
@@ -12677,14 +12097,6 @@
         "summary": "Rotate the tenant SCIM bearer credential",
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -12713,14 +12125,6 @@
         ],
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -12748,22 +12152,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -12808,22 +12196,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -12873,22 +12245,6 @@
         ],
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -12922,14 +12278,6 @@
         ],
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -12954,22 +12302,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -13014,22 +12346,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -13076,22 +12392,6 @@
         "summary": "Pause a tenant job pending an approval",
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -13127,22 +12427,6 @@
         "summary": "Inspect a tenant approval request",
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -13177,22 +12461,6 @@
       "post": {
         "summary": "Approve and resume a tenant job",
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -13232,22 +12500,6 @@
         "summary": "Reject a tenant approval request",
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -13285,22 +12537,6 @@
       "post": {
         "summary": "Cancel a pending tenant approval request",
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -13340,14 +12576,6 @@
         "summary": "List tenant memberships",
         "parameters": [
           {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "tenantID",
             "required": true,
@@ -13370,22 +12598,6 @@
       "put": {
         "summary": "Create or update tenant membership",
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "userID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -13415,22 +12627,6 @@
       "delete": {
         "summary": "Delete tenant membership",
         "parameters": [
-          {
-            "name": "tenantID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "userID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "in": "path",
             "name": "tenantID",
@@ -13482,14 +12678,6 @@
     },
     "/api/v1/projects/{id}/bootstrap-session": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -13690,14 +12878,6 @@
     "/api/v1/projects/{id}/bootstrap-session/manifest-templates": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -13757,14 +12937,6 @@
     "/api/v1/projects/{id}/bootstrap-session/compile": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -13819,14 +12991,6 @@
     },
     "/api/v1/projects/{id}/bootstrap-session/simulate-pr": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -13893,14 +13057,6 @@
     "/api/v1/projects/{id}/bootstrap-session/validate-scm": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -13958,14 +13114,6 @@
     },
     "/api/v1/projects/{id}/bootstrap-session/agent-token": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -14032,14 +13180,6 @@
     "/api/v1/projects/{id}/bootstrap-session/agent-status": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -14084,14 +13224,6 @@
     },
     "/api/v1/projects/{id}/bootstrap-session/resource-scan/start": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -14155,14 +13287,6 @@
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "in": "path",
             "name": "id",
             "required": true,
@@ -14203,14 +13327,6 @@
     },
     "/api/v1/projects/{id}/cost-policy": {
       "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "in": "path",
           "name": "id",
@@ -14310,14 +13426,6 @@
     "/api/v1/projects/{id}/runtime-bundle": {
       "parameters": [
         {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "in": "path",
           "name": "id",
           "required": true,
@@ -14383,26 +13491,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "Normal",
-                "Warning"
-              ]
-            }
-          },
           {
             "in": "path",
             "name": "id",
