@@ -56,17 +56,23 @@ scan_root() {
   local root="$1"
   test -d "$root"
   local identifiers
-  identifiers="$(rg --no-heading --no-filename --only-matching --replace '$0' \
-    --glob '!.git/**' --glob '!node_modules/**' --glob '!dist/**' --glob '!build/**' --glob '!vendor/**' \
-    -e 'ENVPLANE_[A-Z0-9_]+' \
-    -e 'github\.com/envplane/[A-Za-z0-9._/-]+' \
-    -e 'ghcr\.io/envplane/[A-Za-z0-9._/-]+' \
-    -e 'envplane\.io/[A-Za-z0-9._/-]+' \
-    -e '/envplane[A-Za-z0-9._/-]*' \
-    -e 'envplane[-_][A-Za-z0-9._-]+' \
-    -e 'envplane~[A-Za-z0-9._-]+' \
-    -e 'https?://[A-Za-z0-9._-]*envplane[A-Za-z0-9._:/?&=#%+~-]*' \
-    "$root" | sort -u || true)"
+  if command -v rg >/dev/null 2>&1; then
+    identifiers="$(rg --no-heading --no-filename --only-matching --replace '$0' \
+      --glob '!.git/**' --glob '!node_modules/**' --glob '!dist/**' --glob '!build/**' --glob '!vendor/**' \
+      -e 'ENVPLANE_[A-Z0-9_]+' \
+      -e 'github\.com/envplane/[A-Za-z0-9._/-]+' \
+      -e 'ghcr\.io/envplane/[A-Za-z0-9._/-]+' \
+      -e 'envplane\.io/[A-Za-z0-9._/-]+' \
+      -e '/envplane[A-Za-z0-9._/-]*' \
+      -e 'envplane[-_][A-Za-z0-9._-]+' \
+      -e 'envplane~[A-Za-z0-9._-]+' \
+      -e 'https?://[A-Za-z0-9._-]*envplane[A-Za-z0-9._:/?&=#%+~-]*' \
+      "$root" | sort -u || true)"
+  else
+    identifiers="$(grep -RhoE --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build --exclude-dir=vendor \
+      'ENVPLANE_[A-Z0-9_]+|github\.com/envplane/[A-Za-z0-9._/-]+|ghcr\.io/envplane/[A-Za-z0-9._/-]+|envplane\.io/[A-Za-z0-9._/-]+|/envplane[A-Za-z0-9._/-]*|envplane[-_][A-Za-z0-9._-]+|envplane~[A-Za-z0-9._-]+|https?://[A-Za-z0-9._-]*envplane[A-Za-z0-9._:/?&=#%+~-]*' \
+      "$root" | sort -u || true)"
+  fi
   while IFS= read -r identifier; do
     test -n "$identifier" || continue
     classify "$identifier"
