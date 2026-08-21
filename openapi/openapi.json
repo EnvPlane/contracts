@@ -9775,6 +9775,7 @@
     },
     "/api/v1/billing/subscription": {
       "get": {
+        "description": "Returns the current tenant subscription. Billing read permission and trusted tenant context are required.",
         "summary": "Get the current tenant subscription",
         "responses": {
           "200": {
@@ -9798,6 +9799,7 @@
     },
     "/api/v1/billing/checkout": {
       "post": {
+        "description": "Creates a short-lived server-side hosted checkout session for the current tenant. Card data and provider credentials are never accepted by this API.",
         "summary": "Create a hosted billing checkout session",
         "requestBody": {
           "required": true,
@@ -9842,6 +9844,7 @@
     },
     "/api/v1/billing/portal": {
       "post": {
+        "description": "Creates a short-lived server-side hosted customer portal session for the current tenant. The browser must redirect only to the returned HTTPS provider session.",
         "summary": "Create a hosted customer portal session",
         "responses": {
           "201": {
