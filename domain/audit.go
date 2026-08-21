@@ -12,6 +12,7 @@ type AuditEntry struct {
 	TenantID   string          `json:"tenant_id,omitempty"`
 	ID         int64           `json:"id,omitempty"`
 	OccurredAt time.Time       `json:"occurredAt"`
+	LegalHold  bool            `json:"legalHold,omitempty"`
 	Actor      string          `json:"actor"`
 	Action     string          `json:"action"`
 	Resource   string          `json:"resource"`
@@ -28,4 +29,5 @@ type AuditFilter struct {
 	ProjectID  string
 	Limit      int
 	Offset     int
+	After      time.Time
 }

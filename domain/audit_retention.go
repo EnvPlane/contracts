@@ -13,4 +13,5 @@ type AuditRetentionPlan struct {
 	PurgeBefore time.Time `json:"purgeBefore"`
 	Candidates  []int64   `json:"candidates"`
 	Bounded     bool      `json:"bounded"`
+	LegalHold   bool      `json:"legalHold"`
 }

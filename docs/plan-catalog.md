@@ -33,6 +33,16 @@ as catalog capabilities. SAML, SCIM, granular RBAC, Argo, custom policy,
 FinOps allocation, upgrade waves, and SLA support are disabled in this bundle.
 These values describe the bundle; enforcement remains outside this ticket.
 
+## Audit retention
+
+Audit retention is evaluated per tenant from the immutable entitlement snapshot
+using UTC. Free retains seven days; a paid plan uses its
+`audit.retention_days` limit. Audit reads apply the same lower time boundary as
+purge, so API and UI cannot read records outside the tenant entitlement.
+Purge runs in bounded tenant-scoped batches. A record marked `legalHold` is
+never eligible for deletion. The reconciler has no archive or SIEM export
+side-effect; archiving, if required, is an explicit external boundary.
+
 ## Keys and compatibility
 
 Canonical feature and limit keys are the dotted identifiers exported from the
