@@ -8736,6 +8736,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Quota limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaError"
+                }
+              }
+            }
           }
         }
       }
@@ -9277,6 +9287,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Quota limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaError"
                 }
               }
             }
@@ -10618,6 +10638,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Quota limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaError"
+                }
+              }
+            }
           }
         }
       }
@@ -10789,6 +10819,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Quota limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaError"
+                }
+              }
+            }
           }
         }
       }
@@ -10850,6 +10890,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Environment"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Quota limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaError"
                 }
               }
             }
@@ -11349,6 +11399,26 @@
           },
           "400": {
             "description": "Invalid request"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/v1/siem/export/status": {
+      "get": {
+        "summary": "Read SIEM export status",
+        "description": "Returns tenant-scoped exporter status without sink credentials or event payloads.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Tenant context is required"
           },
           "401": {
             "description": "Authentication required"
@@ -13733,6 +13803,33 @@
         "summary": "Get deterministic FinOps explanation"
       }
     },
+    "/api/v1/finops/allocation": {
+      "get": {
+        "operationId": "listFinOpsAllocations",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CostAllocation"
+                  }
+                }
+              }
+            },
+            "description": "Tenant-scoped measured resource allocations"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "FinOps allocation unavailable"
+          }
+        },
+        "summary": "List measured FinOps allocations"
+      }
+    },
     "/api/v1/tenants/{tenantID}/ai-policy": {
       "get": {
         "operationId": "getTenantAIPolicy",
@@ -13886,6 +13983,40 @@
           "409": {
             "description": "Stale or unapproved proposal"
           }
+        }
+      }
+    },
+    "/api/v1/tenants/{tenantID}/audit-retention-policy": {
+      "put": {
+        "summary": "Set tenant audit retention legal hold",
+        "description": "Admin-only tenant-scoped legal hold update. The hold prevents audit purge for the tenant.",
+        "operationId": "putAuditRetentionPolicy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["legalHold"],
+                "properties": {
+                  "legalHold": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated audit retention policy",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/AuditRetentionPolicy"}
+              }
+            }
+          },
+          "400": {"description": "Invalid request"},
+          "403": {"description": "Forbidden"},
+          "503": {"description": "Policy store unavailable"}
         }
       }
     }

@@ -24,9 +24,13 @@ type PolicyInput struct {
 	TTLAllowed     bool   `json:"ttlAllowed"`
 	PinAllowed     bool   `json:"pinAllowed"`
 	RepairApproved bool   `json:"repairApproved"`
-	BudgetChecked  bool   `json:"budgetChecked"`
-	BudgetAllowed  bool   `json:"budgetAllowed"`
-	BudgetWarning  bool   `json:"budgetWarning"`
+	// Deprecated: budget enforcement is evaluated by the server budget
+	// dependency, not by the policy engine.
+	BudgetChecked bool `json:"budgetChecked,omitempty"`
+	// Deprecated: retained for wire compatibility; ignored by the policy engine.
+	BudgetAllowed bool `json:"budgetAllowed,omitempty"`
+	// Deprecated: retained for wire compatibility; ignored by the policy engine.
+	BudgetWarning bool `json:"budgetWarning,omitempty"`
 }
 
 type PolicyDecision struct {
@@ -79,7 +83,7 @@ func (b PolicyBundle) Validate() error {
 		}
 		seen[rule.ID] = struct{}{}
 		switch rule.Check {
-		case "project_ready", "quota_allowed", "ttl_allowed", "pin_allowed", "repair_approved", "budget_allowed":
+		case "project_ready", "quota_allowed", "ttl_allowed", "pin_allowed", "repair_approved":
 		default:
 			return fmt.Errorf("unknown policy check %q", rule.Check)
 		}
