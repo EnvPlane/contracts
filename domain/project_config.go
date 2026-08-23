@@ -86,6 +86,8 @@ type ProjectFluxCDConfig struct {
 	GitopsRepo        string `json:"gitopsRepo"`
 	GitopsPath        string `json:"gitopsPath"`
 	FluxNamespace     string `json:"fluxNamespace"`
+	SourceRefName     string `json:"sourceRefName,omitempty"`
+	SourceRefNamespace string `json:"sourceRefNamespace,omitempty"`
 	KustomizationName string `json:"kustomizationName"`
 	CommitMode        string `json:"commitMode"`
 }

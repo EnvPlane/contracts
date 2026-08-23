@@ -97,6 +97,7 @@ type GitOpsTarget struct {
 	ValuesPath      string `json:"valuesPath,omitempty"`
 	RawManifestPath string `json:"rawManifestPath,omitempty"`
 	SourceRefName   string `json:"sourceRefName"`
+	SourceRefNamespace string `json:"sourceRefNamespace,omitempty"`
 	TargetNamespace string `json:"targetNamespace,omitempty"`
 	HealthCheckName string `json:"healthCheckName"`
 	RepositoryID    string `json:"repositoryId,omitempty"`
