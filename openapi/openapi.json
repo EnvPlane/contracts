@@ -348,6 +348,10 @@
               },
               "default_tag": {
                 "type": "string"
+              },
+              "immutable_digest": {
+                "type": "string",
+                "description": "Immutable sha256 digest used for deployable component images."
               }
             }
           }
