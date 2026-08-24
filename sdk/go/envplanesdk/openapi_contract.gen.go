@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "e689f6e34adc255bb1ead8dbc4a69cd1bbe59e61b8f10ee66cf10e051bfbc63e"
+const CanonicalOpenAPISHA256 = "72d627c31f80101c89467958e9eb9c5e48243551600520dc75fecc3ac87f844e"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -46,6 +46,8 @@ var CanonicalOperations = []string{
 	"GET /api/v1/environments/{id}/diagnosis/{runID}",
 	"GET /api/v1/environments/{id}/events",
 	"GET /api/v1/environments/{id}/flux-status",
+	"GET /api/v1/environments/{id}/kubernetes-diagnosis",
+	"GET /api/v1/environments/{id}/scm-agent/plan",
 	"GET /api/v1/finops/allocation",
 	"GET /api/v1/health",
 	"GET /api/v1/jobs",
@@ -63,10 +65,13 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}",
 	"GET /api/v1/projects/{id}/bootstrap-session",
 	"GET /api/v1/projects/{id}/bootstrap-session/diagnosis/{runID}",
+	"GET /api/v1/projects/{id}/bootstrap-session/onboarding-plan",
 	"GET /api/v1/projects/{id}/bootstrap-session/repo-profile",
 	"GET /api/v1/projects/{id}/cost-policy",
 	"GET /api/v1/projects/{id}/environments",
 	"GET /api/v1/projects/{id}/finops/explanation",
+	"GET /api/v1/projects/{id}/finops/optimization",
+	"GET /api/v1/projects/{id}/gitops/diagnosis",
 	"GET /api/v1/projects/{id}/hybrid-config",
 	"GET /api/v1/projects/{id}/runtime-bundle",
 	"GET /api/v1/remote-clusters",
@@ -81,6 +86,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/settings/authentication/setup/status",
 	"GET /api/v1/settings/clusters/{id}/health",
 	"GET /api/v1/siem/export/status",
+	"GET /api/v1/tenants/{tenantID}/ai-capabilities",
 	"GET /api/v1/tenants/{tenantID}/ai-policy",
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
 	"GET /api/v1/tenants/{tenantID}/memberships",
@@ -125,6 +131,11 @@ var CanonicalOperations = []string{
 	"POST /api/v1/agents/heartbeat",
 	"POST /api/v1/agents/register",
 	"POST /api/v1/agents/resource-scan",
+	"POST /api/v1/ai/eval/replay",
+	"POST /api/v1/ai/incidents/plan",
+	"POST /api/v1/ai/release/plan",
+	"POST /api/v1/ai/security/plan",
+	"POST /api/v1/ai/triggers/preview",
 	"POST /api/v1/billing/checkout",
 	"POST /api/v1/billing/portal",
 	"POST /api/v1/billing/webhook",
@@ -134,6 +145,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/environments/status:batch",
 	"POST /api/v1/environments/{id}/delete/retry",
 	"POST /api/v1/environments/{id}/diagnosis",
+	"POST /api/v1/environments/{id}/diagnosis/{runID}/cancel",
 	"POST /api/v1/environments/{id}/diagnosis/{runID}/feedback",
 	"POST /api/v1/environments/{id}/events",
 	"POST /api/v1/environments/{id}/extend-ttl",

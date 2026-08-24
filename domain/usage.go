@@ -12,6 +12,9 @@ const (
 	UsageMetricManagedCluster     = "managed_cluster"
 	UsageMetricEnvironmentActive  = "environment_active"
 	UsageMetricOperatorMembership = "operator_membership"
+	UsageMetricAIInputTokens      = "ai_input_tokens"
+	UsageMetricAIOutputTokens     = "ai_output_tokens"
+	UsageMetricAICostMicros       = "ai_cost_micros"
 )
 
 type UsageEvent struct {
@@ -39,7 +42,7 @@ func (e UsageEvent) Validate() error {
 		return fmt.Errorf("unsupported usage event schema version %q", e.SchemaVersion)
 	}
 	switch e.Metric {
-	case UsageMetricManagedCluster, UsageMetricEnvironmentActive, UsageMetricOperatorMembership:
+	case UsageMetricManagedCluster, UsageMetricEnvironmentActive, UsageMetricOperatorMembership, UsageMetricAIInputTokens, UsageMetricAIOutputTokens, UsageMetricAICostMicros:
 	default:
 		return fmt.Errorf("unsupported usage metric %q", e.Metric)
 	}

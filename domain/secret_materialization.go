@@ -9,6 +9,8 @@ import (
 
 const SecretMaterializationContractVersion = "v1"
 
+const DefaultSecretRetentionHours = 168
+
 type SecretMaterializationStrategy string
 
 const (
@@ -26,6 +28,7 @@ type SecretStrategyConfig struct {
 	Strategy            SecretMaterializationStrategy `json:"strategy"`
 	Required            bool                          `json:"required"`
 	SourceNamespace     string                        `json:"sourceNamespace,omitempty"`
+	SourceTenantID      string                        `json:"sourceTenantId,omitempty"`
 	SourceName          string                        `json:"sourceName,omitempty"`
 	TargetNamespace     string                        `json:"targetNamespace"`
 	TargetName          string                        `json:"targetName"`
@@ -34,6 +37,9 @@ type SecretStrategyConfig struct {
 	ExternalKey         string                        `json:"externalKey,omitempty"`
 	EncryptedPayloadRef string                        `json:"encryptedPayloadRef,omitempty"`
 	Generator           string                        `json:"generator,omitempty"`
+	CredentialRotation  string                        `json:"credentialRotation,omitempty"`
+	RetentionHours      int                           `json:"retentionHours,omitempty"`
+	ApprovalRequired    bool                          `json:"approvalRequired,omitempty"`
 	ManualValue         string                        `json:"-"`
 }
 
@@ -42,6 +48,7 @@ type SecretMaterializationItem struct {
 	Strategy            SecretMaterializationStrategy `json:"strategy"`
 	Required            bool                          `json:"required"`
 	SourceNamespace     string                        `json:"sourceNamespace,omitempty"`
+	SourceTenantID      string                        `json:"sourceTenantId,omitempty"`
 	SourceName          string                        `json:"sourceName,omitempty"`
 	TargetNamespace     string                        `json:"targetNamespace"`
 	TargetName          string                        `json:"targetName"`
@@ -50,6 +57,8 @@ type SecretMaterializationItem struct {
 	ExternalKey         string                        `json:"externalKey,omitempty"`
 	EncryptedPayloadRef string                        `json:"encryptedPayloadRef,omitempty"`
 	Generator           string                        `json:"generator,omitempty"`
+	CredentialRotation  string                        `json:"credentialRotation,omitempty"`
+	RetentionHours      int                           `json:"retentionHours,omitempty"`
 	Owned               bool                          `json:"owned"`
 }
 
@@ -65,6 +74,7 @@ type SecretMaterializationPlan struct {
 	AllowedSourceNamespaces []string                    `json:"allowedSourceNamespaces,omitempty"`
 	Items                   []SecretMaterializationItem `json:"items"`
 	Ownership               []OwnershipRecord           `json:"ownership"`
+	ApprovalRequired        bool                        `json:"approvalRequired,omitempty"`
 	InputDigest             string                      `json:"inputDigest"`
 	Digest                  string                      `json:"digest"`
 	CreatedAt               time.Time                   `json:"createdAt"`
@@ -78,6 +88,12 @@ func (p SecretMaterializationPlan) Validate() error {
 	for _, item := range p.Items {
 		if strings.TrimSpace(item.ID) == "" || strings.TrimSpace(item.TargetNamespace) != p.TargetNamespace || strings.TrimSpace(item.TargetName) == "" {
 			return errors.New("secret materialization target is outside the exact target namespace")
+		}
+		if item.RetentionHours <= 0 {
+			return fmt.Errorf("secret %s has no bounded retention", item.ID)
+		}
+		if item.SourceTenantID != "" && item.SourceTenantID != p.TenantID && !p.ApprovalRequired {
+			return fmt.Errorf("cross-tenant secret %s requires approval", item.ID)
 		}
 		switch item.Strategy {
 		case SecretStrategyReference:
@@ -93,7 +109,7 @@ func (p SecretMaterializationPlan) Validate() error {
 				return errors.New("encrypted strategy requires an owned encrypted payload reference")
 			}
 		case SecretStrategyGenerated:
-			if item.Generator == "" || !item.Owned {
+			if item.Generator == "" || item.CredentialRotation == "" || !item.Owned {
 				return errors.New("generated strategy requires an owned generator")
 			}
 		default:
@@ -149,6 +165,15 @@ func CompileSecretMaterializationPlan(tenantID, projectID, environmentID, revisi
 			return SecretMaterializationPlan{}, errors.New("plaintext secret value is not accepted by plan compiler")
 		}
 		item := SecretMaterializationItem{ID: cfg.ID, Strategy: cfg.Strategy, Required: cfg.Required, SourceNamespace: cfg.SourceNamespace, SourceName: cfg.SourceName, TargetNamespace: cfg.TargetNamespace, TargetName: cfg.TargetName, Backend: cfg.Backend, ExternalSecretStore: cfg.ExternalSecretStore, ExternalKey: cfg.ExternalKey, EncryptedPayloadRef: cfg.EncryptedPayloadRef, Generator: cfg.Generator}
+		item.SourceTenantID = cfg.SourceTenantID
+		item.CredentialRotation = cfg.CredentialRotation
+		item.RetentionHours = cfg.RetentionHours
+		if item.RetentionHours == 0 {
+			item.RetentionHours = DefaultSecretRetentionHours
+		}
+		if item.Strategy == SecretStrategyGenerated && item.CredentialRotation == "" {
+			item.CredentialRotation = "on_create_and_cleanup"
+		}
 		if item.Strategy == SecretStrategyReference && item.SourceNamespace != "" && !containsString(allowlist, item.SourceNamespace) {
 			allowlist = append(allowlist, item.SourceNamespace)
 		}
@@ -159,6 +184,11 @@ func CompileSecretMaterializationPlan(tenantID, projectID, environmentID, revisi
 		items = append(items, item)
 	}
 	plan := SecretMaterializationPlan{ContractVersion: SecretMaterializationContractVersion, PlanID: revisionID + "/" + environmentID + "/secrets", TenantID: tenantID, ProjectID: projectID, EnvironmentID: environmentID, TemplateRevisionID: revisionID, TemplateDigest: revisionDigest, TargetNamespace: targetNamespace, AllowedSourceNamespaces: allowlist, Items: items, Ownership: ownership, InputDigest: inputDigest, CreatedAt: now.UTC()}
+	for _, item := range items {
+		if item.SourceTenantID != "" && item.SourceTenantID != tenantID {
+			plan.ApprovalRequired = true
+		}
+	}
 	digest, err := plan.CanonicalDigest()
 	if err != nil {
 		return SecretMaterializationPlan{}, err

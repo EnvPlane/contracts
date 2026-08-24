@@ -20,3 +20,12 @@ func TestTenantAIPolicyRejectsUnknownPurpose(t *testing.T) {
 		t.Fatal("unknown AI purpose was accepted")
 	}
 }
+
+func TestOfflineTenantPolicyIsAValidNoEgressMode(t *testing.T) {
+	policy := DefaultTenantAIPolicy("tenant-a")
+	policy.Mode = AIPolicyOffline
+	policy.Purposes["diagnosis"] = true
+	if err := policy.Validate(); err != nil {
+		t.Fatalf("offline policy rejected: %v", err)
+	}
+}

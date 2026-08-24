@@ -14,6 +14,7 @@ const (
 	AIPolicyDisabled   AIPolicyMode = "disabled"
 	AIPolicyExternal   AIPolicyMode = "external"
 	AIPolicySelfHosted AIPolicyMode = "self_hosted"
+	AIPolicyOffline    AIPolicyMode = "offline"
 )
 
 type AIRetentionMode string
@@ -33,17 +34,18 @@ type TenantAIPolicy struct {
 	RetentionMode            AIRetentionMode `json:"retentionMode"`
 	MaxContextClassification string          `json:"maxContextClassification"`
 	Purposes                 map[string]bool `json:"purposes,omitempty"`
+	MaxAutonomy              AIAutonomyLevel `json:"maxAutonomy,omitempty"`
 }
 
 func DefaultTenantAIPolicy(tenantID string) TenantAIPolicy {
-	return TenantAIPolicy{SchemaVersion: AIPolicySchemaVersion, TenantID: strings.TrimSpace(tenantID), Mode: AIPolicyDisabled, RetentionMode: AIRetentionMetadataOnly, MaxContextClassification: "safe_metadata", Purposes: map[string]bool{}}
+	return TenantAIPolicy{SchemaVersion: AIPolicySchemaVersion, TenantID: strings.TrimSpace(tenantID), Mode: AIPolicyDisabled, RetentionMode: AIRetentionMetadataOnly, MaxContextClassification: "safe_metadata", MaxAutonomy: AIAutonomyObserve, Purposes: map[string]bool{}}
 }
 
 func (p TenantAIPolicy) Validate() error {
 	if p.SchemaVersion != AIPolicySchemaVersion || strings.TrimSpace(p.TenantID) == "" {
 		return fmt.Errorf("invalid AI policy identity or schema")
 	}
-	if p.Mode != AIPolicyDisabled && p.Mode != AIPolicyExternal && p.Mode != AIPolicySelfHosted {
+	if p.Mode != AIPolicyDisabled && p.Mode != AIPolicyExternal && p.Mode != AIPolicySelfHosted && p.Mode != AIPolicyOffline {
 		return fmt.Errorf("unsupported AI policy mode")
 	}
 	if p.RetentionMode != AIRetentionMetadataOnly && p.RetentionMode != AIRetentionNone {
@@ -52,8 +54,11 @@ func (p TenantAIPolicy) Validate() error {
 	if strings.TrimSpace(p.MaxContextClassification) == "" || p.MaxContextClassification != "safe_metadata" {
 		return fmt.Errorf("AI context classification cannot exceed safe_metadata")
 	}
+	if p.MaxAutonomy != "" && autonomyRank(p.MaxAutonomy) < 0 {
+		return fmt.Errorf("unsupported maximum AI autonomy %q", p.MaxAutonomy)
+	}
 	for purpose := range p.Purposes {
-		if purpose != "diagnosis" && purpose != "bootstrap_troubleshooting" && purpose != "bootstrap.scan" && purpose != "configuration_proposal" && purpose != "finops_explanation" {
+		if purpose != "diagnosis" && purpose != "bootstrap_troubleshooting" && purpose != "bootstrap.scan" && purpose != "configuration_proposal" && purpose != "environment_creation" && purpose != "approved_actions" && purpose != "finops_explanation" {
 			return fmt.Errorf("unsupported AI purpose %q", purpose)
 		}
 	}

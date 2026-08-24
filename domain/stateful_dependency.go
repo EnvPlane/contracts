@@ -10,6 +10,8 @@ import (
 
 const StatefulDependencyContractVersion = "v1"
 
+const DefaultStatefulRetentionHours = 168
+
 type StatefulDependencyStrategy string
 
 const (
@@ -19,35 +21,46 @@ const (
 	StatefulStrategyDatabaseRestore  StatefulDependencyStrategy = "database_restore"
 	StatefulStrategyExternalIsolated StatefulDependencyStrategy = "external_isolated_database"
 	StatefulStrategyReferenceShared  StatefulDependencyStrategy = "reference_shared"
+	StatefulStrategyGenerate         StatefulDependencyStrategy = "generate"
+	StatefulStrategyEncryptedClone   StatefulDependencyStrategy = "encrypted_clone"
+	StatefulStrategySnapshotClone    StatefulDependencyStrategy = "snapshot_clone"
 )
 
 type StatefulDependencyPolicy struct {
-	ID                   string                     `json:"id"`
-	Kind                 string                     `json:"kind"`
-	Required             bool                       `json:"required"`
-	Strategy             StatefulDependencyStrategy `json:"strategy"`
-	SourceNamespace      string                     `json:"sourceNamespace,omitempty"`
-	SourceName           string                     `json:"sourceName,omitempty"`
-	TargetNamespace      string                     `json:"targetNamespace"`
-	TargetName           string                     `json:"targetName"`
-	ServiceName          string                     `json:"serviceName,omitempty"`
-	SecretRef            string                     `json:"secretRef,omitempty"`
-	SeedTemplateRef      string                     `json:"seedTemplateRef,omitempty"`
-	DumpRef              string                     `json:"dumpRef,omitempty"`
-	RestoreCredentialRef string                     `json:"restoreCredentialRef,omitempty"`
-	StorageClass         string                     `json:"storageClass,omitempty"`
-	SnapshotClass        string                     `json:"snapshotClass,omitempty"`
-	Size                 string                     `json:"size,omitempty"`
-	AccessModes          []string                   `json:"accessModes,omitempty"`
-	CSIProvisioner       string                     `json:"csiProvisioner,omitempty"`
-	ApprovalRequired     bool                       `json:"approvalRequired,omitempty"`
-	MaxStorage           string                     `json:"maxStorage,omitempty"`
-	MaxRetries           int                        `json:"maxRetries,omitempty"`
-	BackoffSeconds       int                        `json:"backoffSeconds,omitempty"`
+	ID                     string                     `json:"id"`
+	Kind                   string                     `json:"kind"`
+	Required               bool                       `json:"required"`
+	Strategy               StatefulDependencyStrategy `json:"strategy"`
+	SourceNamespace        string                     `json:"sourceNamespace,omitempty"`
+	SourceTenantID         string                     `json:"sourceTenantId,omitempty"`
+	SourceName             string                     `json:"sourceName,omitempty"`
+	TargetNamespace        string                     `json:"targetNamespace"`
+	TargetName             string                     `json:"targetName"`
+	ServiceName            string                     `json:"serviceName,omitempty"`
+	SecretRef              string                     `json:"secretRef,omitempty"`
+	SeedTemplateRef        string                     `json:"seedTemplateRef,omitempty"`
+	DumpRef                string                     `json:"dumpRef,omitempty"`
+	RestoreCredentialRef   string                     `json:"restoreCredentialRef,omitempty"`
+	StorageClass           string                     `json:"storageClass,omitempty"`
+	SnapshotClass          string                     `json:"snapshotClass,omitempty"`
+	Size                   string                     `json:"size,omitempty"`
+	AccessModes            []string                   `json:"accessModes,omitempty"`
+	CSIProvisioner         string                     `json:"csiProvisioner,omitempty"`
+	ApprovalRequired       bool                       `json:"approvalRequired,omitempty"`
+	MaxStorage             string                     `json:"maxStorage,omitempty"`
+	MaxRetries             int                        `json:"maxRetries,omitempty"`
+	BackoffSeconds         int                        `json:"backoffSeconds,omitempty"`
+	EncryptionKeyRef       string                     `json:"encryptionKeyRef,omitempty"`
+	MaskingPolicyRef       string                     `json:"maskingPolicyRef,omitempty"`
+	RetentionHours         int                        `json:"retentionHours,omitempty"`
+	ComplianceClass        string                     `json:"complianceClass,omitempty"`
+	CredentialRotation     string                     `json:"credentialRotation,omitempty"`
+	SourceEnvironmentClass string                     `json:"sourceEnvironmentClass,omitempty"`
 }
 
 type StatefulExecutionStep struct {
 	ID              string `json:"id"`
+	IdempotencyKey  string `json:"idempotencyKey"`
 	Action          string `json:"action"`
 	DependencyID    string `json:"dependencyId"`
 	TargetNamespace string `json:"targetNamespace"`
@@ -135,6 +148,15 @@ func (p StatefulExecutionPlan) Validate() error {
 		if policy.MaxRetries < 0 || policy.BackoffSeconds < 0 {
 			return fmt.Errorf("invalid retry policy for %s", policy.ID)
 		}
+		if policy.RetentionHours <= 0 {
+			return fmt.Errorf("stateful dependency %s has no bounded retention", policy.ID)
+		}
+		if policy.SourceTenantID != "" && policy.SourceTenantID != p.TenantID && !policy.ApprovalRequired {
+			return fmt.Errorf("cross-tenant source %s requires explicit approval", policy.ID)
+		}
+		if policy.SourceEnvironmentClass == "production" && !policy.ApprovalRequired {
+			return fmt.Errorf("production source %s requires explicit approval", policy.ID)
+		}
 		switch policy.Strategy {
 		case StatefulStrategyEmpty:
 		case StatefulStrategySeed:
@@ -149,6 +171,9 @@ func (p StatefulExecutionPlan) Validate() error {
 			if policy.DumpRef == "" || policy.RestoreCredentialRef == "" {
 				return fmt.Errorf("restore refs are required for %s", policy.ID)
 			}
+			if policy.SourceEnvironmentClass == "production" && policy.MaskingPolicyRef == "" {
+				return fmt.Errorf("production database restore requires a masking policy for %s", policy.ID)
+			}
 		case StatefulStrategyExternalIsolated:
 			if policy.ServiceName == "" || policy.SecretRef == "" {
 				return fmt.Errorf("isolated database service and secret refs are required for %s", policy.ID)
@@ -157,8 +182,25 @@ func (p StatefulExecutionPlan) Validate() error {
 			if policy.SourceNamespace == "" || policy.SourceName == "" {
 				return fmt.Errorf("shared reference source is required for %s", policy.ID)
 			}
+		case StatefulStrategyGenerate:
+			if policy.CredentialRotation == "" {
+				return fmt.Errorf("generated dependency %s requires a credential rotation policy", policy.ID)
+			}
+		case StatefulStrategyEncryptedClone:
+			if policy.SourceNamespace == "" || policy.SourceName == "" || policy.EncryptionKeyRef == "" {
+				return fmt.Errorf("encrypted clone refs are required for %s", policy.ID)
+			}
+		case StatefulStrategySnapshotClone:
+			if policy.SourceNamespace == "" || policy.SourceName == "" || policy.SnapshotClass == "" || policy.Size == "" {
+				return fmt.Errorf("snapshot clone source and bounds are required for %s", policy.ID)
+			}
 		default:
 			return fmt.Errorf("unsupported stateful strategy %q", policy.Strategy)
+		}
+	}
+	for _, step := range p.Steps {
+		if step.ID == "" || step.IdempotencyKey == "" || step.TargetNamespace != p.TargetNamespace {
+			return fmt.Errorf("stateful step %s is not idempotently bound to the target", step.ID)
 		}
 	}
 	if p.Independent && hasSharedReference(p.Policies) {
@@ -187,6 +229,18 @@ func CompileStatefulExecutionPlan(tenantID, projectID, environmentID, revisionID
 		if policy.TargetNamespace != targetNamespace {
 			return StatefulExecutionPlan{}, fmt.Errorf("stateful dependency %s escapes target namespace", policy.ID)
 		}
+		if (policy.Kind == "Secret" || policy.Kind == "PersistentVolumeClaim" || policy.Kind == "Database") && policy.Strategy == "" {
+			return StatefulExecutionPlan{}, fmt.Errorf("stateful dependency %s requires an explicit strategy", policy.ID)
+		}
+		if policy.SourceTenantID != "" && policy.SourceTenantID != tenantID {
+			policy.ApprovalRequired = true
+		}
+		if policy.SourceEnvironmentClass == "production" {
+			policy.ApprovalRequired = true
+		}
+		if policy.RetentionHours < 0 {
+			return StatefulExecutionPlan{}, fmt.Errorf("invalid retention for %s", policy.ID)
+		}
 		if policy.Required && policy.Strategy == "" {
 			return StatefulExecutionPlan{}, fmt.Errorf("required stateful dependency %s has no strategy", policy.ID)
 		}
@@ -195,6 +249,9 @@ func CompileStatefulExecutionPlan(tenantID, projectID, environmentID, revisionID
 		}
 		if policy.BackoffSeconds == 0 {
 			policy.BackoffSeconds = 5
+		}
+		if policy.RetentionHours == 0 {
+			policy.RetentionHours = DefaultStatefulRetentionHours
 		}
 		if policy.Strategy == StatefulStrategyReferenceShared {
 			plan.Independent = false
@@ -205,7 +262,7 @@ func CompileStatefulExecutionPlan(tenantID, projectID, environmentID, revisionID
 		if policy.ApprovalRequired || (policy.MaxStorage != "" && policy.Size == policy.MaxStorage) {
 			plan.ApprovalRequired = true
 		}
-		step := StatefulExecutionStep{ID: policy.ID + "-prepare", Action: "create_empty", DependencyID: policy.ID, TargetNamespace: policy.TargetNamespace, TargetName: policy.TargetName, Retryable: true, MaxRetries: policy.MaxRetries, BackoffSeconds: policy.BackoffSeconds}
+		step := StatefulExecutionStep{ID: policy.ID + "-prepare", IdempotencyKey: plan.PlanID + ":" + policy.ID, Action: "create_empty", DependencyID: policy.ID, TargetNamespace: policy.TargetNamespace, TargetName: policy.TargetName, Retryable: true, MaxRetries: policy.MaxRetries, BackoffSeconds: policy.BackoffSeconds}
 		switch policy.Strategy {
 		case StatefulStrategySeed:
 			step.Action = "run_seed"
@@ -224,6 +281,16 @@ func CompileStatefulExecutionPlan(tenantID, projectID, environmentID, revisionID
 		case StatefulStrategyReferenceShared:
 			step.Action = "bind_shared_reference"
 			plan.Independent = false
+		case StatefulStrategyGenerate:
+			step.Action = "generate_credentials"
+		case StatefulStrategyEncryptedClone:
+			step.Action = "clone_encrypted_data"
+			step.SourceNamespace = policy.SourceNamespace
+			step.SourceName = policy.SourceName
+		case StatefulStrategySnapshotClone:
+			step.Action = "clone_volume_snapshot"
+			step.SourceNamespace = policy.SourceNamespace
+			step.SourceName = policy.SourceName
 		}
 		plan.Steps = append(plan.Steps, step)
 		plan.Readiness = append(plan.Readiness, StatefulReadinessGate{ID: policy.ID + "-ready", DependencyID: policy.ID, Conditions: []string{"service_available", "secret_available", "storage_bound", "seed_or_restore_succeeded"}, Required: policy.Required})

@@ -38,7 +38,7 @@ func (r AIRun) Validate() error {
 	if r.SchemaVersion != AIRunSchemaVersion || strings.TrimSpace(r.ID) == "" || strings.TrimSpace(r.IdempotencyKey) == "" || strings.TrimSpace(r.TenantID) == "" || strings.TrimSpace(r.ProjectID) == "" || strings.TrimSpace(r.Purpose) == "" || strings.TrimSpace(r.Provider) == "" || strings.TrimSpace(r.Model) == "" || strings.TrimSpace(r.PromptTemplateVersion) == "" || strings.TrimSpace(r.ContextHash) == "" {
 		return errors.New("AI run identity and metadata are required")
 	}
-	if r.Status != AIRunStatusQueued && r.Status != AIRunStatusRunning && r.Status != AIRunStatusSucceeded && r.Status != AIRunStatusFailed && r.Status != AIRunStatusCanceled {
+	if r.Status != AIRunStatusQueued && r.Status != AIRunStatusRunning && r.Status != AIRunStatusSucceeded && r.Status != AIRunStatusFailed && r.Status != AIRunStatusCanceled && r.Status != AIRunStatusPaused {
 		return errors.New("AI run status is invalid")
 	}
 	if r.RequestedAt.IsZero() || r.CreatedAt.IsZero() || r.UpdatedAt.IsZero() || r.InputTokens < 0 || r.OutputTokens < 0 || r.LatencyMilliseconds < 0 {
@@ -66,11 +66,11 @@ func ValidateAIRunTransition(from, to AIRunStatus) error {
 	}
 	switch from {
 	case AIRunStatusQueued:
-		if to == AIRunStatusRunning || to == AIRunStatusFailed || to == AIRunStatusCanceled {
+		if to == AIRunStatusRunning || to == AIRunStatusFailed || to == AIRunStatusCanceled || to == AIRunStatusPaused {
 			return nil
 		}
 	case AIRunStatusRunning:
-		if to == AIRunStatusSucceeded || to == AIRunStatusFailed || to == AIRunStatusCanceled {
+		if to == AIRunStatusSucceeded || to == AIRunStatusFailed || to == AIRunStatusCanceled || to == AIRunStatusPaused {
 			return nil
 		}
 	}

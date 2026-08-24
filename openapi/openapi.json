@@ -5831,7 +5831,8 @@
               "running",
               "succeeded",
               "failed",
-              "canceled"
+              "canceled",
+              "paused"
             ],
             "type": "string"
           },
@@ -6405,6 +6406,15 @@
           },
           "tenantId": {
             "type": "string"
+          },
+          "maxAutonomy": {
+            "enum": [
+              "observe",
+              "recommend",
+              "approval_required",
+              "autonomous_bounded"
+            ],
+            "type": "string"
           }
         },
         "required": [
@@ -6771,6 +6781,3791 @@
             "$ref": "#/components/schemas/EnvironmentCreateCostGuidance"
           },
           "dataSufficient": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AICapability": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "purpose",
+          "action",
+          "defaultAutonomy",
+          "risk",
+          "actionClass",
+          "requiredFeature",
+          "requiredRoles",
+          "auditEvents"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "defaultAutonomy": {
+            "enum": [
+              "observe",
+              "recommend",
+              "approval_required",
+              "autonomous_bounded"
+            ],
+            "type": "string"
+          },
+          "risk": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "type": "string"
+          },
+          "actionClass": {
+            "enum": [
+              "read_only",
+              "proposal",
+              "approved_write",
+              "forbidden"
+            ],
+            "type": "string"
+          },
+          "requiredFeature": {
+            "type": "string"
+          },
+          "requiredRoles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "auditEvents": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "AIEffectiveCapability": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AICapability"
+          },
+          {
+            "type": "object",
+            "required": [
+              "known",
+              "enabled",
+              "effectiveAutonomy",
+              "reason"
+            ],
+            "properties": {
+              "known": {
+                "type": "boolean"
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "effectiveAutonomy": {
+                "enum": [
+                  "observe",
+                  "recommend",
+                  "approval_required",
+                  "autonomous_bounded"
+                ],
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "AICapabilityMatrix": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "maxAutonomy",
+          "capabilities",
+          "providerMode",
+          "activationReason",
+          "quotas"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "maxAutonomy": {
+            "enum": [
+              "observe",
+              "recommend",
+              "approval_required",
+              "autonomous_bounded"
+            ],
+            "type": "string"
+          },
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/AIEffectiveCapability"
+            },
+            "type": "array"
+          },
+          "providerMode": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "external",
+              "self_hosted"
+            ]
+          },
+          "activationReason": {
+            "type": "string"
+          },
+          "quotas": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "AIToolCall": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "name",
+          "arguments",
+          "idempotencyKey",
+          "contextHash"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "arguments": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          }
+        }
+      },
+      "AIVerification": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "check",
+          "expected",
+          "readOnly"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "check": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string"
+          },
+          "readOnly": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AICompensation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "tool",
+          "reason"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "tool": {
+            "$ref": "#/components/schemas/AIToolCall"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "AIStep": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "sequence",
+          "status",
+          "tool",
+          "verification"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "executing",
+              "succeeded",
+              "failed",
+              "skipped"
+            ],
+            "type": "string"
+          },
+          "modelRationale": {
+            "type": "string"
+          },
+          "tool": {
+            "$ref": "#/components/schemas/AIToolCall"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/AIVerification"
+          },
+          "compensation": {
+            "$ref": "#/components/schemas/AICompensation"
+          }
+        }
+      },
+      "AIFinalReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "status",
+          "summary",
+          "verified",
+          "humanEscalation"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "succeeded",
+              "failed",
+              "canceled",
+              "paused"
+            ],
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "humanEscalation": {
+            "type": "boolean"
+          },
+          "errorCategory": {
+            "type": "string"
+          }
+        }
+      },
+      "AIPlan": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "idempotencyKey",
+          "tenantId",
+          "projectId",
+          "subjectType",
+          "subjectId",
+          "purpose",
+          "action",
+          "contextHash",
+          "modelNarrative",
+          "status",
+          "steps",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "subjectType": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "modelNarrative": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "validated",
+              "approved",
+              "executing",
+              "succeeded",
+              "failed",
+              "canceled",
+              "paused"
+            ],
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIStep"
+            },
+            "minItems": 1,
+            "maxItems": 32
+          },
+          "finalReport": {
+            "$ref": "#/components/schemas/AIFinalReport"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        }
+      },
+      "AIExecutionLease": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "owner",
+          "token",
+          "expiresAt"
+        ],
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIStepAttempt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stepId",
+          "attemptId",
+          "idempotencyKey",
+          "startedAt",
+          "status"
+        ],
+        "properties": {
+          "stepId": {
+            "type": "string"
+          },
+          "attemptId": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "errorCategory": {
+            "type": "string"
+          }
+        }
+      },
+      "AIExecutionCheckpoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "phase",
+          "stepIndex",
+          "planContextHash",
+          "updatedAt"
+        ],
+        "properties": {
+          "phase": {
+            "type": "string"
+          },
+          "stepIndex": {
+            "type": "integer"
+          },
+          "planContextHash": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIOrchestratorLimits": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "maxIterations",
+          "maxToolCalls",
+          "maxTokens",
+          "maxCostMicros",
+          "maxWallTimeSeconds"
+        ],
+        "properties": {
+          "maxIterations": {
+            "type": "integer"
+          },
+          "maxToolCalls": {
+            "type": "integer"
+          },
+          "maxTokens": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxCostMicros": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxWallTimeSeconds": {
+            "type": "integer"
+          }
+        }
+      },
+      "AIOrchestratorRun": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "idempotencyKey",
+          "tenantId",
+          "projectId",
+          "purpose",
+          "status",
+          "plan",
+          "attempts",
+          "checkpoint",
+          "limits",
+          "tokenCount",
+          "costMicros",
+          "toolCalls",
+          "iterations",
+          "deadline",
+          "version",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "observe",
+              "plan",
+              "authorize",
+              "execute",
+              "verify",
+              "compensate",
+              "report",
+              "succeeded",
+              "failed",
+              "canceled",
+              "paused"
+            ]
+          },
+          "plan": {
+            "$ref": "#/components/schemas/AIPlan"
+          },
+          "lease": {
+            "$ref": "#/components/schemas/AIExecutionLease"
+          },
+          "attempts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIStepAttempt"
+            }
+          },
+          "checkpoint": {
+            "$ref": "#/components/schemas/AIExecutionCheckpoint"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/AIOrchestratorLimits"
+          },
+          "tokenCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "costMicros": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "toolCalls": {
+            "type": "integer"
+          },
+          "iterations": {
+            "type": "integer"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIToolDescriptor": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "name",
+          "risk",
+          "actionClass",
+          "permissions",
+          "requiredArgs",
+          "allowedArgs",
+          "readOnly",
+          "supportsDryRun",
+          "preconditions"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "risk": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "actionClass": {
+            "type": "string",
+            "enum": [
+              "read_only",
+              "proposal",
+              "approved_write",
+              "forbidden"
+            ]
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredArgs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedArgs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "supportsDryRun": {
+            "type": "boolean"
+          },
+          "compensation": {
+            "type": "string"
+          },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AIToolObservation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "code",
+          "fields"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AIAgentGrant": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "id",
+          "runId",
+          "tenantId",
+          "projectId",
+          "resourceType",
+          "resourceId",
+          "toolName",
+          "purpose",
+          "requesterId",
+          "agentId",
+          "contextHash",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "requesterId": {
+            "type": "string"
+          },
+          "approverId": {
+            "type": "string"
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokeReason": {
+            "type": "string",
+            "enum": [
+              "run_canceled",
+              "policy_changed",
+              "approval_expired",
+              "manual_revoke"
+            ]
+          }
+        },
+        "description": "Opaque, non-exportable capability record. The grant ID is only a server-side lookup handle and is not a credential."
+      },
+      "AIRiskInput": {
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "environmentClass": {
+            "type": "string"
+          },
+          "blastRadius": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentHealth": {
+            "type": "string"
+          },
+          "production": {
+            "type": "boolean"
+          },
+          "delete": {
+            "type": "boolean"
+          },
+          "credential": {
+            "type": "boolean"
+          },
+          "clusterWide": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIRiskDecision": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "risk",
+          "approval",
+          "autonomous",
+          "prohibited",
+          "reason"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "risk": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "approval": {
+            "type": "string",
+            "enum": [
+              "none",
+              "single",
+              "two_person",
+              "maintenance_window",
+              "prohibited"
+            ]
+          },
+          "autonomous": {
+            "type": "boolean"
+          },
+          "prohibited": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "AIApprovalRecord": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "id",
+          "runId",
+          "tenantId",
+          "projectId",
+          "requesterId",
+          "action",
+          "actionArguments",
+          "resourceId",
+          "planHash",
+          "targetStateHash",
+          "policyBundleVersion",
+          "risk",
+          "reviewedStepIds",
+          "impact",
+          "rollback",
+          "state",
+          "approvers",
+          "expiresAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "requesterId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "actionArguments": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "resourceId": {
+            "type": "string"
+          },
+          "planHash": {
+            "type": "string"
+          },
+          "targetStateHash": {
+            "type": "string"
+          },
+          "policyBundleVersion": {
+            "type": "string"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/AIRiskDecision"
+          },
+          "reviewedStepIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impact": {
+            "type": "string"
+          },
+          "rollback": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "expired",
+              "canceled",
+              "denied"
+            ]
+          },
+          "approvers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2
+          },
+          "maintenanceStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maintenanceEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIRetrievalQuery": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "projectId",
+          "subjectType",
+          "subjectId",
+          "sources",
+          "maxResults"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "subjectType": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "environment",
+                "kubernetes_event",
+                "job",
+                "resource_scan",
+                "gitops_status",
+                "approved_runbook"
+              ]
+            },
+            "maxItems": 8
+          },
+          "maxResults": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 256
+          },
+          "requireFresh": {
+            "type": "boolean"
+          },
+          "freshFor": {
+            "type": "string"
+          }
+        }
+      },
+      "AIRetrievedEvidence": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "evidenceId",
+          "reference",
+          "fields",
+          "observedAt",
+          "expiresAt",
+          "stale"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "evidenceId": {
+            "type": "string"
+          },
+          "reference": {
+            "$ref": "#/components/schemas/AIEvidenceReference"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stale": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIShortTermMemoryFact": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "id",
+          "runId",
+          "tenantId",
+          "projectId",
+          "key",
+          "value",
+          "evidenceId",
+          "observedAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "evidenceId": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIMaterialConclusion": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "summary",
+          "evidenceIds"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AIProviderCapability": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "providerId",
+          "mode",
+          "model",
+          "region",
+          "endpointClass",
+          "capabilities",
+          "schemaVersionPin",
+          "evalGateVersion"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "external",
+              "self_hosted"
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "endpointClass": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32
+          },
+          "schemaVersionPin": {
+            "type": "string"
+          },
+          "evalGateVersion": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "AIProviderRoutePolicy": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "purpose",
+          "mode",
+          "allowedRegions",
+          "allowedModels",
+          "requiredCapability",
+          "promptTemplateVersion",
+          "schemaVersionPin",
+          "requiredEvalGateVersion",
+          "maxFallbacks"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "external",
+              "self_hosted"
+            ]
+          },
+          "allowedRegions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedModels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredCapability": {
+            "type": "string"
+          },
+          "promptTemplateVersion": {
+            "type": "string"
+          },
+          "schemaVersionPin": {
+            "type": "string"
+          },
+          "requiredEvalGateVersion": {
+            "type": "string"
+          },
+          "maxFallbacks": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          }
+        }
+      },
+      "AIRouteRequest": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "purpose",
+          "capability",
+          "region"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "capability": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        }
+      },
+      "AIRouteDecision": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "providerId",
+          "mode",
+          "model",
+          "region",
+          "fallbackIndex",
+          "reason",
+          "policyVersion",
+          "promptTemplateVersion",
+          "schemaVersionPin"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "external",
+              "self_hosted"
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "fallbackIndex": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "promptTemplateVersion": {
+            "type": "string"
+          },
+          "schemaVersionPin": {
+            "type": "string"
+          }
+        }
+      },
+      "AISandboxResourceLimits": {
+        "type": "object",
+        "required": [
+          "cpu_millis",
+          "memory_mib",
+          "pids",
+          "timeout_seconds",
+          "max_output_bytes"
+        ],
+        "properties": {
+          "cpu_millis": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "memory_mib": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "pids": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "max_output_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          }
+        }
+      },
+      "AISignedInputRef": {
+        "type": "object",
+        "required": [
+          "id",
+          "digest",
+          "signature",
+          "key_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          },
+          "key_id": {
+            "type": "string"
+          }
+        }
+      },
+      "AISandboxEgress": {
+        "type": "object",
+        "required": [
+          "host",
+          "port"
+        ],
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 65535
+          }
+        }
+      },
+      "AISandboxSpec": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "run_id",
+          "tenant_id",
+          "project_id",
+          "transform",
+          "image",
+          "inputs",
+          "egress",
+          "network_denied",
+          "resources",
+          "created_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "transform": {
+            "type": "string",
+            "enum": [
+              "summarize_evidence",
+              "compare_state",
+              "extract_metrics"
+            ]
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^.+@sha256:[a-f0-9]{64}$"
+          },
+          "inputs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/components/schemas/AISignedInputRef"
+            }
+          },
+          "egress": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "$ref": "#/components/schemas/AISandboxEgress"
+            }
+          },
+          "network_denied": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "resources": {
+            "$ref": "#/components/schemas/AISandboxResourceLimits"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AISandboxOutput": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "run_id",
+          "digest",
+          "signature",
+          "key_id",
+          "payload"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          },
+          "key_id": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "AIEnvironmentLifecycleRequest": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "id",
+          "idempotencyKey",
+          "tenantId",
+          "projectId",
+          "action",
+          "contextHash",
+          "requestedBy",
+          "createdAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "proposalId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "create",
+              "reconcile",
+              "repair",
+              "resize",
+              "extend_ttl",
+              "cleanup"
+            ]
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "requestedBy": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIEnvironmentReadinessCheck": {
+        "type": "object",
+        "required": [
+          "id",
+          "passed",
+          "summary"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 512
+          }
+        }
+      },
+      "AIEnvironmentLifecyclePlan": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "request",
+          "plan",
+          "readiness",
+          "ready",
+          "approvalRequired"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "request": {
+            "$ref": "#/components/schemas/AIEnvironmentLifecycleRequest"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/AIPlan"
+          },
+          "readiness": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEnvironmentReadinessCheck"
+            }
+          },
+          "ready": {
+            "type": "boolean"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "approvalReason": {
+            "type": "string"
+          }
+        }
+      },
+      "AIEnvironmentLifecycleReport": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "status",
+          "summary",
+          "generatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "succeeded",
+              "failed",
+              "canceled",
+              "paused"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "maxItems": 128
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "revision": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "unresolvedRisks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 512
+            },
+            "maxItems": 32
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIEvidenceReference": {
+        "type": "object",
+        "required": [
+          "sourceType",
+          "sourceId",
+          "tenantId"
+        ],
+        "properties": {
+          "sourceType": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIBootstrapDiscovery": {
+        "type": "object",
+        "properties": {
+          "repositoryProvider": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "defaultBranch": {
+            "type": "string"
+          },
+          "branches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 128
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "namespaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 128
+          },
+          "kubernetesVersion": {
+            "type": "string"
+          },
+          "gitOpsBackend": {
+            "type": "string"
+          },
+          "gitOpsRepository": {
+            "type": "string"
+          },
+          "secretStrategy": {
+            "type": "string"
+          }
+        }
+      },
+      "AIBootstrapFieldSuggestion": {
+        "type": "object",
+        "required": [
+          "field",
+          "value",
+          "evidence",
+          "confidence",
+          "requiresReview",
+          "untrusted"
+        ],
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "confidence": {
+            "type": "object",
+            "required": [
+              "score",
+              "level",
+              "evidenceCount"
+            ],
+            "properties": {
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "level": {
+                "type": "string",
+                "enum": [
+                  "unknown",
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "evidenceCount": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "requiresReview": {
+            "type": "boolean"
+          },
+          "untrusted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIBootstrapOnboardingPlan": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "bootstrapSessionId",
+          "contextHash",
+          "discovery",
+          "suggestions",
+          "credentialsRequired",
+          "approvalRequired",
+          "manualAuthoritative",
+          "readyForReview",
+          "generatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "enum": [
+              "1"
+            ]
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "bootstrapSessionId": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "discovery": {
+            "$ref": "#/components/schemas/AIBootstrapDiscovery"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIBootstrapFieldSuggestion"
+            },
+            "maxItems": 64
+          },
+          "blockedReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32
+          },
+          "credentialsRequired": {
+            "type": "boolean"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "manualAuthoritative": {
+            "type": "boolean"
+          },
+          "readyForReview": {
+            "type": "boolean"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIGitOpsObservation": {
+        "type": "object",
+        "required": [
+          "repository",
+          "authorizedPath",
+          "outputPath",
+          "controller",
+          "controllerStatus",
+          "pathExists",
+          "manifestValid",
+          "ownershipValid",
+          "conflict",
+          "forcePush",
+          "protectedBranch"
+        ],
+        "properties": {
+          "repository": {
+            "type": "string"
+          },
+          "authorizedPath": {
+            "type": "string"
+          },
+          "outputPath": {
+            "type": "string"
+          },
+          "sourceRevision": {
+            "type": "string"
+          },
+          "appliedRevision": {
+            "type": "string"
+          },
+          "controller": {
+            "type": "string"
+          },
+          "controllerStatus": {
+            "type": "string"
+          },
+          "pathExists": {
+            "type": "boolean"
+          },
+          "manifestValid": {
+            "type": "boolean"
+          },
+          "ownershipValid": {
+            "type": "boolean"
+          },
+          "conflict": {
+            "type": "boolean"
+          },
+          "forcePush": {
+            "type": "boolean"
+          },
+          "protectedBranch": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIGitOpsRepairProposal": {
+        "type": "object",
+        "required": [
+          "kind",
+          "repository",
+          "branch",
+          "authorizedPath",
+          "approvalRequired",
+          "tool"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "retry_reconciliation",
+              "propose_manifest_fix",
+              "rollback_commit"
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "authorizedPath": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exactDiff": {
+            "type": "string"
+          },
+          "rollbackCommit": {
+            "type": "string"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "tool": {
+            "type": "string"
+          }
+        }
+      },
+      "AIGitOpsAgentPlan": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "contextHash",
+          "observation",
+          "diagnosis",
+          "evidence",
+          "appliedRevisionVerified",
+          "failClosed",
+          "generatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "observation": {
+            "$ref": "#/components/schemas/AIGitOpsObservation"
+          },
+          "diagnosis": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "missing_path",
+              "invalid_yaml",
+              "stale_source",
+              "conflict",
+              "unauthorized",
+              "unknown"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIGitOpsRepairProposal"
+            }
+          },
+          "blockedReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "appliedRevisionVerified": {
+            "type": "boolean"
+          },
+          "failClosed": {
+            "type": "boolean"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIKubernetesResourceObservation": {
+        "type": "object",
+        "required": [
+          "kind",
+          "name",
+          "namespace",
+          "status",
+          "owned"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "owned": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIKubernetesEventObservation": {
+        "type": "object",
+        "required": [
+          "id",
+          "namespace",
+          "kind",
+          "name",
+          "type",
+          "reason",
+          "observedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIKubernetesObservation": {
+        "type": "object",
+        "required": [
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "namespace",
+          "workloadStatus",
+          "ownershipValid",
+          "namespaceValid",
+          "stale"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIKubernetesResourceObservation"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIKubernetesEventObservation"
+            }
+          },
+          "workloadStatus": {
+            "type": "string"
+          },
+          "fluxStatus": {
+            "type": "string"
+          },
+          "networkStatus": {
+            "type": "string"
+          },
+          "storageStatus": {
+            "type": "string"
+          },
+          "quotaStatus": {
+            "type": "string"
+          },
+          "ownershipValid": {
+            "type": "boolean"
+          },
+          "namespaceValid": {
+            "type": "boolean"
+          },
+          "stale": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIKubernetesRepairProposal": {
+        "type": "object",
+        "required": [
+          "kind",
+          "environmentId",
+          "namespace",
+          "approvalRequired",
+          "preVerification",
+          "postVerification",
+          "compensationGuidance",
+          "tool"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "retry_rollout",
+              "restart_owned_workload",
+              "refresh_scan",
+              "scale_workload"
+            ]
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          },
+          "resourceKind": {
+            "type": "string"
+          },
+          "resourceName": {
+            "type": "string"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "preVerification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "postVerification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "compensationGuidance": {
+            "type": "string"
+          },
+          "tool": {
+            "type": "string"
+          }
+        }
+      },
+      "AIKubernetesAgentPlan": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "contextHash",
+          "observation",
+          "diagnosis",
+          "evidence",
+          "failClosed",
+          "generatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "contextHash": {
+            "type": "string"
+          },
+          "observation": {
+            "$ref": "#/components/schemas/AIKubernetesObservation"
+          },
+          "diagnosis": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "crash_loop",
+              "image_pull",
+              "pending_pvc",
+              "dns",
+              "ingress",
+              "quota",
+              "foreign_resource",
+              "unknown"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIKubernetesRepairProposal"
+            }
+          },
+          "blockedReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "failClosed": {
+            "type": "boolean"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AISCMChangePlan": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "planId",
+          "tenantId",
+          "projectId",
+          "provider",
+          "repository",
+          "changeId",
+          "eventId",
+          "action",
+          "impact",
+          "untrustedInput",
+          "approvalRequired",
+          "cleanupAllowed",
+          "idempotencyKey",
+          "generatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "github",
+              "gitlab"
+            ]
+          },
+          "repository": {
+            "type": "string"
+          },
+          "changeId": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "open",
+              "update",
+              "close",
+              "ignore"
+            ]
+          },
+          "branch": {
+            "type": "string"
+          },
+          "commitSha": {
+            "type": "string"
+          },
+          "changedPaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "environment_create_or_update",
+              "policy_controlled_cleanup",
+              "ignored"
+            ]
+          },
+          "untrustedInput": {
+            "type": "boolean"
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "cleanupAllowed": {
+            "type": "boolean"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIFinOpsConfidence": {
+        "type": "object",
+        "required": [
+          "level",
+          "score",
+          "evidenceCount"
+        ],
+        "properties": {
+          "level": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "evidenceCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "AIFinOpsOptimizationProposal": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "proposalFields",
+          "savings",
+          "confidence",
+          "risk",
+          "performanceTradeoff",
+          "evidence",
+          "approvalRequired",
+          "postVerification",
+          "billingAuthoritative"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "ttl",
+              "schedule",
+              "requests_limits",
+              "shared_service"
+            ]
+          },
+          "proposalFields": {
+            "$ref": "#/components/schemas/ConfigurationProposalFields"
+          },
+          "savings": {
+            "$ref": "#/components/schemas/AIFinOpsMoney"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/AIFinOpsConfidence"
+          },
+          "risk": {
+            "type": "string"
+          },
+          "performanceTradeoff": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "postVerification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "billingAuthoritative": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIFinOpsOptimizationPlan": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "tenantId",
+          "projectId",
+          "currency",
+          "periodStart",
+          "periodEnd",
+          "forecast",
+          "confidence",
+          "evidence",
+          "generatedAt"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "forecast": {
+            "$ref": "#/components/schemas/AIFinOpsMoney"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/AIFinOpsConfidence"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIFinOpsOptimizationProposal"
+            }
+          },
+          "missingData": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIReleaseArtifact": {
+        "type": "object",
+        "required": [
+          "name",
+          "present",
+          "compatible"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "present": {
+            "type": "boolean"
+          },
+          "compatible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIReleaseObservation": {
+        "type": "object",
+        "required": [
+          "tenant_id",
+          "umbrella_version",
+          "artifacts",
+          "contract_drift",
+          "atomic_verified"
+        ],
+        "properties": {
+          "tenant_id": {
+            "type": "string"
+          },
+          "umbrella_version": {
+            "type": "string"
+          },
+          "compatibility_fingerprint": {
+            "type": "string"
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIReleaseArtifact"
+            }
+          },
+          "workflow_state": {
+            "type": "string"
+          },
+          "contract_drift": {
+            "type": "boolean"
+          },
+          "atomic_verified": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIReleaseRepairProposal": {
+        "type": "object",
+        "required": [
+          "kind",
+          "repository",
+          "branch",
+          "approval_required",
+          "tests",
+          "rollback_version",
+          "digest_required"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rerun_allowlisted_workflow",
+              "propose_artifact_fix",
+              "publish_umbrella_release"
+            ]
+          },
+          "workflow": {
+            "type": "string"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exact_diff": {
+            "type": "string"
+          },
+          "approval_required": {
+            "type": "boolean"
+          },
+          "tests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rollback_version": {
+            "type": "string"
+          },
+          "digest_required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIReleaseAgentPlan": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "plan_id",
+          "tenant_id",
+          "context_hash",
+          "observation",
+          "diagnosis",
+          "evidence",
+          "proposals",
+          "fail_closed",
+          "generated_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string"
+          },
+          "observation": {
+            "$ref": "#/components/schemas/AIReleaseObservation"
+          },
+          "diagnosis": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "failed_build",
+              "stale_chart",
+              "missing_image",
+              "contract_drift",
+              "atomic_release_failure",
+              "unknown"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIReleaseRepairProposal"
+            }
+          },
+          "blocked_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fail_closed": {
+            "type": "boolean"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIReleaseAgentRequest": {
+        "type": "object",
+        "required": [
+          "umbrella_version",
+          "artifacts",
+          "repository",
+          "branch",
+          "contract_drift",
+          "atomic_verified"
+        ],
+        "properties": {
+          "umbrella_version": {
+            "type": "string"
+          },
+          "compatibility_fingerprint": {
+            "type": "string"
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIReleaseArtifact"
+            }
+          },
+          "workflow_state": {
+            "type": "string"
+          },
+          "contract_drift": {
+            "type": "boolean"
+          },
+          "atomic_verified": {
+            "type": "boolean"
+          },
+          "repository": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          }
+        }
+      },
+      "AIIncidentEvidence": {
+        "type": "object",
+        "required": [
+          "id",
+          "reference",
+          "project_id",
+          "environment_id",
+          "check",
+          "signal",
+          "observed_at",
+          "resolved"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "reference": {
+            "$ref": "#/components/schemas/AIEvidenceReference"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "check": {
+            "type": "string"
+          },
+          "signal": {
+            "type": "string"
+          },
+          "failure_code": {
+            "type": "string"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolved": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AIIncidentAction": {
+        "type": "object",
+        "required": [
+          "kind",
+          "target",
+          "approval_required",
+          "preconditions",
+          "verification",
+          "compensation",
+          "evidence_ids"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "refresh_status",
+              "retry_reconcile",
+              "restart_owned_workload",
+              "rollback",
+              "failover"
+            ]
+          },
+          "target": {
+            "type": "string"
+          },
+          "approval_required": {
+            "type": "boolean"
+          },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "verification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "compensation": {
+            "type": "string"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AIIncidentAgentRequest": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "environment_id",
+          "window_start",
+          "window_end",
+          "failure_count",
+          "blast_radius",
+          "impact",
+          "evidence"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "window_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "window_end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "failure_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "blast_radius": {
+            "type": "string",
+            "enum": [
+              "environment",
+              "project",
+              "tenant",
+              "platform"
+            ]
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "degraded",
+              "partial_outage",
+              "outage"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/AIIncidentEvidence"
+            }
+          }
+        }
+      },
+      "AIIncidentAgentPlan": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "incident_id",
+          "tenant_id",
+          "project_id",
+          "environment_id",
+          "context_hash",
+          "state",
+          "impact",
+          "blast_radius",
+          "suspected_cause_code",
+          "confidence",
+          "evidence_timeline",
+          "actions",
+          "prevention_tasks",
+          "fail_closed",
+          "generated_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "incident_id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "open",
+              "needs_approval",
+              "escalated",
+              "resolved"
+            ]
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "degraded",
+              "partial_outage",
+              "outage"
+            ]
+          },
+          "blast_radius": {
+            "type": "string",
+            "enum": [
+              "environment",
+              "project",
+              "tenant",
+              "platform"
+            ]
+          },
+          "suspected_cause_code": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "object",
+            "required": [
+              "score",
+              "level",
+              "evidenceCount"
+            ],
+            "properties": {
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "level": {
+                "type": "string",
+                "enum": [
+                  "unknown",
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "evidenceCount": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "evidence_timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIIncidentEvidence"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIIncidentAction"
+            }
+          },
+          "escalation_reason": {
+            "type": "string"
+          },
+          "prevention_tasks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fail_closed": {
+            "type": "boolean"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AISecurityException": {
+        "type": "object",
+        "required": [
+          "id",
+          "tenant_id",
+          "project_id",
+          "finding_id",
+          "reason",
+          "approver_id",
+          "expires_at",
+          "audited"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "finding_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "approver_id": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "audited": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AISecurityFinding": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "severity",
+          "tenant_id",
+          "project_id",
+          "environment_id",
+          "source",
+          "subject"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rbac_escalation",
+              "unsigned_image",
+              "vulnerable_artifact",
+              "network_policy_drift",
+              "policy_drift",
+              "audit_anomaly"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/AIEvidenceReference"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "exception": {
+            "$ref": "#/components/schemas/AISecurityException"
+          }
+        }
+      },
+      "AISecurityRemediationProposal": {
+        "type": "object",
+        "required": [
+          "kind",
+          "finding_id",
+          "target",
+          "diff",
+          "approval_required",
+          "preconditions",
+          "verification",
+          "compensation"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "policy_diff",
+              "rotate_credential",
+              "rbac_mutation",
+              "network_policy_diff"
+            ]
+          },
+          "finding_id": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "diff": {
+            "type": "string"
+          },
+          "approval_required": {
+            "type": "boolean"
+          },
+          "preconditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "verification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "compensation": {
+            "type": "string"
+          }
+        }
+      },
+      "AISecurityAgentRequest": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "environment_id",
+          "findings"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "findings": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/AISecurityFinding"
+            }
+          }
+        }
+      },
+      "AISecurityAgentPlan": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "plan_id",
+          "tenant_id",
+          "project_id",
+          "environment_id",
+          "context_hash",
+          "findings",
+          "evidence",
+          "proposals",
+          "fail_closed",
+          "generated_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "project_id": {
+            "type": "string"
+          },
+          "environment_id": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string"
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AISecurityFinding"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AISecurityRemediationProposal"
+            }
+          },
+          "fail_closed": {
+            "type": "boolean"
+          },
+          "escalation_reason": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AITriggerRule": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "id",
+          "tenant_id",
+          "purpose",
+          "event_types",
+          "cooldown_seconds",
+          "timezone",
+          "maintenance_only",
+          "enabled",
+          "autonomy"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "event_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filter_codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cooldown_seconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "quiet_start": {
+            "type": "string"
+          },
+          "quiet_end": {
+            "type": "string"
+          },
+          "maintenance_only": {
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "autonomy": {
+            "type": "string",
+            "enum": [
+              "observe",
+              "recommend",
+              "approval_required",
+              "autonomous_bounded"
+            ]
+          }
+        }
+      },
+      "AITriggerEvent": {
+        "type": "object",
+        "required": [
+          "id",
+          "tenant_id",
+          "type",
+          "subject_id",
+          "occurred_at",
+          "fingerprint"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "filter_code": {
+            "type": "string"
+          },
+          "subject_id": {
+            "type": "string"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fingerprint": {
+            "type": "string"
+          }
+        }
+      },
+      "AITriggerState": {
+        "type": "object",
+        "properties": {
+          "last_event_id": {
+            "type": "string"
+          },
+          "last_fingerprint": {
+            "type": "string"
+          },
+          "last_triggered_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "storm_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "AITriggerPreviewRequest": {
+        "type": "object",
+        "required": [
+          "rule",
+          "event",
+          "state"
+        ],
+        "properties": {
+          "rule": {
+            "$ref": "#/components/schemas/AITriggerRule"
+          },
+          "event": {
+            "$ref": "#/components/schemas/AITriggerEvent"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AITriggerState"
+          }
+        }
+      },
+      "AITriggerResult": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "rule_id",
+          "event_id",
+          "tenant_id",
+          "decision",
+          "run_key",
+          "reason",
+          "autonomy",
+          "state"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "rule_id": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "deduplicated",
+              "cooldown",
+              "quiet_hours",
+              "preview",
+              "started",
+              "escalated"
+            ]
+          },
+          "run_key": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "autonomy": {
+            "type": "string",
+            "enum": [
+              "observe",
+              "recommend",
+              "approval_required",
+              "autonomous_bounded"
+            ]
+          },
+          "state": {
+            "$ref": "#/components/schemas/AITriggerState"
+          },
+          "scheduled_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AISanitizedFact": {
+        "type": "object",
+        "required": [
+          "key",
+          "value"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "AIEvalConsent": {
+        "type": "object",
+        "required": [
+          "opted_in",
+          "policy_version",
+          "actor_id",
+          "recorded_at"
+        ],
+        "properties": {
+          "opted_in": {
+            "type": "boolean"
+          },
+          "policy_version": {
+            "type": "string"
+          },
+          "actor_id": {
+            "type": "string"
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIEvalDatasetRecord": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "id",
+          "tenant_id",
+          "run_id",
+          "snapshot_hash",
+          "prompt_version",
+          "model_version",
+          "policy_version",
+          "consent",
+          "provenance",
+          "created_at"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "tenant_id": {
+            "type": "string"
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "snapshot_hash": {
+            "type": "string"
+          },
+          "prompt_version": {
+            "type": "string"
+          },
+          "model_version": {
+            "type": "string"
+          },
+          "policy_version": {
+            "type": "string"
+          },
+          "consent": {
+            "$ref": "#/components/schemas/AIEvalConsent"
+          },
+          "provenance": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIEvidenceReference"
+            }
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AIReplayRequest": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "dataset",
+          "facts",
+          "prompt_version",
+          "model_version",
+          "policy_version"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "dataset": {
+            "$ref": "#/components/schemas/AIEvalDatasetRecord"
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AISanitizedFact"
+            }
+          },
+          "prompt_version": {
+            "type": "string"
+          },
+          "model_version": {
+            "type": "string"
+          },
+          "policy_version": {
+            "type": "string"
+          }
+        }
+      },
+      "AIReplayResult": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "snapshot_hash",
+          "deterministic",
+          "version_compatible",
+          "deleted"
+        ],
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "snapshot_hash": {
+            "type": "string"
+          },
+          "deterministic": {
+            "type": "boolean"
+          },
+          "version_compatible": {
+            "type": "boolean"
+          },
+          "deleted": {
             "type": "boolean"
           }
         }
@@ -10898,16 +14693,6 @@
               }
             }
           },
-          "429": {
-            "description": "Quota limit exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuotaError"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not found",
             "content": {
@@ -10924,6 +14709,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Quota limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotaError"
                 }
               }
             }
@@ -14001,9 +17796,13 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["legalHold"],
+                "required": [
+                  "legalHold"
+                ],
                 "properties": {
-                  "legalHold": {"type": "boolean"}
+                  "legalHold": {
+                    "type": "boolean"
+                  }
                 }
               }
             }
@@ -14014,13 +17813,440 @@
             "description": "Updated audit retention policy",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/AuditRetentionPolicy"}
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRetentionPolicy"
+                }
               }
             }
           },
-          "400": {"description": "Invalid request"},
-          "403": {"description": "Forbidden"},
-          "503": {"description": "Policy store unavailable"}
+          "400": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "Policy store unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/tenants/{tenantID}/ai-capabilities": {
+      "get": {
+        "operationId": "getTenantAICapabilities",
+        "summary": "Read effective tenant AI autonomy capabilities",
+        "parameters": [
+          {
+            "name": "tenantID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Effective AI capability matrix",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AICapabilityMatrix"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Tenant scope or permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/bootstrap-session/onboarding-plan": {
+      "get": {
+        "operationId": "getBootstrapOnboardingPlan",
+        "summary": "Read evidence-backed Bootstrap onboarding plan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIBootstrapOnboardingPlan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Project access denied"
+          },
+          "503": {
+            "description": "Onboarding assistant unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/gitops/diagnosis": {
+      "get": {
+        "operationId": "getGitOpsAgentPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GitOps diagnosis and bounded repair proposals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIGitOpsAgentPlan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Project access denied"
+          },
+          "503": {
+            "description": "GitOps diagnosis unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/environments/{id}/kubernetes-diagnosis": {
+      "get": {
+        "operationId": "getKubernetesAgentPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kubernetes diagnosis and bounded remediation proposals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIKubernetesAgentPlan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Environment access denied"
+          },
+          "503": {
+            "description": "Kubernetes diagnosis unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/environments/{id}/scm-agent/plan": {
+      "get": {
+        "operationId": "getSCMChangePlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bounded SCM change plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AISCMChangePlan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Environment access denied"
+          },
+          "503": {
+            "description": "SCM agent unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/finops/optimization": {
+      "get": {
+        "operationId": "getProjectFinOpsOptimization",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence-backed FinOps optimization proposals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIFinOpsOptimizationPlan"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Project access denied"
+          },
+          "503": {
+            "description": "FinOps optimization unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/release/plan": {
+      "post": {
+        "summary": "Preview bounded CI and release engineering plan",
+        "operationId": "previewReleaseAgentPlan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIReleaseAgentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Release agent plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIReleaseAgentPlan"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid release facts"
+          },
+          "403": {
+            "description": "Release agent disabled or tenant scope denied"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/incidents/plan": {
+      "post": {
+        "summary": "Preview bounded incident response plan",
+        "operationId": "previewIncidentAgentPlan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIIncidentAgentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Incident response plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIIncidentAgentPlan"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid incident evidence"
+          },
+          "403": {
+            "description": "Incident agent disabled or tenant scope denied"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/security/plan": {
+      "post": {
+        "summary": "Preview bounded security and compliance plan",
+        "operationId": "previewSecurityAgentPlan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AISecurityAgentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security agent plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AISecurityAgentPlan"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid security observations"
+          },
+          "403": {
+            "description": "Security agent disabled or tenant scope denied"
+          }
+        }
+      }
+    },
+    "/api/v1/environments/{id}/diagnosis/{runID}/cancel": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "runID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Cancel an AI diagnosis run",
+        "operationId": "cancelEnvironmentDiagnosis",
+        "responses": {
+          "200": {
+            "description": "Canceled diagnosis run",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRun"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Project access denied"
+          },
+          "404": {
+            "description": "Diagnosis run not found"
+          },
+          "503": {
+            "description": "Diagnosis unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/triggers/preview": {
+      "post": {
+        "summary": "Preview a bounded AI trigger decision",
+        "operationId": "previewAITrigger",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AITriggerPreviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trigger decision",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AITriggerResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid trigger rule or event"
+          },
+          "403": {
+            "description": "Tenant scope denied"
+          }
+        }
+      }
+    },
+    "/api/v1/ai/eval/replay": {
+      "post": {
+        "summary": "Replay a sanitized AI evaluation snapshot",
+        "operationId": "replayAIEvalSnapshot",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIReplayRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replay comparison",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIReplayResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or unconsented replay data"
+          },
+          "403": {
+            "description": "Tenant scope denied"
+          }
         }
       }
     }

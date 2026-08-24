@@ -25,6 +25,7 @@ const (
 	AIRunStatusSucceeded AIRunStatus = "succeeded"
 	AIRunStatusFailed    AIRunStatus = "failed"
 	AIRunStatusCanceled  AIRunStatus = "canceled"
+	AIRunStatusPaused    AIRunStatus = "paused"
 )
 
 type AIDiagnosisOutcome string
@@ -118,7 +119,7 @@ func (s AIRunStatusRecord) Validate() error {
 		return errors.New("AI run status identity or schema version is invalid")
 	}
 	switch s.Status {
-	case AIRunStatusQueued, AIRunStatusRunning, AIRunStatusSucceeded, AIRunStatusFailed, AIRunStatusCanceled:
+	case AIRunStatusQueued, AIRunStatusRunning, AIRunStatusSucceeded, AIRunStatusFailed, AIRunStatusCanceled, AIRunStatusPaused:
 		return nil
 	default:
 		return fmt.Errorf("unsupported AI run status %q", s.Status)

@@ -64,6 +64,23 @@ type AIContextInput struct {
 	Bootstrap    []AIBootstrapSnapshot
 }
 
+type AIContextThreatAssessment struct {
+	CredentialDetected         bool `json:"credentialDetected"`
+	PromptInjectionDetected    bool `json:"promptInjectionDetected"`
+	ExfiltrationDetected       bool `json:"exfiltrationDetected"`
+	UnicodeObfuscationDetected bool `json:"unicodeObfuscationDetected"`
+}
+
+type AISecurityEvent struct {
+	SchemaVersion  string    `json:"schemaVersion"`
+	EventType      string    `json:"eventType"`
+	TenantID       string    `json:"tenantId"`
+	SourceType     string    `json:"sourceType"`
+	SourceIDHash   string    `json:"sourceIdHash"`
+	Classification string    `json:"classification"`
+	CreatedAt      time.Time `json:"createdAt"`
+}
+
 // AIBootstrapSnapshot is the explicit non-secret allowlist for troubleshooting.
 type AIBootstrapSnapshot struct {
 	TenantID              string `json:"tenantId"`
@@ -183,6 +200,26 @@ func (b AIContextBuilder) Build(input AIContextInput) (AIContext, error) {
 	return context, nil
 }
 
+func (c AIContext) SecureForProvider() (AIContext, AIContextThreatAssessment, error) {
+	if c.SchemaVersion != AIContextSchemaVersion || strings.TrimSpace(c.TenantID) == "" {
+		return AIContext{}, AIContextThreatAssessment{}, errors.New("AI context security envelope is invalid")
+	}
+	secured := c
+	secured.Entries = make([]AIContextEntry, len(c.Entries))
+	for index, entry := range c.Entries {
+		secured.Entries[index] = entry
+		secured.Entries[index].Fields = append([]AIContextField(nil), entry.Fields...)
+	}
+	assessment := AIContextThreatAssessment{}
+	for entryIndex := range secured.Entries {
+		secured.Entries[entryIndex].SourceID, assessment = secureContextString(secured.Entries[entryIndex].SourceID, assessment)
+		for fieldIndex := range secured.Entries[entryIndex].Fields {
+			secured.Entries[entryIndex].Fields[fieldIndex].Value, assessment = secureContextString(secured.Entries[entryIndex].Fields[fieldIndex].Value, assessment)
+		}
+	}
+	return secured, assessment, nil
+}
+
 func bootstrapContextEntry(snapshot AIBootstrapSnapshot, maxBytes int, truncated *bool) AIContextEntry {
 	return aiEntry("bootstrap_session", snapshot.SessionID, []AIContextField{
 		aiField("projectId", snapshot.ProjectID, maxBytes, truncated),
@@ -204,10 +241,16 @@ func bootstrapContextEntry(snapshot AIBootstrapSnapshot, maxBytes int, truncated
 var (
 	aiBearerPattern     = regexp.MustCompile(`(?i)\bbearer\s+[A-Za-z0-9._~+/=-]+`)
 	aiPrivateKeyPattern = regexp.MustCompile(`(?s)-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----.*?-----END [A-Z0-9 ]*PRIVATE KEY-----`)
-	aiCredentialPattern = regexp.MustCompile(`(?i)\b(password|passwd|client[_-]?secret|webhook[_-]?secret|access[_-]?token|refresh[_-]?token)\s*[:=]\s*[^\s,;]+`)
+	aiCredentialPattern = regexp.MustCompile(`(?i)\b(password|passwd|client[_-]?secret|webhook[_-]?secret|access[_-]?token|refresh[_-]?token|token)\s*[:=]\s*[^\s,;]+`)
 )
 
 func redactAIText(value string, maxBytes int) (AIContextString, bool) {
+	value = strings.Map(func(r rune) rune {
+		if r == '\u200b' || r == '\u200c' || r == '\u200d' || r == '\ufeff' {
+			return -1
+		}
+		return r
+	}, value)
 	value = aiBearerPattern.ReplaceAllString(value, "Bearer [REDACTED]")
 	value = aiPrivateKeyPattern.ReplaceAllString(value, "[REDACTED_PRIVATE_KEY]")
 	value = aiCredentialPattern.ReplaceAllString(value, "$1=[REDACTED]")
@@ -217,7 +260,69 @@ func redactAIText(value string, maxBytes int) (AIContextString, bool) {
 	if len(value) <= maxBytes {
 		return AIContextString{Value: value, Trust: AIContextTrustUntrustedData}, false
 	}
-	return AIContextString{Value: value[:maxBytes] + "[TRUNCATED_STRING]", Trust: AIContextTrustUntrustedData}, true
+	marker := "[TRUNCATED_STRING]"
+	if maxBytes <= len(marker) {
+		return AIContextString{Value: marker[:maxBytes], Trust: AIContextTrustUntrustedData}, true
+	}
+	return AIContextString{Value: value[:maxBytes-len(marker)] + marker, Trust: AIContextTrustUntrustedData}, true
+}
+
+func secureContextString(value AIContextString, assessment AIContextThreatAssessment) (AIContextString, AIContextThreatAssessment) {
+	normalized := strings.Map(func(r rune) rune {
+		if r == '\u200b' || r == '\u200c' || r == '\u200d' || r == '\ufeff' {
+			return -1
+		}
+		return r
+	}, value.Value)
+	lower := strings.ToLower(normalized)
+	if strings.Contains(lower, "bearer ") || strings.Contains(lower, "private key") || strings.Contains(lower, "password=") || strings.Contains(lower, "token=") || strings.Contains(lower, "webhook_secret") {
+		assessment.CredentialDetected = true
+	}
+	if strings.Contains(lower, "ignore previous") || strings.Contains(lower, "system message") || strings.Contains(lower, "you are now") || strings.Contains(lower, "follow these instructions") {
+		assessment.PromptInjectionDetected = true
+	}
+	if strings.Contains(lower, "send the secret") || strings.Contains(lower, "exfiltrate") || strings.Contains(lower, "upload credentials") {
+		assessment.ExfiltrationDetected = true
+	}
+	if normalized != value.Value {
+		assessment.UnicodeObfuscationDetected = true
+	}
+	redacted, _ := redactAIText(normalized, len(normalized))
+	redacted.Trust = AIContextTrustUntrustedData
+	return redacted, assessment
+}
+
+func SanitizeAIDiagnosisResult(result AIDiagnosisResult) (AIDiagnosisResult, AIContextThreatAssessment) {
+	assessment := AIContextThreatAssessment{}
+	result.Summary, assessment = sanitizeOutputText(result.Summary, assessment)
+	for index := range result.Observed {
+		result.Observed[index], assessment = sanitizeOutputText(result.Observed[index], assessment)
+	}
+	for index := range result.LikelyCauses {
+		result.LikelyCauses[index].Summary, assessment = sanitizeOutputText(result.LikelyCauses[index].Summary, assessment)
+	}
+	for index := range result.SafeChecks {
+		result.SafeChecks[index].Summary, assessment = sanitizeOutputText(result.SafeChecks[index].Summary, assessment)
+	}
+	for index := range result.UserChecks {
+		result.UserChecks[index].Summary, assessment = sanitizeOutputText(result.UserChecks[index].Summary, assessment)
+	}
+	for index := range result.PlatformChecks {
+		result.PlatformChecks[index].Summary, assessment = sanitizeOutputText(result.PlatformChecks[index].Summary, assessment)
+	}
+	return result, assessment
+}
+
+func sanitizeOutputText(value string, assessment AIContextThreatAssessment) (string, AIContextThreatAssessment) {
+	sanitized, next := secureContextString(AIContextString{Value: value, Trust: AIContextTrustUntrustedData}, assessment)
+	return sanitized.Value, next
+}
+
+// RedactAIText is the shared redaction boundary for all AI-derived storage.
+// Callers must treat the returned value as untrusted data.
+func RedactAIText(value string, maxBytes int) (string, bool) {
+	redacted, truncated := redactAIText(value, maxBytes)
+	return redacted.Value, truncated
 }
 
 func aiField(name, value string, maxBytes int, truncated *bool) AIContextField {

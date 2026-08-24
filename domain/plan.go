@@ -20,6 +20,12 @@ const (
 	FeatureFleetUpgradeWaves = "fleet.upgrade_waves"
 	FeatureSupportSLA        = "support.sla"
 	FeatureAuditSIEM        = "audit.siem_export"
+	FeatureAIDiagnosis     = "ai.diagnosis"
+	FeatureAIBootstrap     = "ai.bootstrap"
+	FeatureAIConfiguration = "ai.configuration"
+	FeatureAIEnvironment   = "ai.environment_create"
+	FeatureAIFinOps        = "ai.finops"
+	FeatureAIApproved      = "ai.approved_actions"
 )
 
 const (
@@ -30,6 +36,10 @@ const (
 	LimitEnvironmentPinHours   = "environment.pin.max_hours"
 	LimitOperatorsMax          = "users.operators.max"
 	LimitAuditRetentionDays    = "audit.retention_days"
+	LimitAIRunsConcurrent      = "ai.runs.max_concurrent"
+	LimitAIRunsRequests        = "ai.runs.max_requests"
+	LimitAIContextBytes        = "ai.context.max_bytes"
+	LimitAIOutputTokens        = "ai.output.max_tokens"
 )
 
 var knownPlanFeatureKeys = map[string]struct{}{
@@ -37,6 +47,7 @@ var knownPlanFeatureKeys = map[string]struct{}{
 	FeatureGitOpsFlux: {}, FeatureGitOpsArgo: {}, FeatureFinOpsAllocation: {}, FeaturePolicyCustom: {},
 	FeatureFleetUpgradeWaves: {}, FeatureSupportSLA: {},
 	FeatureAuditSIEM: {},
+	FeatureAIDiagnosis: {}, FeatureAIBootstrap: {}, FeatureAIConfiguration: {}, FeatureAIEnvironment: {}, FeatureAIFinOps: {}, FeatureAIApproved: {},
 	// These aliases are retained for existing entitlement and quota callers.
 	"projects": {}, "environments": {}, "gitops": {}, "helmDirect": {}, "audit": {},
 }
@@ -44,6 +55,7 @@ var knownPlanFeatureKeys = map[string]struct{}{
 var knownPlanLimitKeys = map[string]struct{}{
 	LimitProjectsMax: {}, LimitManagedClustersMax: {}, LimitActiveEnvironmentsMax: {},
 	LimitEnvironmentTTLHours: {}, LimitEnvironmentPinHours: {}, LimitOperatorsMax: {}, LimitAuditRetentionDays: {},
+	LimitAIRunsConcurrent: {}, LimitAIRunsRequests: {}, LimitAIContextBytes: {}, LimitAIOutputTokens: {},
 	// These aliases are retained for existing entitlement and quota callers.
 	"maxProjects": {}, "maxRemoteClusters": {}, "maxActiveEnvironments": {}, "maxMembers": {},
 	"maxTTLHours": {}, "maxPinDays": {},
