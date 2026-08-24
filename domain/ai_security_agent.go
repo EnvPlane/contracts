@@ -57,7 +57,7 @@ type AISecurityActionKind string
 
 const (
 	AISecurityPolicyDiff        AISecurityActionKind = "policy_diff"
-	AISecurityRotateCredential  AISecurityActionKind = "rotate_credential"
+	AISecurityRotateCredential  AISecurityActionKind = "rotate_credential" //nolint:gosec -- action identifier, not credential material
 	AISecurityRBACMutation      AISecurityActionKind = "rbac_mutation"
 	AISecurityNetworkPolicyDiff AISecurityActionKind = "network_policy_diff"
 )

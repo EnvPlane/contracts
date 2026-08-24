@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"testing"
 	"time"
 )
@@ -21,14 +22,14 @@ func TestAIEnvironmentLifecyclePlanFailsClosedBeforeApprovalOrReadiness(t *testi
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := plan.ValidateForExecution(true); err != ErrAIEnvironmentLifecycleNotReady {
+	if err := plan.ValidateForExecution(true); !errors.Is(err, ErrAIEnvironmentLifecycleNotReady) {
 		t.Fatalf("not-ready execution error = %v", err)
 	}
 	plan, err = buildLifecycleTestPlan(request, true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := plan.ValidateForExecution(false); err != ErrAIEnvironmentLifecycleApproval {
+	if err := plan.ValidateForExecution(false); !errors.Is(err, ErrAIEnvironmentLifecycleApproval) {
 		t.Fatalf("unapproved execution error = %v", err)
 	}
 }

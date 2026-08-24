@@ -98,16 +98,16 @@ type AIKubernetesAgentPlan struct {
 
 func (o AIKubernetesObservation) Validate() error {
 	if strings.TrimSpace(o.TenantID) == "" || strings.TrimSpace(o.ProjectID) == "" || strings.TrimSpace(o.EnvironmentID) == "" || strings.TrimSpace(o.Namespace) == "" || !o.NamespaceValid || !o.OwnershipValid {
-		return errors.New("Kubernetes observation is outside the authorized namespace or ownership scope")
+		return errors.New("kubernetes observation is outside the authorized namespace or ownership scope")
 	}
 	for _, value := range []string{o.TenantID, o.ProjectID, o.EnvironmentID, o.Namespace, o.WorkloadStatus, o.FluxStatus, o.NetworkStatus, o.StorageStatus, o.QuotaStatus} {
 		if len(value) > 512 || strings.ContainsAny(value, "\r\n\x00") {
-			return errors.New("Kubernetes observation contains an invalid value")
+			return errors.New("kubernetes observation contains an invalid value")
 		}
 	}
 	for _, resource := range o.Resources {
 		if len(resource.Name) > 256 || len(resource.Kind) > 128 || resource.Namespace != o.Namespace || !resource.Owned || strings.ContainsAny(resource.Name+resource.Kind+resource.Status+resource.Reason, "\r\n\x00") {
-			return errors.New("Kubernetes resource observation is unauthorized")
+			return errors.New("kubernetes resource observation is unauthorized")
 		}
 	}
 	for _, event := range o.Events {

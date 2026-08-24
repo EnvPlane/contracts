@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 	"time"
 )
@@ -34,7 +35,7 @@ func TestAIPlanExecutionAndCompatibilityFailClosed(t *testing.T) {
 	if err := plan.ValidateForExecution("sha256:context"); err != nil {
 		t.Fatalf("valid plan rejected: %v", err)
 	}
-	if err := plan.ValidateForExecution("sha256:changed"); err != ErrAIPlanStale {
+	if err := plan.ValidateForExecution("sha256:changed"); !errors.Is(err, ErrAIPlanStale) {
 		t.Fatalf("stale plan error = %v", err)
 	}
 	if err := plan.ValidateResumeCompatibility("2", "sha256:context"); err != ErrAIPlanIncompatible {
