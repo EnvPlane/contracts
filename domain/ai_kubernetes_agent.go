@@ -130,16 +130,16 @@ func (p AIKubernetesAgentPlan) Validate() error {
 	}
 	for _, evidence := range p.Evidence {
 		if evidence.TenantID != p.TenantID || strings.TrimSpace(evidence.SourceID) == "" {
-			return errors.New("Kubernetes evidence is outside tenant scope")
+			return errors.New("kubernetes evidence is outside tenant scope")
 		}
 	}
 	for _, proposal := range p.Proposals {
 		if proposal.EnvironmentID != p.EnvironmentID || proposal.Namespace != p.Observation.Namespace || strings.TrimSpace(proposal.Tool) == "" || len(proposal.PreVerification) == 0 || len(proposal.PostVerification) == 0 || strings.TrimSpace(proposal.CompensationGuidance) == "" {
-			return errors.New("Kubernetes repair proposal is invalid")
+			return errors.New("kubernetes repair proposal is invalid")
 		}
 		if proposal.Kind == AIKubernetesRestartOwnedWorkload || proposal.Kind == AIKubernetesScaleWorkload {
 			if !proposal.ApprovalRequired {
-				return errors.New("Kubernetes mutation requires approval")
+				return errors.New("kubernetes mutation requires approval")
 			}
 		}
 	}
