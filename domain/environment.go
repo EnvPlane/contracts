@@ -92,19 +92,20 @@ type SCMSource struct {
 }
 
 type GitOpsTarget struct {
-	Path            string `json:"path"`
-	Renderer        string `json:"renderer,omitempty"`
-	ValuesPath      string `json:"valuesPath,omitempty"`
-	RawManifestPath string `json:"rawManifestPath,omitempty"`
-	SourceRefName   string `json:"sourceRefName"`
+	Path               string `json:"path"`
+	OutputPath         string `json:"outputPath,omitempty"`
+	Renderer           string `json:"renderer,omitempty"`
+	ValuesPath         string `json:"valuesPath,omitempty"`
+	RawManifestPath    string `json:"rawManifestPath,omitempty"`
+	SourceRefName      string `json:"sourceRefName"`
 	SourceRefNamespace string `json:"sourceRefNamespace,omitempty"`
-	TargetNamespace string `json:"targetNamespace,omitempty"`
-	HealthCheckName string `json:"healthCheckName"`
-	RepositoryID    string `json:"repositoryId,omitempty"`
-	BaseBranch      string `json:"baseBranch,omitempty"`
-	Branch          string `json:"branch,omitempty"`
-	BranchStrategy  string `json:"branchStrategy,omitempty"`
-	PullRequestURL  string `json:"pullRequestUrl,omitempty"`
+	TargetNamespace    string `json:"targetNamespace,omitempty"`
+	HealthCheckName    string `json:"healthCheckName"`
+	RepositoryID       string `json:"repositoryId,omitempty"`
+	BaseBranch         string `json:"baseBranch,omitempty"`
+	Branch             string `json:"branch,omitempty"`
+	BranchStrategy     string `json:"branchStrategy,omitempty"`
+	PullRequestURL     string `json:"pullRequestUrl,omitempty"`
 }
 
 type BaseEnvironment struct {
@@ -273,6 +274,9 @@ func (e Environment) PathKustomizationFilename() string {
 }
 
 func (e Environment) GitOpsDirectory() string {
+	if outputPath := strings.Trim(strings.TrimSpace(e.GitOps.OutputPath), "/"); outputPath != "" {
+		return outputPath
+	}
 	project := gitOpsPathSegment(e.Project)
 	if project == "" {
 		project = "default"
