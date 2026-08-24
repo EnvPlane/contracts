@@ -112,7 +112,7 @@ func (o AIKubernetesObservation) Validate() error {
 	}
 	for _, event := range o.Events {
 		if event.Namespace != o.Namespace || strings.TrimSpace(event.ID) == "" || strings.ContainsAny(event.ID+event.Kind+event.Name+event.Reason, "\r\n\x00") {
-			return errors.New("Kubernetes event observation is unauthorized")
+			return errors.New("kubernetes event observation is unauthorized")
 		}
 	}
 	return nil
@@ -120,10 +120,10 @@ func (o AIKubernetesObservation) Validate() error {
 
 func (p AIKubernetesAgentPlan) Validate() error {
 	if p.SchemaVersion != AIKubernetesAgentSchemaVersion || strings.TrimSpace(p.PlanID) == "" || strings.TrimSpace(p.ContextHash) == "" || p.GeneratedAt.IsZero() || len(p.Evidence) == 0 {
-		return errors.New("Kubernetes agent plan identity is invalid")
+		return errors.New("kubernetes agent plan identity is invalid")
 	}
 	if p.TenantID != p.Observation.TenantID || p.ProjectID != p.Observation.ProjectID || p.EnvironmentID != p.Observation.EnvironmentID {
-		return errors.New("Kubernetes agent plan scope is inconsistent")
+		return errors.New("kubernetes agent plan scope is inconsistent")
 	}
 	if err := p.Observation.Validate(); err != nil {
 		return err

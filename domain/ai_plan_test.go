@@ -38,7 +38,7 @@ func TestAIPlanExecutionAndCompatibilityFailClosed(t *testing.T) {
 	if err := plan.ValidateForExecution("sha256:changed"); !errors.Is(err, ErrAIPlanStale) {
 		t.Fatalf("stale plan error = %v", err)
 	}
-	if err := plan.ValidateResumeCompatibility("2", "sha256:context"); err != ErrAIPlanIncompatible {
+	if err := plan.ValidateResumeCompatibility("2", "sha256:context"); !errors.Is(err, ErrAIPlanIncompatible) {
 		t.Fatalf("incompatible plan error = %v", err)
 	}
 	paused := plan.PauseForIncompatibility("upgrade requires review")
