@@ -93,6 +93,7 @@ type SCMSource struct {
 
 type GitOpsTarget struct {
 	Path               string `json:"path"`
+	RepositoryPath     string `json:"repositoryPath,omitempty"`
 	OutputPath         string `json:"outputPath,omitempty"`
 	Renderer           string `json:"renderer,omitempty"`
 	ValuesPath         string `json:"valuesPath,omitempty"`
