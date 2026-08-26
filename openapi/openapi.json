@@ -4260,7 +4260,8 @@
           "contractVersion": {
             "type": "string",
             "enum": [
-              "v1"
+              "v1",
+              "v2"
             ]
           },
           "revisionId": {
@@ -5219,7 +5220,8 @@
           "contractVersion": {
             "type": "string",
             "enum": [
-              "v1"
+              "v1",
+              "v2"
             ]
           },
           "commandId": {
@@ -5285,7 +5287,24 @@
           "leaseExpiresAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "envelopeLeases": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SecretMaterializationEnvelopeLease"
+            }
           }
+        }
+      },
+      "SecretMaterializationEnvelopeLease": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["leaseId", "envelopeDigest", "audience", "expiresAt"],
+        "properties": {
+          "leaseId": {"type": "string"},
+          "envelopeDigest": {"type": "string", "pattern": "^sha256:"},
+          "audience": {"type": "string"},
+          "expiresAt": {"type": "string", "format": "date-time"}
         }
       },
       "AgentSecretMaterializationResult": {

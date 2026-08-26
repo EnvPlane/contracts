@@ -12,7 +12,8 @@ func TestAgentSecretMaterializationCommandIsVersionedBoundAndRedacted(t *testing
 	if err != nil {
 		t.Fatal(err)
 	}
-	command := AgentSecretMaterializationCommand{ContractVersion: SecretMaterializationCommandContractVersion, CommandID: "command", TenantID: plan.TenantID, ProjectID: plan.ProjectID, EnvironmentID: plan.EnvironmentID, ClusterID: "cluster", AgentID: "agent", Operation: SecretOperationMaterialize, PlanID: plan.PlanID, PlanDigest: plan.Digest, ExpectedRevision: plan.Revision, Plan: plan, Status: SecretCommandPending, Attempt: 0, CreatedAt: time.Unix(2, 0)}
+	created := time.Unix(2, 0)
+	command := AgentSecretMaterializationCommand{ContractVersion: SecretMaterializationCommandContractVersion, CommandID: "command", TenantID: plan.TenantID, ProjectID: plan.ProjectID, EnvironmentID: plan.EnvironmentID, ClusterID: "cluster", AgentID: "agent", Operation: SecretOperationMaterialize, PlanID: plan.PlanID, PlanDigest: plan.Digest, ExpectedRevision: plan.Revision, Plan: plan, Status: SecretCommandPending, Attempt: 0, CreatedAt: created, EnvelopeLeases: map[string]SecretMaterializationEnvelopeLease{"registry": {LeaseID: "lease", EnvelopeDigest: "sha256:digest", Audience: "agent", ExpiresAt: created.Add(time.Minute)}}}
 	if err := command.Validate(); err != nil {
 		t.Fatal(err)
 	}
@@ -32,6 +33,26 @@ func TestAgentSecretMaterializationCommandIsVersionedBoundAndRedacted(t *testing
 	roundTrip.TenantID = "other"
 	if err := roundTrip.Validate(); err == nil {
 		t.Fatal("cross-tenant plan substitution was accepted")
+	}
+}
+
+func TestEnvelopeLeaseRejectsExpiryAudienceAndTampering(t *testing.T) {
+	now := time.Unix(10, 0)
+	lease := SecretMaterializationEnvelopeLease{LeaseID: "lease", EnvelopeDigest: "sha256:digest", Audience: "agent", ExpiresAt: now.Add(time.Minute)}
+	if err := lease.Validate("agent", now); err != nil {
+		t.Fatal(err)
+	}
+	lease.Audience = "other"
+	if err := lease.Validate("agent", now); err == nil {
+		t.Fatal("wrong audience accepted")
+	}
+	lease.Audience, lease.EnvelopeDigest = "agent", "tampered"
+	if err := lease.Validate("agent", now); err == nil {
+		t.Fatal("tampered digest accepted")
+	}
+	lease.EnvelopeDigest, lease.ExpiresAt = "sha256:digest", now
+	if err := lease.Validate("agent", now); err == nil {
+		t.Fatal("expired lease accepted")
 	}
 }
 
