@@ -231,6 +231,9 @@ func (p SecretMaterializationPlan) Validate() error {
 			if item.EncryptedPayloadRef == "" || !item.Owned {
 				return errors.New("encrypted strategy requires an owned encrypted payload reference")
 			}
+			if item.Strategy == SecretStrategyEncryptedClone && (item.SourceNamespace == "" || item.SourceName == "" || !containsString(p.AllowedSourceNamespaces, item.SourceNamespace)) {
+				return errors.New("encrypted clone source is not explicitly allowlisted")
+			}
 		case SecretStrategyGenerated:
 			if item.Generator == "" || item.CredentialRotation == "" || !item.Owned {
 				return errors.New("generated strategy requires an owned generator")
@@ -330,7 +333,7 @@ func CompileSecretMaterializationPlan(tenantID, projectID, environmentID, revisi
 		if item.Strategy == SecretStrategyGenerated && item.CredentialRotation == "" {
 			item.CredentialRotation = "on_create_and_cleanup"
 		}
-		if item.Strategy == SecretStrategyReference && item.SourceNamespace != "" && !containsString(allowlist, item.SourceNamespace) {
+		if (item.Strategy == SecretStrategyReference || item.Strategy == SecretStrategyEncryptedClone) && item.SourceNamespace != "" && !containsString(allowlist, item.SourceNamespace) {
 			allowlist = append(allowlist, item.SourceNamespace)
 		}
 		if cfg.ApprovalRequired {

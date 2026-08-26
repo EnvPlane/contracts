@@ -11,7 +11,7 @@ func TestSecretMaterializationPlanAllStrategiesAreTypedAndRedacted(t *testing.T)
 	configs := []SecretStrategyConfig{
 		{ID: "ref", Strategy: SecretStrategyReference, SourceNamespace: "shared", SourceName: "db", TargetName: "db", TargetNamespace: "feature-a"},
 		{ID: "external", Strategy: SecretStrategyExternal, ExternalSecretStore: "vault-store", ExternalKey: "projects/p/db", TargetName: "db-ext", TargetNamespace: "feature-a"},
-		{ID: "clone", Strategy: SecretStrategyEncryptedClone, EncryptedPayloadRef: "manualSecrets/clone", TargetName: "db-clone", TargetNamespace: "feature-a"},
+		{ID: "clone", Strategy: SecretStrategyEncryptedClone, SourceNamespace: "shared", SourceName: "db-clone-source", EncryptedPayloadRef: "manualSecrets/clone", TargetName: "db-clone", TargetNamespace: "feature-a"},
 		{ID: "manual", Strategy: SecretStrategyManual, EncryptedPayloadRef: "manualSecrets/manual", TargetName: "db-manual", TargetNamespace: "feature-a"},
 		{ID: "generated", Strategy: SecretStrategyGenerated, Generator: "random-password-v1", TargetName: "db-generated", TargetNamespace: "feature-a"},
 	}
@@ -41,6 +41,25 @@ func TestSecretMaterializationPlanRejectsNamespaceEscapeAndPlaintext(t *testing.
 	_, err := CompileSecretMaterializationPlan("tenant-a", "project-a", "env-a", "rev-1", "sha256:revision", "feature-a", []SecretStrategyConfig{{ID: "manual", Strategy: SecretStrategyManual, TargetNamespace: "other", TargetName: "db", ManualValue: "do-not-store"}}, "sha256:inputs", time.Now())
 	if err == nil {
 		t.Fatal("expected namespace/plaintext rejection")
+	}
+}
+
+func TestEncryptedCloneSourceNamespaceIsSignedAndCannotEscape(t *testing.T) {
+	plan, err := CompileSecretMaterializationPlan("tenant", "project", "environment", "revision", "sha256:template", "target", []SecretStrategyConfig{{ID: "clone", Strategy: SecretStrategyEncryptedClone, SourceNamespace: "base", SourceName: "source", TargetNamespace: "target", TargetName: "clone", EncryptedPayloadRef: "envelopes/clone"}}, "sha256:input", time.Unix(1, 0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !containsString(plan.AllowedSourceNamespaces, "base") {
+		t.Fatal("clone source namespace is not signed")
+	}
+	plan.Items[0].SourceNamespace = "kube-system"
+	plan.Digest = ""
+	plan.Digest, err = plan.CanonicalDigest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := plan.Validate(); err == nil {
+		t.Fatal("namespace escape was accepted")
 	}
 }
 
