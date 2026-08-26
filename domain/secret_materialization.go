@@ -48,7 +48,7 @@ const (
 	SecretErrorNamespaceEscape     SecretMaterializationErrorCode = "namespace_escape"
 	SecretErrorMissingBinding      SecretMaterializationErrorCode = "missing_binding"
 	SecretErrorPlaintextForbidden  SecretMaterializationErrorCode = "plaintext_forbidden"
-	SecretErrorUnsupportedStrategy SecretMaterializationErrorCode = "unsupported_strategy"
+	SecretErrorUnsupportedStrategy SecretMaterializationErrorCode = "unsupported_strategy" // #nosec G101 -- protocol error code, not a credential.
 	SecretErrorAmbiguousOwnership  SecretMaterializationErrorCode = "ambiguous_ownership"
 	SecretErrorConflict            SecretMaterializationErrorCode = "conflict"
 	SecretErrorSourceNotFound      SecretMaterializationErrorCode = "source_not_found"

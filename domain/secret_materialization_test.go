@@ -157,6 +157,7 @@ func TestSecretMaterializationValidationRejectsAmbiguousAndMissingBindings(t *te
 }
 
 func TestSecretMaterializationStrategyActions(t *testing.T) {
+	// #nosec G101 -- expected protocol action labels, not credentials.
 	want := map[SecretMaterializationStrategy]string{SecretStrategyReference: "bind_existing_secret", SecretStrategyExternal: "resolve_external_secret", SecretStrategyEncryptedClone: "decrypt_and_clone_secret", SecretStrategyManual: "await_manual_secret_reference", SecretStrategyGenerated: "generate_secret"}
 	for strategy, action := range want {
 		if got := strategy.Action(SecretOperationMaterialize); got != action {
