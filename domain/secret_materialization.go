@@ -268,6 +268,9 @@ func (p SecretMaterializationPlan) Validate() error {
 		if result.Operation != SecretOperationMaterialize && result.Operation != SecretOperationCleanup {
 			return fmt.Errorf("unsupported secret materialization operation %q", result.Operation)
 		}
+		if !validSecretResultState(result.Operation, result.Status) {
+			return fmt.Errorf("unsupported %s result state %q", result.Operation, result.Status)
+		}
 		if result.Operation == SecretOperationCleanup && !item.Owned {
 			return fmt.Errorf("item %s cannot clean up a non-owned secret", result.ItemID)
 		}
@@ -428,6 +431,17 @@ func validSecretItemState(state SecretMaterializationItemState) bool {
 		return true
 	}
 	return false
+}
+
+func validSecretResultState(operation SecretMaterializationOperation, state SecretMaterializationItemState) bool {
+	switch operation {
+	case SecretOperationMaterialize:
+		return state == SecretItemPending || state == SecretItemMaterializing || state == SecretItemReady || state == SecretItemFailed
+	case SecretOperationCleanup:
+		return state == SecretItemCleaning || state == SecretItemDeleted || state == SecretItemFailed
+	default:
+		return false
+	}
 }
 func validSecretErrorCode(code SecretMaterializationErrorCode) bool {
 	switch code {
