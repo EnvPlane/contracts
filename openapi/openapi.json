@@ -4838,6 +4838,196 @@
           }
         }
       },
+      "SecretMaterializationDispatchRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "default": "materialize",
+            "enum": [
+              "materialize",
+              "cleanup"
+            ]
+          }
+        }
+      },
+      "SecretMaterializationItemResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "itemId",
+          "strategy",
+          "targetNamespace",
+          "targetName",
+          "operation",
+          "idempotencyKey",
+          "inputDigest",
+          "status",
+          "attempt",
+          "startedAt"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "strategy": {
+            "type": "string",
+            "enum": [
+              "reference",
+              "external",
+              "encrypted_clone",
+              "manual",
+              "generated"
+            ]
+          },
+          "targetNamespace": {
+            "type": "string"
+          },
+          "targetName": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "materialize",
+              "cleanup"
+            ]
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "inputDigest": {
+            "type": "string"
+          },
+          "outputDigest": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "materializing",
+              "ready",
+              "failed",
+              "cleaning",
+              "deleted"
+            ]
+          },
+          "errorCode": {
+            "$ref": "#/components/schemas/SecretMaterializationErrorCode"
+          },
+          "attempt": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SecretMaterializationErrorCode": {
+        "type": "string",
+        "enum": [
+          "invalid_binding",
+          "namespace_escape",
+          "missing_binding",
+          "plaintext_forbidden",
+          "unsupported_strategy",
+          "ambiguous_ownership",
+          "conflict",
+          "source_not_found",
+          "backend_unavailable",
+          "timeout",
+          "permission_denied",
+          "validation_failed"
+        ]
+      },
+      "SecretMaterializationStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId",
+          "planDigest",
+          "state",
+          "items"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string"
+          },
+          "planDigest": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "materializing",
+              "ready",
+              "failed",
+              "cleaning",
+              "deleted"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "strategy",
+                "targetNamespace",
+                "targetName",
+                "state"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "strategy": {
+                  "type": "string"
+                },
+                "sourceNamespace": {
+                  "type": "string"
+                },
+                "sourceName": {
+                  "type": "string"
+                },
+                "targetNamespace": {
+                  "type": "string"
+                },
+                "targetName": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "lastAttempt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "errorCode": {
+                  "$ref": "#/components/schemas/SecretMaterializationErrorCode"
+                }
+              }
+            }
+          }
+        }
+      },
       "SecretMaterializationPlan": {
         "type": "object",
         "required": [
@@ -4914,6 +5104,9 @@
                 "sourceNamespace": {
                   "type": "string"
                 },
+                "sourceTenantId": {
+                  "type": "string"
+                },
                 "sourceName": {
                   "type": "string"
                 },
@@ -4937,6 +5130,13 @@
                 },
                 "generator": {
                   "type": "string"
+                },
+                "credentialRotation": {
+                  "type": "string"
+                },
+                "retentionHours": {
+                  "type": "integer",
+                  "minimum": 1
                 },
                 "owned": {
                   "type": "boolean"
@@ -4962,11 +5162,207 @@
             "type": "string",
             "format": "date-time"
           },
+          "approvalRequired": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "materializing",
+              "ready",
+              "failed",
+              "cleaning",
+              "deleted"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecretMaterializationItemResult"
+            }
+          },
           "allowedSourceNamespaces": {
             "type": "array",
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "AgentSecretMaterializationCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contractVersion",
+          "commandId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "clusterId",
+          "agentId",
+          "operation",
+          "planId",
+          "planDigest",
+          "expectedRevision",
+          "plan",
+          "status",
+          "attempt",
+          "createdAt"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          "commandId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "materialize",
+              "cleanup"
+            ]
+          },
+          "planId": {
+            "type": "string"
+          },
+          "planDigest": {
+            "type": "string"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "plan": {
+            "$ref": "#/components/schemas/SecretMaterializationPlan"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "claimed"
+            ]
+          },
+          "attempt": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "attemptId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "claimedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "leaseExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AgentSecretMaterializationResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contractVersion",
+          "commandId",
+          "attemptId",
+          "tenantId",
+          "projectId",
+          "environmentId",
+          "clusterId",
+          "agentId",
+          "planId",
+          "planDigest",
+          "expectedRevision",
+          "status",
+          "finishedAt"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "enum": [
+              "v1"
+            ]
+          },
+          "commandId": {
+            "type": "string"
+          },
+          "attemptId": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "clusterId": {
+            "type": "string"
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "planDigest": {
+            "type": "string"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "succeeded",
+              "failed"
+            ]
+          },
+          "errorCode": {
+            "$ref": "#/components/schemas/SecretMaterializationErrorCode"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecretMaterializationItemResult"
+            }
+          },
+          "finishedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -13778,6 +14174,224 @@
           },
           "404": {
             "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/secret-materialization": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get redacted Secret materialization status",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "planId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Redacted materialization plan status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecretMaterializationStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project or plan not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/environments/{id}/secret-materialization/dispatch": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Dispatch a Secret materialization command to the target agent",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecretMaterializationDispatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Command queued or an equivalent active command returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentSecretMaterializationCommand"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Plan binding or dispatch conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agents/secret-materialization/commands/next": {
+      "get": {
+        "summary": "Claim the next Secret materialization command",
+        "description": "Authenticates with the runtime agent token and atomically leases one metadata-only command.",
+        "security": [
+          {
+            "agentAuthToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "projectId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "clusterId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "agentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Claimed command",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentSecretMaterializationCommand"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No pending command"
+          },
+          "401": {
+            "description": "Invalid agent identity or runtime token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/agents/secret-materialization/commands/{id}/result": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Complete a claimed Secret materialization command",
+        "security": [
+          {
+            "agentAuthToken": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentSecretMaterializationResult"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Result accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyObject"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Command attempt or immutable plan binding mismatch",
             "content": {
               "application/json": {
                 "schema": {

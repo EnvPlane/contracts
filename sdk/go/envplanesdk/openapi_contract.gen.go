@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "72d627c31f80101c89467958e9eb9c5e48243551600520dc75fecc3ac87f844e"
+const CanonicalOpenAPISHA256 = "a77d85c5b224916dfc88fbdc3c6de3ba0a1aaa492979313195023ce5dcdb61e1"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -35,6 +35,7 @@ var CanonicalOperations = []string{
 	"GET /api/projects/{id}/runtime-bundle",
 	"GET /api/v1/agents/resource-scan/next",
 	"GET /api/v1/agents/runtime-access",
+	"GET /api/v1/agents/secret-materialization/commands/next",
 	"GET /api/v1/audit",
 	"GET /api/v1/billing/subscription",
 	"GET /api/v1/capabilities",
@@ -74,6 +75,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/gitops/diagnosis",
 	"GET /api/v1/projects/{id}/hybrid-config",
 	"GET /api/v1/projects/{id}/runtime-bundle",
+	"GET /api/v1/projects/{id}/secret-materialization",
 	"GET /api/v1/remote-clusters",
 	"GET /api/v1/remote-clusters/targets",
 	"GET /api/v1/remote-clusters/{id}",
@@ -131,6 +133,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/agents/heartbeat",
 	"POST /api/v1/agents/register",
 	"POST /api/v1/agents/resource-scan",
+	"POST /api/v1/agents/secret-materialization/commands/{id}/result",
 	"POST /api/v1/ai/eval/replay",
 	"POST /api/v1/ai/incidents/plan",
 	"POST /api/v1/ai/release/plan",
@@ -154,6 +157,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/environments/{id}/pin",
 	"POST /api/v1/environments/{id}/recreate",
 	"POST /api/v1/environments/{id}/refresh",
+	"POST /api/v1/environments/{id}/secret-materialization/dispatch",
 	"POST /api/v1/environments/{id}/status",
 	"POST /api/v1/environments/{id}/unpin",
 	"POST /api/v1/jobs",
