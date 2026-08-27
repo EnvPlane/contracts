@@ -412,6 +412,7 @@ type RunnerHeartbeatRequest struct {
 // its pinned chart contract with a newer compiled deployment configuration.
 // None of these fields contains secret material.
 type RunnerCommand struct {
+	ReleasePlanTransportVersion     string                     `json:"releasePlanTransportVersion,omitempty"`
 	ID                              string                     `json:"id"`
 	ProjectID                       string                     `json:"projectId"`
 	ClusterID                       string                     `json:"clusterId"`
@@ -440,26 +441,30 @@ type RunnerCommand struct {
 	ReleasePlanDigest               string                     `json:"releasePlanDigest,omitempty"`
 	ReleasePlanSignature            string                     `json:"releasePlanSignature,omitempty"`
 	ReleasePlanKeyID                string                     `json:"releasePlanKeyId,omitempty"`
+	ReleasePlan                     *EnvironmentReleasePlan    `json:"releasePlan,omitempty"`
+	ReleasePlanPublicKey            string                     `json:"releasePlanPublicKey,omitempty"`
 	CleanupInventory                []ReleasePlanInventoryItem `json:"cleanupInventory,omitempty"`
 	CleanupPhase                    CleanupPhase               `json:"cleanupPhase,omitempty"`
 }
 
 type RunnerCommandResult struct {
-	ProjectID               string `json:"projectId"`
-	ClusterID               string `json:"clusterId"`
-	RunnerID                string `json:"runnerId"`
-	RemoteClusterGeneration int64  `json:"remoteClusterGeneration,omitempty"`
-	RunnerIdentityIssuedAt  string `json:"runnerIdentityIssuedAt,omitempty"`
-	RunnerAuthToken         string `json:"runnerAuthToken"`
-	CommandID               string `json:"commandId"`
-	AttemptID               string `json:"attemptId,omitempty"`
-	Status                  string `json:"status"`
-	ReleaseName             string `json:"releaseName,omitempty"`
-	Namespace               string `json:"namespace,omitempty"`
-	Error                   string `json:"error,omitempty"`
-	ErrorCode               string `json:"errorCode,omitempty"`
-	EnvironmentStatus       string `json:"environmentStatus,omitempty"`
-	CleanupVerified         bool   `json:"cleanupVerified,omitempty"`
+	ReleasePlanTransportVersion string             `json:"releasePlanTransportVersion,omitempty"`
+	ProjectID                   string             `json:"projectId"`
+	ClusterID                   string             `json:"clusterId"`
+	RunnerID                    string             `json:"runnerId"`
+	RemoteClusterGeneration     int64              `json:"remoteClusterGeneration,omitempty"`
+	RunnerIdentityIssuedAt      string             `json:"runnerIdentityIssuedAt,omitempty"`
+	RunnerAuthToken             string             `json:"runnerAuthToken"`
+	CommandID                   string             `json:"commandId"`
+	AttemptID                   string             `json:"attemptId,omitempty"`
+	Status                      string             `json:"status"`
+	ReleaseName                 string             `json:"releaseName,omitempty"`
+	Namespace                   string             `json:"namespace,omitempty"`
+	Error                       string             `json:"error,omitempty"`
+	ErrorCode                   string             `json:"errorCode,omitempty"`
+	EnvironmentStatus           string             `json:"environmentStatus,omitempty"`
+	CleanupVerified             bool               `json:"cleanupVerified,omitempty"`
+	RenderedResources           []RenderedResource `json:"renderedResources,omitempty"`
 }
 
 type RunnerHeartbeatStatus string

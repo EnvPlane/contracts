@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+const ReleasePlanTransportVersion = "v1"
+
 type ReleasePlanInventoryItem struct {
 	Kind      string `json:"kind"`
 	Namespace string `json:"namespace"`
