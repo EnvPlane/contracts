@@ -14256,6 +14256,48 @@
         }
       }
     },
+    "/api/v1/environments/{id}/secret-materialization": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get the environment's redacted Secret materialization status",
+        "security": [
+          {
+            "apiToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Redacted materialization plan status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecretMaterializationStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Environment or plan not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/environments/{id}/secret-materialization/dispatch": {
       "parameters": [
         {
