@@ -258,6 +258,66 @@
         "type": "object",
         "additionalProperties": true
       },
+      "FirstRunProgress": {
+        "type": "object",
+        "description": "Installation-scoped resumable onboarding progress. This safe read model contains no credentials, personal data, or user-entered configuration.",
+        "required": ["schemaVersion", "state", "revision", "claimed"],
+        "properties": {
+          "schemaVersion": { "type": "string", "enum": ["v1"] },
+          "state": { "type": "string", "enum": ["uninitialized", "operator-claimed", "cluster-ready", "scm-ready", "project-ready", "environment-ready", "complete"] },
+          "revision": { "type": "integer", "format": "int64", "minimum": 0 },
+          "claimed": { "type": "boolean" },
+          "claimedAt": { "type": "string", "format": "date-time", "nullable": true },
+          "lastTransitionAt": { "type": "string", "format": "date-time", "nullable": true },
+          "updatedAt": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "FirstRunTransitionRequest": {
+        "type": "object",
+        "required": ["state", "expectedRevision"],
+        "properties": {
+          "state": { "type": "string", "enum": ["uninitialized", "operator-claimed", "cluster-ready", "scm-ready", "project-ready", "environment-ready", "complete"] },
+          "expectedRevision": { "type": "integer", "format": "int64", "minimum": 0 }
+        }
+      },
+      "FirstRunResetRequest": {
+        "type": "object",
+        "required": ["confirmation", "expectedRevision"],
+        "properties": {
+          "confirmation": { "type": "string", "enum": ["RESET_FIRST_RUN"] },
+          "expectedRevision": { "type": "integer", "format": "int64", "minimum": 0 }
+        }
+      },
+      "CurrentClusterPreflight": {
+        "type": "object",
+        "description": "Safe current-cluster discovery metadata. It excludes secrets, kubeconfig data, and workload specifications.",
+        "required": ["clusterIdentity", "ingressClasses", "storageClasses", "namespaces", "suggestedBaseNamespace", "suggestedExecutorNamespace", "remediations"],
+        "properties": {
+          "clusterIdentity": { "type": "string" },
+          "ingressClasses": { "type": "array", "items": { "type": "string" } },
+          "storageClasses": { "type": "array", "items": { "type": "string" } },
+          "namespaces": { "type": "array", "items": { "type": "string" } },
+          "suggestedBaseNamespace": { "type": "string" },
+          "suggestedExecutorNamespace": { "type": "string" },
+          "remediations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "CurrentClusterReconcileRequest": {
+        "type": "object",
+        "required": ["consent"],
+        "properties": {
+          "consent": { "type": "string", "enum": ["RECONCILE_CURRENT_CLUSTER_EXECUTORS"] }
+        }
+      },
+      "CurrentClusterReconcileResponse": {
+        "type": "object",
+        "required": ["clusterId", "projectId", "status"],
+        "properties": {
+          "clusterId": { "type": "string" },
+          "projectId": { "type": "string" },
+          "status": { "type": "string", "enum": ["reconciled"] }
+        }
+      },
       "SecretReference": {
         "type": "object",
         "properties": {
@@ -14175,6 +14235,70 @@
           "503": {
             "description": "Authentication setup unavailable"
           }
+        }
+      }
+    },
+    "/api/v1/first-run/progress": {
+      "get": {
+        "summary": "Get safe resumable first-run progress",
+        "responses": {
+          "200": { "description": "Installation-scoped progress without credentials or personal data", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunProgress" } } } },
+          "503": { "description": "First-run progress unavailable", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/v1/current-cluster/preflight": {
+      "get": {
+        "summary": "Inspect safe current-cluster metadata",
+        "security": [{ "apiToken": [] }],
+        "responses": {
+          "200": { "description": "Cluster identity, classes, namespaces and remediation codes", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CurrentClusterPreflight" } } } },
+          "403": { "description": "clusters.read required" },
+          "412": { "description": "Discovery prerequisites unavailable" },
+          "503": { "description": "Current-cluster discovery unavailable" }
+        }
+      }
+    },
+    "/api/v1/current-cluster/reconcile": {
+      "post": {
+        "summary": "Reconcile configured current-cluster executors",
+        "description": "Requires clusters.write and explicit current-cluster reconcile consent. It does not grant cluster-wide capabilities.",
+        "security": [{ "apiToken": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CurrentClusterReconcileRequest" } } } },
+        "responses": {
+          "200": { "description": "Chart-configured registration reconciled", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CurrentClusterReconcileResponse" } } } },
+          "400": { "description": "Explicit consent required" },
+          "403": { "description": "clusters.write required" },
+          "412": { "description": "Executor reconciliation is not configured or failed" }
+        }
+      }
+    },
+    "/api/v1/settings/authentication/first-run/transition": {
+      "post": {
+        "summary": "Advance one confirmed first-run step",
+        "description": "Requires a valid setup session or settings.write permission. Transitions are revision-guarded and idempotent.",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunTransitionRequest" } } } },
+        "responses": {
+          "200": { "description": "Confirmed progress", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunProgress" } } } },
+          "400": { "description": "Invalid or skipped transition" },
+          "403": { "description": "settings.write required" },
+          "409": { "description": "Stale first-run revision" },
+          "503": { "description": "First-run progress unavailable" }
+        }
+      }
+    },
+    "/api/v1/settings/authentication/first-run/reset": {
+      "post": {
+        "summary": "Reset first-run progress without deleting workloads",
+        "description": "Requires settings.write and the explicit RESET_FIRST_RUN confirmation.",
+        "security": [{ "apiToken": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunResetRequest" } } } },
+        "responses": {
+          "200": { "description": "Reset progress", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunProgress" } } } },
+          "400": { "description": "Explicit reset confirmation required" },
+          "403": { "description": "settings.write required" },
+          "409": { "description": "Stale first-run revision" },
+          "503": { "description": "First-run progress unavailable" }
         }
       }
     },

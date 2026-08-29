@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "35a02bfddad3100379408cede3e10f40e6823d7c6c84b01929a1211ecc3ef615"
+const CanonicalOpenAPISHA256 = "b76a344ff8c6f9781ea766cc6b61c8ec97294b2d9c12f548b6a77f5bcffc2065"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -40,6 +40,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/audit",
 	"GET /api/v1/billing/subscription",
 	"GET /api/v1/capabilities",
+	"GET /api/v1/current-cluster/preflight",
 	"GET /api/v1/dashboard/summary",
 	"GET /api/v1/enterprise/{capabilityID}",
 	"GET /api/v1/environment-records",
@@ -52,6 +53,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/environments/{id}/scm-agent/plan",
 	"GET /api/v1/environments/{id}/secret-materialization",
 	"GET /api/v1/finops/allocation",
+	"GET /api/v1/first-run/progress",
 	"GET /api/v1/health",
 	"GET /api/v1/jobs",
 	"GET /api/v1/jobs/{id}",
@@ -146,6 +148,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/billing/checkout",
 	"POST /api/v1/billing/portal",
 	"POST /api/v1/billing/webhook",
+	"POST /api/v1/current-cluster/reconcile",
 	"POST /api/v1/environments",
 	"POST /api/v1/environments/events:batch",
 	"POST /api/v1/environments/reconcile",
@@ -195,6 +198,8 @@ var CanonicalOperations = []string{
 	"POST /api/v1/runners/register",
 	"POST /api/v1/scim/{tenantID}/credential",
 	"POST /api/v1/settings/authentication/credentials/rotate",
+	"POST /api/v1/settings/authentication/first-run/reset",
+	"POST /api/v1/settings/authentication/first-run/transition",
 	"POST /api/v1/settings/authentication/setup/auto-claim",
 	"POST /api/v1/settings/authentication/setup/claim",
 	"POST /api/v1/settings/secret-refs/{id}/validate",
