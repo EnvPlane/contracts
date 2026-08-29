@@ -288,6 +288,45 @@
           "expectedRevision": { "type": "integer", "format": "int64", "minimum": 0 }
         }
       },
+      "FirstRunSupportBundle": {
+        "type": "object",
+        "description": "Offline-safe first-run diagnostics. It contains no credentials, repository names, resource manifests, or personal data.",
+        "required": ["schemaVersion", "generatedAt", "versions", "progress", "events"],
+        "properties": {
+          "schemaVersion": { "type": "string", "enum": ["v1"] },
+          "generatedAt": { "type": "string", "format": "date-time" },
+          "versions": { "$ref": "#/components/schemas/FirstRunSupportBundleVersions" },
+          "readiness": { "$ref": "#/components/schemas/FirstRunSupportBundleReadiness" },
+          "progress": { "$ref": "#/components/schemas/FirstRunProgress" },
+          "events": { "type": "array", "maxItems": 16, "items": { "$ref": "#/components/schemas/FirstRunSupportBundleEvent" } }
+        }
+      },
+      "FirstRunSupportBundleVersions": {
+        "type": "object",
+        "required": ["apiContractVersion"],
+        "properties": {
+          "apiContractVersion": { "type": "string" },
+          "controlPlaneVersion": { "type": "string" }
+        }
+      },
+      "FirstRunSupportBundleReadiness": {
+        "type": "object",
+        "properties": {
+          "currentClusterDiscovery": { "type": "string", "enum": ["available", "unavailable", "not_configured"] },
+          "remediationCodes": { "type": "array", "maxItems": 16, "items": { "type": "string", "pattern": "^[a-z0-9_:-]+$" } }
+        }
+      },
+      "FirstRunSupportBundleEvent": {
+        "type": "object",
+        "required": ["category", "state", "occurredAt", "correlationId"],
+        "properties": {
+          "category": { "type": "string", "enum": ["transition", "failure", "resume"] },
+          "state": { "type": "string", "enum": ["uninitialized", "operator-claimed", "cluster-ready", "scm-ready", "project-ready", "environment-ready", "complete"] },
+          "failureCode": { "type": "string", "pattern": "^[a-z0-9_:-]+$" },
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "correlationId": { "type": "string", "maxLength": 128 }
+        }
+      },
       "CurrentClusterPreflight": {
         "type": "object",
         "description": "Safe current-cluster discovery metadata. It excludes secrets, kubeconfig data, and workload specifications.",
@@ -14244,6 +14283,18 @@
         "responses": {
           "200": { "description": "Installation-scoped progress without credentials or personal data", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunProgress" } } } },
           "503": { "description": "First-run progress unavailable", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/api/v1/settings/first-run/support-bundle": {
+      "get": {
+        "summary": "Download redacted offline first-run support bundle",
+        "description": "Requires settings.read. The bundle is deliberately limited to versions, safe readiness categories, resumable progress, and bounded safe events; it excludes credentials, repository names, manifests, and resource identifiers.",
+        "security": [{ "apiToken": [] }],
+        "responses": {
+          "200": { "description": "Redacted support bundle", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunSupportBundle" } } } },
+          "403": { "description": "settings.read required" },
+          "503": { "description": "First-run progress unavailable" }
         }
       }
     },
