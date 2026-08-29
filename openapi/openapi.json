@@ -14327,12 +14327,13 @@
     "/api/v1/settings/authentication/first-run/transition": {
       "post": {
         "summary": "Advance one confirmed first-run step",
-        "description": "Requires a valid setup session or settings.write permission. Transitions are revision-guarded and idempotent.",
+        "description": "Requires a valid setup session or settings.write permission. Transitions are revision-guarded, idempotent, and independently verify current tenant-scoped cluster, SCM, project, or ready-environment evidence. No credentials, repository names, or Secret material are persisted in first-run progress.",
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunTransitionRequest" } } } },
         "responses": {
           "200": { "description": "Confirmed progress", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FirstRunProgress" } } } },
           "400": { "description": "Invalid or skipped transition" },
           "403": { "description": "settings.write required" },
+          "412": { "description": "Required server-side first-run evidence is absent or unavailable" },
           "409": { "description": "Stale first-run revision" },
           "503": { "description": "First-run progress unavailable" }
         }
