@@ -13,7 +13,7 @@ func TestSignedIssuerMetadataRejectsTamperingWrongKeyAndExpiry(t *testing.T) {
 	seed := sha256.Sum256([]byte("issuer-metadata-v1"))
 	private := ed25519.NewKeyFromSeed(seed[:])
 	now := time.Date(2026, 8, 29, 0, 0, 0, 0, time.UTC)
-	value, err := json.Marshal([]string{"license-a"})
+	value, err := json.Marshal(IssuerRevocationMetadata{Revocations: []IssuerLicenseRevocation{{LicenseID: "license-a", RevokedAt: now}}})
 	if err != nil {
 		t.Fatal(err)
 	}

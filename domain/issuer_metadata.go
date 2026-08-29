@@ -29,6 +29,17 @@ type SignedIssuerMetadata struct {
 	Signature string          `json:"signature"`
 }
 
+// IssuerRevocationMetadata is the canonical value of an
+// issuer-revocations SignedIssuerMetadata envelope.
+type IssuerRevocationMetadata struct {
+	Revocations []IssuerLicenseRevocation `json:"revocations"`
+}
+
+type IssuerLicenseRevocation struct {
+	LicenseID string    `json:"licenseId"`
+	RevokedAt time.Time `json:"revokedAt"`
+}
+
 func IssuerMetadataSigningPayload(version, kind string, issuedAt, expiresAt time.Time, keyID, algorithm string, value any) ([]byte, error) {
 	return json.Marshal(struct {
 		Version   string    `json:"version"`
