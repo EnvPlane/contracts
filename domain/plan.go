@@ -79,7 +79,7 @@ func CommunityFreePlanCatalog() PlanCatalog {
 		SchemaVersion: PlanSchemaVersion,
 		Plans: []PlanDefinition{
 			communityPlan("1.0.0"),
-			freePlan("1.0.0"),
+			freePlan("1.0.1"),
 		},
 	}
 }
@@ -109,9 +109,9 @@ func freePlan(version string) PlanDefinition {
 			FeatureAuditSIEM: false,
 			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
 		}, Limits: map[string]int64{
-			LimitProjectsMax: 3, LimitManagedClustersMax: 1, LimitActiveEnvironmentsMax: 2,
+			LimitProjectsMax: 1, LimitManagedClustersMax: 1, LimitActiveEnvironmentsMax: 2,
 			LimitEnvironmentTTLHours: 72, LimitEnvironmentPinHours: 168, LimitOperatorsMax: 3, LimitAuditRetentionDays: 7,
-			"maxProjects": 3, "maxRemoteClusters": 1, "maxActiveEnvironments": 2, "maxMembers": 3,
+			"maxProjects": 1, "maxRemoteClusters": 1, "maxActiveEnvironments": 2, "maxMembers": 3,
 			"maxTTLHours": 72, "maxPinDays": 7,
 		}}
 }

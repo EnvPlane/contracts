@@ -10,7 +10,7 @@ func TestCommunityFreePlanCatalogIsValidAndVersioned(t *testing.T) {
 	if err := catalog.Validate(); err != nil {
 		t.Fatalf("catalog validation: %v", err)
 	}
-	if len(catalog.Plans) != 2 || catalog.Plans[1].Limits[LimitActiveEnvironmentsMax] != 2 {
+	if len(catalog.Plans) != 2 || catalog.Plans[1].EffectiveVersion != "1.0.1" || catalog.Plans[1].Limits[LimitProjectsMax] != 1 || catalog.Plans[1].Limits["maxProjects"] != 1 || catalog.Plans[1].Limits[LimitActiveEnvironmentsMax] != 2 || catalog.Plans[1].Limits["maxActiveEnvironments"] != 2 {
 		t.Fatalf("unexpected free catalog: %#v", catalog)
 	}
 	for _, key := range []string{FeatureGitOpsFlux, FeatureAuthOIDC, FeatureSupportSLA} {
