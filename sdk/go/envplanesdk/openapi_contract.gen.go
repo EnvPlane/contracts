@@ -3,11 +3,12 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "86ac9e38c33809aed7c7d0aaf4a634f9cbd55af9c4b651373c35fab47d6c107b"
+const CanonicalOpenAPISHA256 = "35a02bfddad3100379408cede3e10f40e6823d7c6c84b01929a1211ecc3ef615"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
 	"DELETE /api/v1/environments/{id}",
+	"DELETE /api/v1/license/activation",
 	"DELETE /api/v1/oidc/providers/{providerID}",
 	"DELETE /api/v1/products/{name}",
 	"DELETE /api/v1/projects/{id}",
@@ -55,6 +56,8 @@ var CanonicalOperations = []string{
 	"GET /api/v1/jobs",
 	"GET /api/v1/jobs/{id}",
 	"GET /api/v1/license",
+	"GET /api/v1/license/activation",
+	"GET /api/v1/license/activation/identity",
 	"GET /api/v1/management-endpoint-profile",
 	"GET /api/v1/me",
 	"GET /api/v1/me/tenants",
@@ -206,6 +209,7 @@ var CanonicalOperations = []string{
 	"POST /webhook/github",
 	"PUT /api/projects/{id}/components",
 	"PUT /api/v1/license",
+	"PUT /api/v1/license/activation",
 	"PUT /api/v1/management-endpoint-profile",
 	"PUT /api/v1/oidc/providers/{providerID}",
 	"PUT /api/v1/products/{name}",
