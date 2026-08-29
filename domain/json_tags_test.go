@@ -10,7 +10,7 @@ func TestJSONTagsDoNotUseOmitemptyOnStructFields(t *testing.T) {
 	types := []reflect.Type{
 		reflect.TypeOf(Project{}), reflect.TypeOf(Environment{}),
 		reflect.TypeOf(RemoteCluster{}), reflect.TypeOf(ControlPlaneSettings{}),
-		reflect.TypeOf(AuthenticationSettings{}), reflect.TypeOf(AgentResourceScanRequest{}),
+		reflect.TypeOf(AuthenticationSettings{}), reflect.TypeOf(FirstRunProgress{}), reflect.TypeOf(AgentResourceScanRequest{}),
 	}
 	for _, typ := range types {
 		for index := 0; index < typ.NumField(); index++ {

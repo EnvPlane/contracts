@@ -16,9 +16,12 @@ type ControlPlaneSettings struct {
 	ManagementEndpointProfile *ManagementEndpointProfile `json:"management_endpoint_profile,omitempty"`
 	Authentication            AuthenticationSettings     `json:"authentication"`
 	AuthenticationTransaction *AuthenticationTransaction `json:"authentication_transaction,omitempty"`
-	UpdatedAt                 time.Time                  `json:"updated_at"`
-	UpdatedBy                 string                     `json:"updated_by,omitempty"`
-	SchemaVersion             string                     `json:"schema_version"`
+	// FirstRun is an installation-scoped, safe progress cursor. Its zero value
+	// deliberately decodes existing stored settings written before this contract.
+	FirstRun      FirstRunProgress `json:"first_run"`
+	UpdatedAt     time.Time        `json:"updated_at"`
+	UpdatedBy     string           `json:"updated_by,omitempty"`
+	SchemaVersion string           `json:"schema_version"`
 }
 
 // AuthenticationTransaction is safe persisted coordination state. It never
