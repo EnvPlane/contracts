@@ -330,9 +330,11 @@
       "CurrentClusterPreflight": {
         "type": "object",
         "description": "Safe current-cluster discovery metadata. It excludes secrets, kubeconfig data, and workload specifications.",
-        "required": ["clusterIdentity", "ingressClasses", "storageClasses", "namespaces", "suggestedBaseNamespace", "suggestedExecutorNamespace", "remediations"],
+        "required": ["clusterIdentity", "managedClusterId", "managedProjectId", "ingressClasses", "storageClasses", "namespaces", "suggestedBaseNamespace", "suggestedExecutorNamespace", "remediations"],
         "properties": {
           "clusterIdentity": { "type": "string" },
+          "managedClusterId": { "type": "string", "description": "Chart-configured logical cluster ID eligible for current-cluster reconciliation, or empty when disabled." },
+          "managedProjectId": { "type": "string", "description": "Chart-configured project ID eligible for current-cluster reconciliation, or empty when disabled." },
           "ingressClasses": { "type": "array", "items": { "type": "string" } },
           "storageClasses": { "type": "array", "items": { "type": "string" } },
           "namespaces": { "type": "array", "items": { "type": "string" } },
