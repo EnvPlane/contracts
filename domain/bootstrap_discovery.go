@@ -128,6 +128,8 @@ type ResourceSourceMapping struct {
 	Name                   string `json:"name,omitempty"`
 	GitRepositoryNamespace string `json:"gitRepositoryNamespace,omitempty"`
 	GitRepositoryName      string `json:"gitRepositoryName,omitempty"`
+	GitRepositoryURL       string `json:"gitRepositoryUrl,omitempty"`
+	GitRepositoryBranch    string `json:"gitRepositoryBranch,omitempty"`
 	Reason                 string `json:"reason,omitempty"`
 }
 
