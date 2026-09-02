@@ -260,8 +260,11 @@ type BootstrapAgentStatusResponse struct {
 	ResourceScanCompletedAt *time.Time               `json:"resourceScanCompletedAt,omitempty"`
 	ResourceScanFailedAt    *time.Time               `json:"resourceScanFailedAt,omitempty"`
 	ResourceScanError       string                   `json:"resourceScanError,omitempty"`
-	ResourceCount           int                      `json:"resourceCount,omitempty"`
-	Error                   string                   `json:"error,omitempty"`
+	// ResourceCount is always serialized so clients can distinguish a
+	// successful empty scan from a completed scan whose report was not
+	// delivered.
+	ResourceCount int    `json:"resourceCount"`
+	Error         string `json:"error,omitempty"`
 }
 
 type AgentResourceScanRequest struct {
