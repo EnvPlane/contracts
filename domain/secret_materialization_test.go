@@ -44,6 +44,24 @@ func TestSecretMaterializationPlanRejectsNamespaceEscapeAndPlaintext(t *testing.
 	}
 }
 
+func TestSecretMaterializationPlanDigestSurvivesEmptyAllowlistTransport(t *testing.T) {
+	plan, err := CompileSecretMaterializationPlan("tenant", "project", "environment", "revision", "sha256:template", "target", nil, "sha256:input", time.Unix(1, 0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	payload, err := json.Marshal(plan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var transported SecretMaterializationPlan
+	if err := json.Unmarshal(payload, &transported); err != nil {
+		t.Fatal(err)
+	}
+	if err := transported.Validate(); err != nil {
+		t.Fatalf("plan must retain its signature after JSON transport: %v", err)
+	}
+}
+
 func TestEncryptedCloneSourceNamespaceIsSignedAndCannotEscape(t *testing.T) {
 	plan, err := CompileSecretMaterializationPlan("tenant", "project", "environment", "revision", "sha256:template", "target", []SecretStrategyConfig{{ID: "clone", Strategy: SecretStrategyEncryptedClone, SourceNamespace: "base", SourceName: "source", TargetNamespace: "target", TargetName: "clone", EncryptedPayloadRef: "envelopes/clone"}}, "sha256:input", time.Unix(1, 0))
 	if err != nil {

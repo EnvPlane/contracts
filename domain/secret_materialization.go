@@ -368,6 +368,12 @@ func (p SecretMaterializationPlan) CanonicalDigest() (string, error) {
 		plan.State = ""
 		plan.Revision = 0
 		plan.Results = nil
+		// Optional slices are omitted by JSON when empty and decode as nil on
+		// the Runner. Treat both representations identically so an otherwise
+		// immutable plan retains its digest across the API transport boundary.
+		if len(plan.AllowedSourceNamespaces) == 0 {
+			plan.AllowedSourceNamespaces = nil
+		}
 	})
 }
 
