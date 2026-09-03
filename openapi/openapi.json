@@ -5544,6 +5544,19 @@
           }
         }
       },
+      "AgentFluxSourceCommand": {
+        "type": "object", "additionalProperties": false,
+        "required": ["contractVersion", "commandId", "tenantId", "projectId", "clusterId", "agentId", "namespace", "gitRepositoryName", "credentialSecretName", "kustomizationName", "kustomizationPath", "repositoryUrl", "branch", "status", "attempt", "createdAt"],
+        "properties": {
+          "contractVersion": {"type": "string", "enum": ["v2"]}, "commandId": {"type": "string"}, "tenantId": {"type": "string"}, "projectId": {"type": "string"}, "clusterId": {"type": "string"}, "agentId": {"type": "string"}, "namespace": {"type": "string"}, "gitRepositoryName": {"type": "string"}, "credentialSecretName": {"type": "string"}, "kustomizationName": {"type": "string"}, "kustomizationPath": {"type": "string"}, "repositoryUrl": {"type": "string"}, "branch": {"type": "string"}, "status": {"type": "string", "enum": ["pending", "claimed"]}, "attempt": {"type": "integer", "minimum": 0}, "attemptId": {"type": "string"}, "createdAt": {"type": "string", "format": "date-time"}, "claimedAt": {"type": "string", "format": "date-time"}, "leaseExpiresAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "AgentFluxSourceResult": {
+        "type": "object", "additionalProperties": false,
+        "required": ["contractVersion", "commandId", "attemptId", "tenantId", "projectId", "clusterId", "agentId", "status", "finishedAt"],
+        "properties": {"contractVersion": {"type": "string", "enum": ["v2"]}, "commandId": {"type": "string"}, "attemptId": {"type": "string"}, "tenantId": {"type": "string"}, "projectId": {"type": "string"}, "clusterId": {"type": "string"}, "agentId": {"type": "string"}, "status": {"type": "string", "enum": ["succeeded", "failed"]}, "errorCode": {"type": "string"}, "finishedAt": {"type": "string", "format": "date-time"}}
+      },
+      "FluxSourceCredential": {"type": "object", "additionalProperties": false, "required": ["username", "password"], "properties": {"username": {"type": "string"}, "password": {"type": "string", "writeOnly": true}}},
       "RunnerCommand": {
         "properties": {
           "secretMaterializationPlanId": {
@@ -14698,6 +14711,41 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/agents/flux-sources/commands/next": {
+      "get": {
+        "summary": "Claim the next project Flux source command",
+        "security": [{"agentAuthToken": []}],
+        "parameters": [
+          {"in": "query", "name": "projectId", "required": true, "schema": {"type": "string"}},
+          {"in": "query", "name": "clusterId", "required": true, "schema": {"type": "string"}},
+          {"in": "query", "name": "agentId", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {"200": {"description": "Claimed command", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AgentFluxSourceCommand"}}}}, "204": {"description": "No pending command"}, "401": {"description": "Invalid agent identity or runtime token"}}
+      }
+    },
+    "/api/v1/agents/flux-sources/commands/{id}/credential": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "get": {
+        "summary": "Fetch a claimed Flux source credential",
+        "description": "Available only to the Agent holding the command lease; never exposed through browser APIs.",
+        "security": [{"agentAuthToken": []}],
+        "parameters": [
+          {"in": "query", "name": "projectId", "required": true, "schema": {"type": "string"}},
+          {"in": "query", "name": "clusterId", "required": true, "schema": {"type": "string"}},
+          {"in": "query", "name": "agentId", "required": true, "schema": {"type": "string"}}
+        ],
+        "responses": {"200": {"description": "Credential handoff", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/FluxSourceCredential"}}}}, "401": {"description": "Invalid agent identity or runtime token"}, "409": {"description": "Command is not actively leased by this Agent"}}
+      }
+    },
+    "/api/v1/agents/flux-sources/commands/{id}/result": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "summary": "Complete a claimed project Flux source command",
+        "security": [{"agentAuthToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/AgentFluxSourceResult"}}}},
+        "responses": {"204": {"description": "Result accepted"}, "401": {"description": "Invalid agent identity or runtime token"}, "409": {"description": "Command attempt binding mismatch"}}
       }
     },
     "/api/v1/agents/register": {
