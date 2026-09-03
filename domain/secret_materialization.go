@@ -192,7 +192,13 @@ func (p SecretMaterializationPlan) Validate() error {
 		return err
 	}
 	if actualDigest != p.Digest {
-		return fmt.Errorf("secret materialization plan digest mismatch: got %s want %s", p.Digest, actualDigest)
+		// Plans signed before empty optional slices were canonicalized must
+		// remain valid after a JSON transport round-trip. New plans use the
+		// canonical form above; this fallback is read-only compatibility.
+		legacyDigest, legacyErr := p.legacyCanonicalDigest()
+		if legacyErr != nil || legacyDigest != p.Digest {
+			return fmt.Errorf("secret materialization plan digest mismatch: got %s want %s", p.Digest, actualDigest)
+		}
 	}
 	owned := map[string]bool{}
 	itemIDs := map[string]bool{}
@@ -373,6 +379,19 @@ func (p SecretMaterializationPlan) CanonicalDigest() (string, error) {
 		// immutable plan retains its digest across the API transport boundary.
 		if len(plan.AllowedSourceNamespaces) == 0 {
 			plan.AllowedSourceNamespaces = nil
+		}
+	})
+}
+
+func (p SecretMaterializationPlan) legacyCanonicalDigest() (string, error) {
+	return canonicalDigest(&p, func(v any) {
+		plan := v.(*SecretMaterializationPlan)
+		plan.Digest = ""
+		plan.State = ""
+		plan.Revision = 0
+		plan.Results = nil
+		if len(plan.AllowedSourceNamespaces) == 0 {
+			plan.AllowedSourceNamespaces = []string{}
 		}
 	})
 }
