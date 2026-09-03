@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const FluxSourceCommandContractVersion = "v1"
+const FluxSourceCommandContractVersion = "v2"
 
 type FluxSourceCommandStatus string
 
@@ -18,9 +18,10 @@ const (
 )
 
 // AgentFluxSourceCommand carries only the immutable, non-secret binding for a
-// project-owned Flux GitRepository. The credential is obtained separately by
-// the authenticated Agent after it has claimed this command; it is never part
-// of the browser API or this transport payload.
+// project-owned Flux GitRepository and its owning Kustomization. The
+// credential is obtained separately by the authenticated Agent after it has
+// claimed this command; it is never part of the browser API or this transport
+// payload.
 type AgentFluxSourceCommand struct {
 	ContractVersion      string                  `json:"contractVersion"`
 	CommandID            string                  `json:"commandId"`
@@ -31,6 +32,8 @@ type AgentFluxSourceCommand struct {
 	Namespace            string                  `json:"namespace"`
 	GitRepositoryName    string                  `json:"gitRepositoryName"`
 	CredentialSecretName string                  `json:"credentialSecretName"`
+	KustomizationName    string                  `json:"kustomizationName"`
+	KustomizationPath    string                  `json:"kustomizationPath"`
 	RepositoryURL        string                  `json:"repositoryUrl"`
 	Branch               string                  `json:"branch"`
 	Status               FluxSourceCommandStatus `json:"status"`
@@ -42,8 +45,12 @@ type AgentFluxSourceCommand struct {
 }
 
 func (c AgentFluxSourceCommand) Validate() error {
-	if c.ContractVersion != FluxSourceCommandContractVersion || strings.TrimSpace(c.CommandID) == "" || strings.TrimSpace(c.TenantID) == "" || strings.TrimSpace(c.ProjectID) == "" || strings.TrimSpace(c.ClusterID) == "" || strings.TrimSpace(c.AgentID) == "" || strings.TrimSpace(c.Namespace) == "" || strings.TrimSpace(c.GitRepositoryName) == "" || strings.TrimSpace(c.CredentialSecretName) == "" || strings.TrimSpace(c.RepositoryURL) == "" || strings.TrimSpace(c.Branch) == "" || c.CreatedAt.IsZero() {
+	if c.ContractVersion != FluxSourceCommandContractVersion || strings.TrimSpace(c.CommandID) == "" || strings.TrimSpace(c.TenantID) == "" || strings.TrimSpace(c.ProjectID) == "" || strings.TrimSpace(c.ClusterID) == "" || strings.TrimSpace(c.AgentID) == "" || strings.TrimSpace(c.Namespace) == "" || strings.TrimSpace(c.GitRepositoryName) == "" || strings.TrimSpace(c.CredentialSecretName) == "" || strings.TrimSpace(c.KustomizationName) == "" || strings.Trim(strings.TrimSpace(c.KustomizationPath), "/") == "" || strings.TrimSpace(c.RepositoryURL) == "" || strings.TrimSpace(c.Branch) == "" || c.CreatedAt.IsZero() {
 		return errors.New("invalid Flux source command binding")
+	}
+	path := strings.Trim(strings.TrimSpace(c.KustomizationPath), "/")
+	if strings.HasPrefix(path, "../") || strings.Contains(path, "/../") || path == ".." {
+		return errors.New("invalid Flux kustomization path")
 	}
 	if c.Status != FluxSourceCommandPending && c.Status != FluxSourceCommandClaimed {
 		return errors.New("Flux source command is not claimable")

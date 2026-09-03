@@ -11,6 +11,7 @@ func TestAgentFluxSourceTransportIsCredentialFreeAndBound(t *testing.T) {
 		ContractVersion: FluxSourceCommandContractVersion,
 		CommandID:       "source-1", TenantID: "tenant", ProjectID: "checkout", ClusterID: "cluster", AgentID: "agent",
 		Namespace: "flux-system", GitRepositoryName: "checkout-gitops", CredentialSecretName: "checkout-gitops-auth",
+		KustomizationName: "checkout-prs", KustomizationPath: "clusters/dev/apps/checkout",
 		RepositoryURL: "https://github.com/envplane/gitops.git", Branch: "main", Status: FluxSourceCommandPending, CreatedAt: now,
 	}
 	if err := command.Validate(); err != nil {
