@@ -53,7 +53,7 @@ func (c AgentFluxSourceCommand) Validate() error {
 		return errors.New("invalid Flux kustomization path")
 	}
 	if c.Status != FluxSourceCommandPending && c.Status != FluxSourceCommandClaimed {
-		return errors.New("Flux source command is not claimable")
+		return errors.New("flux source command is not claimable")
 	}
 	return nil
 }
@@ -76,7 +76,7 @@ func (r AgentFluxSourceResult) Validate() error {
 		return errors.New("invalid Flux source result binding")
 	}
 	if r.Status != FluxSourceCommandSucceeded && r.Status != FluxSourceCommandFailed {
-		return errors.New("Flux source result is not terminal")
+		return errors.New("flux source result is not terminal")
 	}
 	if r.Status == FluxSourceCommandSucceeded && strings.TrimSpace(r.ErrorCode) != "" {
 		return errors.New("successful Flux source result has an error code")
