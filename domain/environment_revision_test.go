@@ -20,3 +20,16 @@ func TestEnvironmentRevisionOrdersAndDeduplicates(t *testing.T) {
 		t.Fatal("equal revision must be idempotent")
 	}
 }
+
+func TestEnvironmentRevisionWithUnsequencedGitLabCommitReconcilesChangedSHA(t *testing.T) {
+	previous := EnvironmentRevision{Provider: ProviderGitLab, Repository: "group/app", ChangeID: "8", Commit: "f000000"}
+	updated := previous
+	updated.Commit = "0100000"
+
+	if !updated.NewerThan(previous) {
+		t.Fatal("changed unsequenced commit must be reconciled")
+	}
+	if previous.NewerThan(previous) {
+		t.Fatal("identical unsequenced revision must remain idempotent")
+	}
+}

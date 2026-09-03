@@ -32,6 +32,13 @@ func (r EnvironmentRevision) HasImmutableDigest() bool {
 }
 
 func (r EnvironmentRevision) NewerThan(other EnvironmentRevision) bool {
+	// GitLab merge-request webhooks do not provide a monotonic source-revision
+	// sequence. Treat a changed immutable revision as a reconciliation signal in
+	// that case: ordering commits lexicographically drops legitimate updates
+	// whenever the new SHA happens to sort before the old one.
+	if r.Sequence == 0 && other.Sequence == 0 {
+		return r != other
+	}
 	if r.Sequence != other.Sequence {
 		if r.Sequence == 0 {
 			return false
