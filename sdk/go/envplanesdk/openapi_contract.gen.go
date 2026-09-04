@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "731743bf0cf455fd2d211b3417fb353c59ba17372eb8816ad55fbb97d878e6f2"
+const CanonicalOpenAPISHA256 = "cfad21c38855b379bc3882bc2ae28fd3206010ad5377f15e8e505cd4f35bb251"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -34,6 +34,8 @@ var CanonicalOperations = []string{
 	"GET /api/projects/{id}/environments",
 	"GET /api/projects/{id}/hybrid-config",
 	"GET /api/projects/{id}/runtime-bundle",
+	"GET /api/v1/agents/flux-sources/commands/next",
+	"GET /api/v1/agents/flux-sources/commands/{id}/credential",
 	"GET /api/v1/agents/resource-scan/next",
 	"GET /api/v1/agents/runtime-access",
 	"GET /api/v1/agents/secret-materialization/commands/next",
@@ -137,6 +139,7 @@ var CanonicalOperations = []string{
 	"POST /api/projects/{id}/bootstrap-session/scm-offline",
 	"POST /api/projects/{id}/bootstrap-session/simulate-pr",
 	"POST /api/projects/{id}/bootstrap-session/validate-scm",
+	"POST /api/v1/agents/flux-sources/commands/{id}/result",
 	"POST /api/v1/agents/heartbeat",
 	"POST /api/v1/agents/register",
 	"POST /api/v1/agents/resource-scan",
