@@ -3904,6 +3904,7 @@
           },
           "manualValue": {
             "type": "string",
+            "maxLength": 0,
             "description": "Always empty in API responses."
           }
         }
