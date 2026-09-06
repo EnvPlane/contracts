@@ -28,6 +28,8 @@ jobs:
         run: echo "GOTOOLCHAIN=go$(awk '/^go[[:space:]]/ {print $2; exit}' go.mod)" >> "$GITHUB_ENV"
       - name: Verify module before publication
         run: go test ./...
+      - name: Verify module builds outside any workspace
+        run: GOWORK=off go build ./...
       - id: version
         name: Allocate next patch version
         run: |
