@@ -51,18 +51,21 @@ type PullRequestEvent struct {
 }
 
 type PullRequestCommand struct {
-	Provider       Provider      `json:"provider"`
-	Command        PRCommand     `json:"command"`
-	Repo           string        `json:"repo"`
-	ChangeID       string        `json:"changeId"`
-	Author         string        `json:"author"`
-	URL            string        `json:"url"`
-	EventID        string        `json:"eventId"`
-	InstallationID string        `json:"installationId"`
-	PinDuration    time.Duration `json:"pinDuration,omitempty"`
-	PinRaw         string        `json:"pinRaw,omitempty"`
-	Branch         string        `json:"branch,omitempty"`
-	ChangedPaths   []string      `json:"changedPaths,omitempty"`
+	Provider          Provider      `json:"provider"`
+	Command           PRCommand     `json:"command"`
+	Repo              string        `json:"repo"`
+	ChangeID          string        `json:"changeId"`
+	Author            string        `json:"author"`
+	AuthorAssociation string        `json:"authorAssociation,omitempty"`
+	AuthorID          string        `json:"authorId,omitempty"`
+	AuthorAccessLevel int           `json:"authorAccessLevel,omitempty"`
+	URL               string        `json:"url"`
+	EventID           string        `json:"eventId"`
+	InstallationID    string        `json:"installationId"`
+	PinDuration       time.Duration `json:"pinDuration,omitempty"`
+	PinRaw            string        `json:"pinRaw,omitempty"`
+	Branch            string        `json:"branch,omitempty"`
+	ChangedPaths      []string      `json:"changedPaths,omitempty"`
 }
 
 func (e PullRequestEvent) EnvironmentID() string {
