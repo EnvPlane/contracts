@@ -18727,6 +18727,50 @@
         }
       }
     },
+    "/api/v1/tenants/{tenantID}/audit-log/{id}/legal-hold": {
+      "patch": {
+        "operationId": "patchAuditEntryLegalHold",
+        "summary": "Set or clear a tenant audit entry legal hold",
+        "parameters": [
+          {"name": "tenantID", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "id", "in": "path", "required": true, "schema": {"type": "integer", "format": "int64"}}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {"application/json": {"schema": {"type": "object", "required": ["legalHold"], "properties": {"legalHold": {"type": "boolean"}}}}}
+        },
+        "responses": {
+          "204": {"description": "Legal hold updated"},
+          "400": {"description": "Invalid audit entry or request"},
+          "403": {"description": "Forbidden"},
+          "404": {"description": "Audit entry not found"},
+          "503": {"description": "Audit store unavailable"}
+        }
+      }
+    },
+    "/api/v1/tenants/{tenantID}/budget": {
+      "get": {
+        "operationId": "getTenantBudget",
+        "summary": "Read the tenant monthly budget",
+        "responses": {
+          "200": {"description": "Tenant monthly budget", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MonthlyBudget"}}}},
+          "403": {"description": "Forbidden"},
+          "404": {"description": "Budget not configured"},
+          "503": {"description": "Budget store unavailable"}
+        }
+      },
+      "put": {
+        "operationId": "putTenantBudget",
+        "summary": "Set the tenant monthly budget",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MonthlyBudget"}}}},
+        "responses": {
+          "200": {"description": "Updated tenant monthly budget", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MonthlyBudget"}}}},
+          "400": {"description": "Invalid budget"},
+          "403": {"description": "Forbidden"},
+          "503": {"description": "Budget store unavailable"}
+        }
+      }
+    },
     "/api/v1/tenants/{tenantID}/ai-capabilities": {
       "get": {
         "operationId": "getTenantAICapabilities",
