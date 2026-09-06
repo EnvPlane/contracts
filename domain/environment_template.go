@@ -131,8 +131,34 @@ type EnvironmentReleasePlan struct {
 	StatefulExecutionPlanID         string                 `json:"statefulExecutionPlanId,omitempty"`
 	StatefulExecutionPlanDigest     string                 `json:"statefulExecutionPlanDigest,omitempty"`
 	InputDigest                     string                 `json:"inputDigest"`
+	ExecutionInputDigest            string                 `json:"executionInputDigest,omitempty"`
 	Digest                          string                 `json:"digest"`
 	CreatedAt                       time.Time              `json:"createdAt"`
+}
+
+// ReleasePlanExecutionInputs identifies every command input consumed by a deployment backend.
+type ReleasePlanExecutionInputs struct {
+	Environment          Environment   `json:"environment"`
+	ProjectConfig        ProjectConfig `json:"projectConfig"`
+	ChartRef             string        `json:"chartRef,omitempty"`
+	ChartVersion         string        `json:"chartVersion,omitempty"`
+	ProjectConfigVersion int           `json:"projectConfigVersion,omitempty"`
+}
+
+// ReleasePlanExecutionInputDigest returns the digest that binds backend execution inputs to a signed plan.
+func ReleasePlanExecutionInputDigest(environment Environment, projectConfig ProjectConfig, chartRef, chartVersion string, projectConfigVersion int) (string, error) {
+	payload, err := json.Marshal(ReleasePlanExecutionInputs{
+		Environment:          environment,
+		ProjectConfig:        projectConfig,
+		ChartRef:             chartRef,
+		ChartVersion:         chartVersion,
+		ProjectConfigVersion: projectConfigVersion,
+	})
+	if err != nil {
+		return "", err
+	}
+	sum := sha256.Sum256(payload)
+	return "sha256:" + hex.EncodeToString(sum[:]), nil
 }
 
 func canonicalDigest(value any, clear func(any)) (string, error) {
