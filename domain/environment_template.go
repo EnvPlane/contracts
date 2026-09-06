@@ -136,19 +136,66 @@ type EnvironmentReleasePlan struct {
 	CreatedAt                       time.Time              `json:"createdAt"`
 }
 
+// ReleasePlanDeploymentEnvironment is the stable Environment projection used
+// by deployment backends. It intentionally excludes operational observations
+// such as status, timestamps, cost estimates, endpoints, expiry, and pinning;
+// those values can change without changing the desired deployment.
+type ReleasePlanDeploymentEnvironment struct {
+	TenantID                  string                 `json:"tenant_id,omitempty"`
+	ID                        string                 `json:"id"`
+	Project                   string                 `json:"project"`
+	Product                   string                 `json:"product"`
+	ClusterID                 string                 `json:"clusterId,omitempty"`
+	Namespace                 string                 `json:"namespace"`
+	TargetNamespace           string                 `json:"targetNamespace,omitempty"`
+	HelmReleaseName           string                 `json:"helmReleaseName,omitempty"`
+	Mode                      EnvironmentMode        `json:"mode"`
+	Domain                    string                 `json:"domain"`
+	Source                    SCMSource              `json:"source"`
+	Base                      BaseEnvironment        `json:"base"`
+	GitOps                    GitOpsTarget           `json:"gitops"`
+	Charts                    ChartVersions          `json:"charts"`
+	Infrastructure            Infrastructure         `json:"infrastructure"`
+	Services                  []ServiceOverride      `json:"services"`
+	Components                []EnvironmentComponent `json:"components,omitempty"`
+	Overrides                 map[string]string      `json:"overrides,omitempty"`
+	TTLHours                  int                    `json:"ttlHours"`
+	TemplateRevisionID        string                 `json:"templateRevisionId,omitempty"`
+	TemplateDigest            string                 `json:"templateDigest,omitempty"`
+	DesiredRevision           EnvironmentRevision    `json:"desiredRevision"`
+	ManifestPath              string                 `json:"manifestPath"`
+	NamespaceManifestPath     string                 `json:"namespaceManifestPath,omitempty"`
+	KustomizationManifestPath string                 `json:"kustomizationManifestPath,omitempty"`
+}
+
+func releasePlanDeploymentEnvironment(environment Environment) ReleasePlanDeploymentEnvironment {
+	return ReleasePlanDeploymentEnvironment{
+		TenantID: environment.TenantID, ID: environment.ID, Project: environment.Project,
+		Product: environment.Product, ClusterID: environment.ClusterID, Namespace: environment.Namespace,
+		TargetNamespace: environment.TargetNamespace, HelmReleaseName: environment.HelmReleaseName,
+		Mode: environment.Mode, Domain: environment.Domain, Source: environment.Source,
+		Base: environment.Base, GitOps: environment.GitOps, Charts: environment.Charts,
+		Infrastructure: environment.Infrastructure, Services: environment.Services,
+		Components: environment.Components, Overrides: environment.Overrides, TTLHours: environment.TTLHours,
+		TemplateRevisionID: environment.TemplateRevisionID, TemplateDigest: environment.TemplateDigest,
+		DesiredRevision: environment.DesiredRevision, ManifestPath: environment.ManifestPath,
+		NamespaceManifestPath: environment.NamespaceManifestPath, KustomizationManifestPath: environment.KustomizationManifestPath,
+	}
+}
+
 // ReleasePlanExecutionInputs identifies every command input consumed by a deployment backend.
 type ReleasePlanExecutionInputs struct {
-	Environment          Environment   `json:"environment"`
-	ProjectConfig        ProjectConfig `json:"projectConfig"`
-	ChartRef             string        `json:"chartRef,omitempty"`
-	ChartVersion         string        `json:"chartVersion,omitempty"`
-	ProjectConfigVersion int           `json:"projectConfigVersion,omitempty"`
+	Environment          ReleasePlanDeploymentEnvironment `json:"environment"`
+	ProjectConfig        ProjectConfig                    `json:"projectConfig"`
+	ChartRef             string                           `json:"chartRef,omitempty"`
+	ChartVersion         string                           `json:"chartVersion,omitempty"`
+	ProjectConfigVersion int                              `json:"projectConfigVersion,omitempty"`
 }
 
 // ReleasePlanExecutionInputDigest returns the digest that binds backend execution inputs to a signed plan.
 func ReleasePlanExecutionInputDigest(environment Environment, projectConfig ProjectConfig, chartRef, chartVersion string, projectConfigVersion int) (string, error) {
 	payload, err := json.Marshal(ReleasePlanExecutionInputs{
-		Environment:          environment,
+		Environment:          releasePlanDeploymentEnvironment(environment),
 		ProjectConfig:        projectConfig,
 		ChartRef:             chartRef,
 		ChartVersion:         chartVersion,
