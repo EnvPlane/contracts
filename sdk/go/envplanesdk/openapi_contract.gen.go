@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "39180df8642ecf88208d2a26fb93d5ddcf91b7f30674acf11a0910c65c14da66"
+const CanonicalOpenAPISHA256 = "ec17a379f040baf69c82057c40c3f57d740feaf2b8cdb3fe13e8b409f15734b6"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -100,6 +100,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/tenants/{tenantID}/ai-capabilities",
 	"GET /api/v1/tenants/{tenantID}/ai-policy",
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
+	"GET /api/v1/tenants/{tenantID}/budget",
 	"GET /api/v1/tenants/{tenantID}/memberships",
 	"GET /auth/github/callback",
 	"GET /auth/github/login",
@@ -120,6 +121,7 @@ var CanonicalOperations = []string{
 	"PATCH /api/v1/projects/{id}/bootstrap-session",
 	"PATCH /api/v1/projects/{id}/cost-policy",
 	"PATCH /api/v1/projects/{id}/hybrid-config",
+	"PATCH /api/v1/tenants/{tenantID}/audit-log/{id}/legal-hold",
 	"PATCH /scim/v2/{tenantID}/Groups/{id}",
 	"PATCH /scim/v2/{tenantID}/Users/{id}",
 	"POST /api/environments/{id}/extend-ttl",
@@ -211,11 +213,8 @@ var CanonicalOperations = []string{
 	"POST /api/v1/tenants/{tenantID}/approvals/{id}/cancel",
 	"POST /api/v1/tenants/{tenantID}/approvals/{id}/reject",
 	"POST /api/v1/tenants/{tenantID}/jobs/{id}/approval",
-	"POST /api/v1/webhooks/github",
-	"POST /api/v1/webhooks/gitlab",
 	"POST /auth/logout",
 	"POST /auth/saml/{providerID}/callback",
-	"POST /webhook/github",
 	"PUT /api/projects/{id}/components",
 	"PUT /api/v1/license",
 	"PUT /api/v1/license/activation",
@@ -232,6 +231,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/settings/authentication",
 	"PUT /api/v1/tenants/{tenantID}/ai-policy",
 	"PUT /api/v1/tenants/{tenantID}/audit-retention-policy",
+	"PUT /api/v1/tenants/{tenantID}/budget",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"PUT /scim/v2/{tenantID}/Groups/{id}",
 	"PUT /scim/v2/{tenantID}/Users/{id}",
