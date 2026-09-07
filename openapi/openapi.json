@@ -478,6 +478,10 @@
           "name": {
             "type": "string"
           },
+          "quota_exempt": {
+            "type": "boolean",
+            "description": "True only for the enabled chart-managed project that is excluded from the customer project quota."
+          },
           "product_id": {
             "type": "string"
           },
