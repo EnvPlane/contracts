@@ -147,8 +147,6 @@ type ReleasePlanDeploymentEnvironment struct {
 	Product                   string                 `json:"product"`
 	ClusterID                 string                 `json:"clusterId,omitempty"`
 	Namespace                 string                 `json:"namespace"`
-	TargetNamespace           string                 `json:"targetNamespace,omitempty"`
-	HelmReleaseName           string                 `json:"helmReleaseName,omitempty"`
 	Mode                      EnvironmentMode        `json:"mode"`
 	Domain                    string                 `json:"domain"`
 	Source                    SCMSource              `json:"source"`
@@ -172,7 +170,6 @@ func releasePlanDeploymentEnvironment(environment Environment) ReleasePlanDeploy
 	return ReleasePlanDeploymentEnvironment{
 		TenantID: environment.TenantID, ID: environment.ID, Project: environment.Project,
 		Product: environment.Product, ClusterID: environment.ClusterID, Namespace: environment.Namespace,
-		TargetNamespace: environment.TargetNamespace, HelmReleaseName: environment.HelmReleaseName,
 		Mode: environment.Mode, Domain: environment.Domain, Source: environment.Source,
 		Base: environment.Base, GitOps: environment.GitOps, Charts: environment.Charts,
 		Infrastructure: environment.Infrastructure, Services: environment.Services,

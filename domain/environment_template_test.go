@@ -68,6 +68,8 @@ func TestReleasePlanExecutionInputDigestIgnoresVolatileEnvironmentFields(t *test
 	}
 	now := time.Unix(123, 0).UTC()
 	environment.Status = StatusReady
+	environment.TargetNamespace = "resolved-ns-a"
+	environment.HelmReleaseName = "resolved-release-a"
 	environment.LastActivityAt = &now
 	environment.CostEstimate = &CostEstimate{}
 	environment.Endpoints = []IngressEndpoint{{Host: "preview.example"}}
