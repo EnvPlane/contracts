@@ -68,7 +68,6 @@ func TestReleasePlanExecutionInputDigestIgnoresVolatileEnvironmentFields(t *test
 	}
 	now := time.Unix(123, 0).UTC()
 	environment.Status = StatusReady
-	environment.TargetNamespace = "resolved-ns-a"
 	environment.HelmReleaseName = "resolved-release-a"
 	environment.LastActivityAt = &now
 	environment.CostEstimate = &CostEstimate{}
@@ -96,5 +95,13 @@ func TestReleasePlanExecutionInputDigestIncludesDeploymentFields(t *testing.T) {
 	}
 	if first == second {
 		t.Fatal("deployment-relevant chart mutation did not change digest")
+	}
+	base.TargetNamespace = "resolved-ns-a"
+	third, err := ReleasePlanExecutionInputDigest(base, ProjectConfig{}, "chart-a", "1.0.0", 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if second == third {
+		t.Fatal("deployment-relevant target namespace mutation did not change digest")
 	}
 }

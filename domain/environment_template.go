@@ -137,9 +137,12 @@ type EnvironmentReleasePlan struct {
 }
 
 // ReleasePlanDeploymentEnvironment is the stable Environment projection used
-// by deployment backends. It intentionally excludes operational observations
-// such as status, timestamps, cost estimates, endpoints, expiry, and pinning;
-// those values can change without changing the desired deployment.
+// by deployment backends. TargetNamespace is included because Argo CD uses it
+// as the destination namespace when no explicit backend override is present.
+// HelmReleaseName is intentionally excluded: control-plane only persists it as
+// an observed backend result and does not use it to form an execution target.
+// Other operational observations such as status, timestamps, cost estimates,
+// endpoints, expiry, and pinning can change without changing the desired deployment.
 type ReleasePlanDeploymentEnvironment struct {
 	TenantID                  string                 `json:"tenant_id,omitempty"`
 	ID                        string                 `json:"id"`
@@ -147,6 +150,7 @@ type ReleasePlanDeploymentEnvironment struct {
 	Product                   string                 `json:"product"`
 	ClusterID                 string                 `json:"clusterId,omitempty"`
 	Namespace                 string                 `json:"namespace"`
+	TargetNamespace           string                 `json:"targetNamespace,omitempty"`
 	Mode                      EnvironmentMode        `json:"mode"`
 	Domain                    string                 `json:"domain"`
 	Source                    SCMSource              `json:"source"`
@@ -169,7 +173,7 @@ type ReleasePlanDeploymentEnvironment struct {
 func releasePlanDeploymentEnvironment(environment Environment) ReleasePlanDeploymentEnvironment {
 	return ReleasePlanDeploymentEnvironment{
 		TenantID: environment.TenantID, ID: environment.ID, Project: environment.Project,
-		Product: environment.Product, ClusterID: environment.ClusterID, Namespace: environment.Namespace,
+		Product: environment.Product, ClusterID: environment.ClusterID, Namespace: environment.Namespace, TargetNamespace: environment.TargetNamespace,
 		Mode: environment.Mode, Domain: environment.Domain, Source: environment.Source,
 		Base: environment.Base, GitOps: environment.GitOps, Charts: environment.Charts,
 		Infrastructure: environment.Infrastructure, Services: environment.Services,
