@@ -26,3 +26,9 @@ type SCMWebhookBootstrapProof struct {
 func (p SCMWebhookBootstrapProof) Ready() bool {
 	return p.EndpointState == "ready" && p.ReceiverState == "ready" && p.DeliveryState == "verified"
 }
+
+// ReadyForConfig additionally binds a verified proof to the currently desired
+// webhook configuration. An empty expected fingerprint is never ready.
+func (p SCMWebhookBootstrapProof) ReadyForConfig(expectedFingerprint string) bool {
+	return expectedFingerprint != "" && p.ConfigFingerprint == expectedFingerprint && p.Ready()
+}

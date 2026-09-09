@@ -24,6 +24,24 @@ func TestSCMWebhookBootstrapProofReady(t *testing.T) {
 	}
 }
 
+func TestSCMWebhookBootstrapProofReadyForConfig(t *testing.T) {
+	proof := SCMWebhookBootstrapProof{EndpointState: "ready", ReceiverState: "ready", DeliveryState: "verified", ConfigFingerprint: "current"}
+	for _, tc := range []struct {
+		name, expected string
+		want           bool
+	}{
+		{name: "matching configuration", expected: "current", want: true},
+		{name: "stale configuration", expected: "changed", want: false},
+		{name: "missing expected configuration", expected: "", want: false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := proof.ReadyForConfig(tc.expected); got != tc.want {
+				t.Fatalf("ReadyForConfig(%q) = %v, want %v", tc.expected, got, tc.want)
+			}
+		})
+	}
+}
+
 func TestSCMWebhookBootstrapProofJSONContainsNoCredentialFields(t *testing.T) {
 	b, err := json.Marshal(SCMWebhookBootstrapProof{SecretFingerprint: "sha256:abc"})
 	if err != nil {
