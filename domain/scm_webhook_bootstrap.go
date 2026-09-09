@@ -17,6 +17,8 @@ type SCMWebhookBootstrapProof struct {
 	TLSState          string    `json:"tlsState"`
 	ReceiverState     string    `json:"receiverState"`
 	DeliveryState     string    `json:"deliveryState"`
+	DeliveryNonce     string    `json:"deliveryNonce,omitempty"`
+	DeliveryDeadlineAt time.Time `json:"deliveryDeadlineAt,omitempty"`
 	FailureCode       string    `json:"failureCode"`
 	ObservedAt        time.Time `json:"observedAt"`
 	VerifiedAt        time.Time `json:"verifiedAt"`
