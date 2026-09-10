@@ -53,3 +53,15 @@ func TestSCMWebhookBootstrapProofJSONContainsNoCredentialFields(t *testing.T) {
 		}
 	}
 }
+
+func TestSCMWebhookStatusJSONIsRedacted(t *testing.T) {
+	b, err := json.Marshal(SCMWebhookStatus{Provider: "gitlab", PublicURL: "https://hooks.example.test/api/v1/webhooks/gitlab", ReceiverHealth: "ready", LastSignatureResult: "verified"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, forbidden := range []string{"token", "secret", "payload"} {
+		if strings.Contains(strings.ToLower(string(b)), forbidden) {
+			t.Fatalf("credential-like field %q leaked: %s", forbidden, b)
+		}
+	}
+}

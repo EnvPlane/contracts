@@ -71,6 +71,28 @@
           "verifiedAt": { "type": "string", "format": "date-time" }
         }
       },
+      "SCMWebhookStatus": {
+        "type": "object",
+        "description": "Redacted operational status; never contains credentials, tokens, or event payloads.",
+        "properties": {
+          "provider": { "type": "string" },
+          "publicUrl": { "type": "string" },
+          "endpointState": { "type": "string" },
+          "dnsState": { "type": "string" },
+          "tlsState": { "type": "string" },
+          "receiverState": { "type": "string" },
+          "receiverHealth": { "type": "string" },
+          "lastDeliveryAt": { "type": "string", "format": "date-time" },
+          "lastDeliveryState": { "type": "string" },
+          "lastSignatureResult": { "type": "string" },
+          "lastJobId": { "type": "string" },
+          "lastJobStatus": { "type": "string" },
+          "failureCode": { "type": "string" },
+          "observedAt": { "type": "string", "format": "date-time" },
+          "ready": { "type": "boolean" },
+          "readinessBlocker": { "type": "string" }
+        }
+      },
       "SCMWebhookCredential": {
         "type": "object",
         "required": ["provider", "configured"],
@@ -13707,6 +13729,34 @@
         "security": [{"apiToken": []}],
         "responses": {
           "200": {"description": "Reconciled webhook proof", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"$ref": "#/components/responses/Conflict"},
+          "429": {"$ref": "#/components/responses/TooManyRequests"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/status": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "get": {
+        "summary": "Get redacted SCM webhook operational status",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Redacted webhook status", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookStatus"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/test-delivery": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "summary": "Test SCM webhook delivery",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Delivery test started", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
           "401": {"$ref": "#/components/responses/Unauthorized"},
           "403": {"$ref": "#/components/responses/Forbidden"},
           "404": {"$ref": "#/components/responses/NotFound"},
