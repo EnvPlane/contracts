@@ -65,3 +65,19 @@ func TestSCMWebhookStatusJSONIsRedacted(t *testing.T) {
 		}
 	}
 }
+
+func TestSCMWebhookMigrationPreflightJSONIsRedacted(t *testing.T) {
+	b, err := json.Marshal(SCMWebhookMigrationPreflight{
+		Provider: "gitlab", ProjectID: "project-1", CallbackURL: "https://hooks.example.test/api/v1/webhooks/gitlab",
+		CredentialConfigured: true, RecommendedAction: "verify_delivery",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	lower := strings.ToLower(string(b))
+	for _, forbidden := range []string{"token", "secret", "password", "payload"} {
+		if strings.Contains(lower, `"`+forbidden+`"`) {
+			t.Fatalf("credential field %q leaked: %s", forbidden, b)
+		}
+	}
+}

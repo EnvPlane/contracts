@@ -50,6 +50,25 @@ type SCMWebhookStatus struct {
 	ReadinessBlocker    string    `json:"readinessBlocker,omitempty"`
 }
 
+// SCMWebhookMigrationPreflight is a read-only, redacted migration report.
+// It intentionally exposes no Secret data or signing credentials.
+type SCMWebhookMigrationPreflight struct {
+	Provider             string    `json:"provider"`
+	ProjectID            string    `json:"projectId"`
+	CredentialConfigured bool      `json:"credentialConfigured"`
+	ProofConfigured      bool      `json:"proofConfigured"`
+	CallbackURL          string    `json:"callbackUrl,omitempty"`
+	EndpointState        string    `json:"endpointState"`
+	DNSState             string    `json:"dnsState"`
+	TLSState             string    `json:"tlsState"`
+	ReceiverState        string    `json:"receiverState"`
+	DeliveryState        string    `json:"deliveryState"`
+	LegacyFallbackMode   string    `json:"legacyFallbackMode"`
+	LegacyFallbackUntil  time.Time `json:"legacyFallbackUntil,omitempty"`
+	ReadOnly             bool      `json:"readOnly"`
+	RecommendedAction    string    `json:"recommendedAction,omitempty"`
+}
+
 func SCMWebhookStatusFromProof(p SCMWebhookBootstrapProof) SCMWebhookStatus {
 	status := SCMWebhookStatus{
 		Provider: p.Provider, PublicURL: p.CallbackURL, EndpointState: p.EndpointState,

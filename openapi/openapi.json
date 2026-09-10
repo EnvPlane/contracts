@@ -93,6 +93,26 @@
           "readinessBlocker": { "type": "string" }
         }
       },
+      "SCMWebhookMigrationPreflight": {
+        "type": "object",
+        "description": "Read-only redacted migration report; never contains Secret data or signing credentials.",
+        "properties": {
+          "provider": { "type": "string" },
+          "projectId": { "type": "string" },
+          "credentialConfigured": { "type": "boolean" },
+          "proofConfigured": { "type": "boolean" },
+          "callbackUrl": { "type": "string" },
+          "endpointState": { "type": "string" },
+          "dnsState": { "type": "string" },
+          "tlsState": { "type": "string" },
+          "receiverState": { "type": "string" },
+          "deliveryState": { "type": "string" },
+          "legacyFallbackMode": { "type": "string" },
+          "legacyFallbackUntil": { "type": "string", "format": "date-time" },
+          "readOnly": { "type": "boolean" },
+          "recommendedAction": { "type": "string" }
+        }
+      },
       "SCMWebhookCredential": {
         "type": "object",
         "required": ["provider", "configured"],
@@ -13744,6 +13764,19 @@
         "security": [{"apiToken": []}],
         "responses": {
           "200": {"description": "Redacted webhook status", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookStatus"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/migration-preflight": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "get": {
+        "summary": "Read-only SCM webhook migration preflight",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Redacted migration report", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookMigrationPreflight"}}}},
           "401": {"$ref": "#/components/responses/Unauthorized"},
           "403": {"$ref": "#/components/responses/Forbidden"},
           "404": {"$ref": "#/components/responses/NotFound"}
