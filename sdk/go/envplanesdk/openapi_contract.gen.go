@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "53ef5d9962abc118b6d5fbd2ba7656150435cf185385deba001d0d9ed6ac3eb3"
+const CanonicalOpenAPISHA256 = "0b25d39b7ba25d3f80bcce6b789e57a5d651ec0bfb548529b8c9f68e3891dafd"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -12,6 +12,8 @@ var CanonicalOperations = []string{
 	"DELETE /api/v1/oidc/providers/{providerID}",
 	"DELETE /api/v1/products/{name}",
 	"DELETE /api/v1/projects/{id}",
+	"DELETE /api/v1/projects/{id}/scm-webhook",
+	"DELETE /api/v1/projects/{id}/scm-webhook-credential",
 	"DELETE /api/v1/remote-clusters/{id}",
 	"DELETE /api/v1/saml/providers/{providerID}",
 	"DELETE /api/v1/settings/authentication",
@@ -83,6 +85,8 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/gitops/diagnosis",
 	"GET /api/v1/projects/{id}/hybrid-config",
 	"GET /api/v1/projects/{id}/runtime-bundle",
+	"GET /api/v1/projects/{id}/scm-webhook",
+	"GET /api/v1/projects/{id}/scm-webhook-credential",
 	"GET /api/v1/projects/{id}/secret-materialization",
 	"GET /api/v1/remote-clusters",
 	"GET /api/v1/remote-clusters/targets",
@@ -189,6 +193,9 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/environment-proposals/preview",
 	"POST /api/v1/projects/{id}/runner-config",
 	"POST /api/v1/projects/{id}/runtime-tokens/revoke",
+	"POST /api/v1/projects/{id}/scm-webhook/reconcile",
+	"POST /api/v1/projects/{id}/scm-webhook/rotate-secret",
+	"POST /api/v1/projects/{id}/scm-webhook/verify",
 	"POST /api/v1/remote-clusters",
 	"POST /api/v1/remote-clusters/{id}/credentials",
 	"POST /api/v1/remote-clusters/{id}/credentials/rotate",
@@ -225,6 +232,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/projects/{id}",
 	"PUT /api/v1/projects/{id}/components",
 	"PUT /api/v1/projects/{id}/hybrid-config",
+	"PUT /api/v1/projects/{id}/scm-webhook-credential",
 	"PUT /api/v1/remote-clusters/{id}",
 	"PUT /api/v1/saml/providers/{providerID}",
 	"PUT /api/v1/settings",

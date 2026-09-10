@@ -49,6 +49,36 @@
       }
     },
     "schemas": {
+      "SCMWebhookBootstrapProof": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "repositoryId": { "type": "string" },
+          "repositoryPath": { "type": "string" },
+          "hookId": { "type": "integer", "format": "int64" },
+          "callbackUrl": { "type": "string" },
+          "configFingerprint": { "type": "string" },
+          "secretFingerprint": { "type": "string" },
+          "endpointState": { "type": "string" },
+          "dnsState": { "type": "string" },
+          "tlsState": { "type": "string" },
+          "receiverState": { "type": "string" },
+          "deliveryState": { "type": "string" },
+          "deliveryNonce": { "type": "string" },
+          "deliveryDeadlineAt": { "type": "string", "format": "date-time" },
+          "failureCode": { "type": "string" },
+          "observedAt": { "type": "string", "format": "date-time" },
+          "verifiedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SCMWebhookCredential": {
+        "type": "object",
+        "required": ["provider", "configured"],
+        "properties": {
+          "provider": { "type": "string" },
+          "configured": { "type": "boolean" }
+        }
+      },
       "SCMEvent": {
         "type": "object",
         "required": [
@@ -11162,6 +11192,14 @@
           }
         }
       }
+    },
+    "responses": {
+      "BadRequest": {"description": "Bad request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+      "Unauthorized": {"description": "Unauthorized", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+      "Forbidden": {"description": "Forbidden", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+      "NotFound": {"description": "Not found", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+      "Conflict": {"description": "Conflict", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+      "TooManyRequests": {"description": "Too many requests", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
     }
   },
   "paths": {
@@ -13600,6 +13638,109 @@
               }
             }
           }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook-credential": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "get": {
+        "summary": "Get GitLab webhook credential status",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Credential status", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookCredential"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
+      "put": {
+        "summary": "Set GitLab webhook credential",
+        "security": [{"apiToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["token"], "properties": {"token": {"type": "string", "writeOnly": true}}}}}},
+        "responses": {
+          "200": {"description": "Credential status", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookCredential"}}}},
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
+      "delete": {
+        "summary": "Revoke GitLab webhook credential",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "204": {"description": "Credential revoked"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "get": {
+        "summary": "Get SCM webhook bootstrap proof",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Webhook proof", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
+      "delete": {
+        "summary": "Disable SCM webhook automation",
+        "security": [{"apiToken": []}],
+        "parameters": [{"in": "query", "name": "deleteRemoteHook", "required": false, "schema": {"type": "boolean", "default": false}}],
+        "responses": {
+          "204": {"description": "Automation disabled"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/reconcile": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "summary": "Reconcile the GitLab SCM webhook",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Reconciled webhook proof", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"$ref": "#/components/responses/Conflict"},
+          "429": {"$ref": "#/components/responses/TooManyRequests"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/verify": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "summary": "Verify SCM webhook delivery",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Delivery verification started", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"$ref": "#/components/responses/Conflict"},
+          "429": {"$ref": "#/components/responses/TooManyRequests"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/rotate-secret": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "summary": "Rotate the SCM webhook secret",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Rotated webhook proof", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"$ref": "#/components/responses/Conflict"}
         }
       }
     },
