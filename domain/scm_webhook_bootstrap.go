@@ -5,27 +5,29 @@ import "time"
 // SCMWebhookBootstrapProof is safe to return to browser clients. It records
 // only public webhook metadata and one-way fingerprints, never credentials.
 type SCMWebhookBootstrapProof struct {
-	Provider            string    `json:"provider"`
-	RepositoryID        string    `json:"repositoryId"`
-	RepositoryPath      string    `json:"repositoryPath"`
-	HookID              int64     `json:"hookId"`
-	CallbackURL         string    `json:"callbackUrl"`
-	ConfigFingerprint   string    `json:"configFingerprint"`
-	SecretFingerprint   string    `json:"secretFingerprint"`
-	EndpointState       string    `json:"endpointState"`
-	DNSState            string    `json:"dnsState"`
-	TLSState            string    `json:"tlsState"`
-	ReceiverState       string    `json:"receiverState"`
-	DeliveryState       string    `json:"deliveryState"`
-	DeliveryNonce       string    `json:"deliveryNonce,omitempty"`
-	DeliveryDeadlineAt  time.Time `json:"deliveryDeadlineAt,omitempty"`
-	FailureCode         string    `json:"failureCode"`
-	ObservedAt          time.Time `json:"observedAt"`
-	VerifiedAt          time.Time `json:"verifiedAt"`
-	LastDeliveryAt      time.Time `json:"lastDeliveryAt,omitempty"`
-	LastSignatureResult string    `json:"lastSignatureResult,omitempty"`
-	LastJobID           string    `json:"lastJobId,omitempty"`
-	LastJobStatus       string    `json:"lastJobStatus,omitempty"`
+	Provider                  string    `json:"provider"`
+	RepositoryID              string    `json:"repositoryId"`
+	RepositoryPath            string    `json:"repositoryPath"`
+	HookID                    int64     `json:"hookId"`
+	CallbackURL               string    `json:"callbackUrl"`
+	ConfigFingerprint         string    `json:"configFingerprint"`
+	SecretFingerprint         string    `json:"secretFingerprint"`
+	PreviousSecretFingerprint string    `json:"previousSecretFingerprint,omitempty"`
+	PreviousSecretExpiresAt   time.Time `json:"previousSecretExpiresAt,omitempty"`
+	EndpointState             string    `json:"endpointState"`
+	DNSState                  string    `json:"dnsState"`
+	TLSState                  string    `json:"tlsState"`
+	ReceiverState             string    `json:"receiverState"`
+	DeliveryState             string    `json:"deliveryState"`
+	DeliveryNonce             string    `json:"deliveryNonce,omitempty"`
+	DeliveryDeadlineAt        time.Time `json:"deliveryDeadlineAt,omitempty"`
+	FailureCode               string    `json:"failureCode"`
+	ObservedAt                time.Time `json:"observedAt"`
+	VerifiedAt                time.Time `json:"verifiedAt"`
+	LastDeliveryAt            time.Time `json:"lastDeliveryAt,omitempty"`
+	LastSignatureResult       string    `json:"lastSignatureResult,omitempty"`
+	LastJobID                 string    `json:"lastJobId,omitempty"`
+	LastJobStatus             string    `json:"lastJobStatus,omitempty"`
 }
 
 // SCMWebhookStatus is the redacted operational read model used by project
