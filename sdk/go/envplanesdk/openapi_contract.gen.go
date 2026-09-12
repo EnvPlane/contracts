@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "9f71c4fb4ba7ce41aaa620a0d4074b825c8ec93e63cb3b77bfd7802366113881"
+const CanonicalOpenAPISHA256 = "e6595c454c78a987f40f4f7095298c71e053410eb1dbc517734496507601b009"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -196,6 +196,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/runner-config",
 	"POST /api/v1/projects/{id}/runtime-tokens/revoke",
 	"POST /api/v1/projects/{id}/scm-webhook/reconcile",
+	"POST /api/v1/projects/{id}/scm-webhook/resolve-duplicates",
 	"POST /api/v1/projects/{id}/scm-webhook/rotate-secret",
 	"POST /api/v1/projects/{id}/scm-webhook/test-delivery",
 	"POST /api/v1/projects/{id}/scm-webhook/verify",
@@ -223,6 +224,10 @@ var CanonicalOperations = []string{
 	"POST /api/v1/tenants/{tenantID}/approvals/{id}/cancel",
 	"POST /api/v1/tenants/{tenantID}/approvals/{id}/reject",
 	"POST /api/v1/tenants/{tenantID}/jobs/{id}/approval",
+	"POST /api/v1/webhook-receiver/events",
+	"POST /api/v1/webhook-receiver/github",
+	"POST /api/v1/webhook-receiver/gitlab",
+	"POST /api/v1/webhook-receiver/gitlab-command",
 	"POST /auth/logout",
 	"POST /auth/saml/{providerID}/callback",
 	"PUT /api/projects/{id}/components",

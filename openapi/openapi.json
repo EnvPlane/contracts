@@ -46,6 +46,12 @@
         "scheme": "bearer",
         "bearerFormat": "projectConfigToken",
         "description": "Bearer projectConfigToken from runner deployment instructions. This token is bound to runner identity, one-time use, and must be sent only in the Authorization header."
+      },
+      "webhookReceiverToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "webhookReceiverToken",
+        "description": "Receiver capability accepted only by webhook intake endpoints."
       }
     },
     "schemas": {
@@ -13825,6 +13831,53 @@
           "404": {"$ref": "#/components/responses/NotFound"},
           "409": {"$ref": "#/components/responses/Conflict"}
         }
+      }
+    },
+    "/api/v1/projects/{id}/scm-webhook/resolve-duplicates": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "summary": "Remove duplicate EnvPlane SCM webhooks",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Resolved webhook proof", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"$ref": "#/components/responses/Conflict"},
+          "429": {"$ref": "#/components/responses/TooManyRequests"}
+        }
+      }
+    },
+    "/api/v1/webhook-receiver/events": {
+      "post": {
+        "summary": "Receive normalized SCM webhook event",
+        "security": [{"webhookReceiverToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMEvent"}}}},
+        "responses": {"202": {"description": "Event accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}, "401": {"$ref": "#/components/responses/Unauthorized"}}
+      }
+    },
+    "/api/v1/webhook-receiver/github": {
+      "post": {
+        "summary": "Receive raw GitHub webhook delivery",
+        "security": [{"webhookReceiverToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "description": "Raw GitHub webhook payload."}}}},
+        "responses": {"202": {"description": "Delivery accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}, "401": {"$ref": "#/components/responses/Unauthorized"}}
+      }
+    },
+    "/api/v1/webhook-receiver/gitlab": {
+      "post": {
+        "summary": "Receive raw GitLab merge request webhook delivery",
+        "security": [{"webhookReceiverToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "description": "Raw GitLab webhook payload."}}}},
+        "responses": {"202": {"description": "Delivery accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}, "401": {"$ref": "#/components/responses/Unauthorized"}}
+      }
+    },
+    "/api/v1/webhook-receiver/gitlab-command": {
+      "post": {
+        "summary": "Receive raw GitLab comment command delivery",
+        "security": [{"webhookReceiverToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "description": "Raw GitLab comment webhook payload."}}}},
+        "responses": {"202": {"description": "Command accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}, "401": {"$ref": "#/components/responses/Unauthorized"}}
       }
     },
     "/api/v1/projects/{id}": {
