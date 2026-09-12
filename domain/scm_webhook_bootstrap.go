@@ -14,6 +14,8 @@ type SCMWebhookBootstrapProof struct {
 	SecretFingerprint         string    `json:"secretFingerprint"`
 	PreviousSecretFingerprint string    `json:"previousSecretFingerprint,omitempty"`
 	PreviousSecretExpiresAt   time.Time `json:"previousSecretExpiresAt,omitempty"`
+	HookState                 string    `json:"hookState,omitempty"`
+	LastDriftCheckAt          time.Time `json:"lastDriftCheckAt,omitempty"`
 	EndpointState             string    `json:"endpointState"`
 	DNSState                  string    `json:"dnsState"`
 	TLSState                  string    `json:"tlsState"`
@@ -92,7 +94,7 @@ func SCMWebhookStatusFromProof(p SCMWebhookBootstrapProof) SCMWebhookStatus {
 
 // Ready is the single readiness predicate used by Bootstrap gates.
 func (p SCMWebhookBootstrapProof) Ready() bool {
-	return p.EndpointState == "ready" && p.ReceiverState == "ready" && p.DeliveryState == "verified"
+	return p.EndpointState == "ready" && p.ReceiverState == "ready" && p.DeliveryState == "verified" && (p.HookState == "" || p.HookState == "ready")
 }
 
 // ReadyForConfig additionally binds a verified proof to the currently desired
