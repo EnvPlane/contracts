@@ -13836,7 +13836,7 @@
     "/api/v1/projects/{id}/scm-webhook/resolve-duplicates": {
       "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
       "post": {
-        "summary": "Remove duplicate EnvPlane SCM webhooks",
+        "summary": "Remove duplicate SCM webhooks",
         "security": [{"apiToken": []}],
         "responses": {
           "200": {"description": "Resolved webhook proof", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SCMWebhookBootstrapProof"}}}},
