@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root="${1:-.}"
-expected="${ENVPLANE_CONTRACTS_VERSION:-v0.1.3}"
+expected="${ENVPLANE_CONTRACTS_VERSION:-v0.1.88}"
 status=0
 for module in control-plane runner agent gitops bootstrap webhook; do
   file="$root/$module/go.mod"
