@@ -13864,6 +13864,12 @@
         "responses": {"202": {"description": "Delivery accepted"}, "400": {"$ref": "#/components/responses/BadRequest"}, "401": {"$ref": "#/components/responses/Unauthorized"}}
       }
     },
+    "/api/v1/webhook-receiver/readyz": {
+      "get": {
+        "summary": "Check public webhook receiver readiness",
+        "responses": {"200": {"description": "Webhook receiver is ready"}}
+      }
+    },
     "/api/v1/webhook-receiver/gitlab": {
       "post": {
         "summary": "Receive raw GitLab merge request webhook delivery",
