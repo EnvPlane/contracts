@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "b8787a4a0c167aa83d71768e7e90b03d96fc76d643f2ce5650f070711f26f39c"
+const CanonicalOpenAPISHA256 = "a86cb0b3624451f9b56cda0853a4000da83b59a5bef32460ec03bbbce96c351c"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",

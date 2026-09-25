@@ -17,6 +17,13 @@ const (
 	AIPolicyOffline    AIPolicyMode = "offline"
 )
 
+type AIProvider string
+
+const (
+	AIProviderOpenAI    AIProvider = "openai"
+	AIProviderAnthropic AIProvider = "anthropic"
+)
+
 type AIRetentionMode string
 
 const (
@@ -27,6 +34,7 @@ const (
 type TenantAIPolicy struct {
 	SchemaVersion            string          `json:"schemaVersion"`
 	TenantID                 string          `json:"tenantId"`
+	Provider                 AIProvider      `json:"provider,omitempty"`
 	Mode                     AIPolicyMode    `json:"mode"`
 	AllowedRegions           []string        `json:"allowedRegions,omitempty"`
 	AllowedEndpoints         []string        `json:"allowedEndpoints,omitempty"`
@@ -38,7 +46,7 @@ type TenantAIPolicy struct {
 }
 
 func DefaultTenantAIPolicy(tenantID string) TenantAIPolicy {
-	return TenantAIPolicy{SchemaVersion: AIPolicySchemaVersion, TenantID: strings.TrimSpace(tenantID), Mode: AIPolicyDisabled, RetentionMode: AIRetentionMetadataOnly, MaxContextClassification: "safe_metadata", MaxAutonomy: AIAutonomyObserve, Purposes: map[string]bool{}}
+	return TenantAIPolicy{SchemaVersion: AIPolicySchemaVersion, TenantID: strings.TrimSpace(tenantID), Provider: AIProviderOpenAI, Mode: AIPolicyDisabled, RetentionMode: AIRetentionMetadataOnly, MaxContextClassification: "safe_metadata", MaxAutonomy: AIAutonomyObserve, Purposes: map[string]bool{}}
 }
 
 func (p TenantAIPolicy) Validate() error {
@@ -47,6 +55,9 @@ func (p TenantAIPolicy) Validate() error {
 	}
 	if p.Mode != AIPolicyDisabled && p.Mode != AIPolicyExternal && p.Mode != AIPolicySelfHosted && p.Mode != AIPolicyOffline {
 		return fmt.Errorf("unsupported AI policy mode")
+	}
+	if provider := p.EffectiveProvider(); provider != AIProviderOpenAI && provider != AIProviderAnthropic {
+		return fmt.Errorf("unsupported AI provider")
 	}
 	if p.RetentionMode != AIRetentionMetadataOnly && p.RetentionMode != AIRetentionNone {
 		return fmt.Errorf("unsupported AI retention mode")
@@ -66,6 +77,7 @@ func (p TenantAIPolicy) Validate() error {
 }
 
 func (p TenantAIPolicy) Deterministic() TenantAIPolicy {
+	p.Provider = p.EffectiveProvider()
 	p.AllowedRegions = append([]string(nil), p.AllowedRegions...)
 	p.AllowedEndpoints = append([]string(nil), p.AllowedEndpoints...)
 	p.AllowedModels = append([]string(nil), p.AllowedModels...)
@@ -73,6 +85,13 @@ func (p TenantAIPolicy) Deterministic() TenantAIPolicy {
 	sort.Strings(p.AllowedEndpoints)
 	sort.Strings(p.AllowedModels)
 	return p
+}
+
+func (p TenantAIPolicy) EffectiveProvider() AIProvider {
+	if strings.TrimSpace(string(p.Provider)) == "" {
+		return AIProviderOpenAI
+	}
+	return AIProvider(strings.ToLower(strings.TrimSpace(string(p.Provider))))
 }
 
 func (p TenantAIPolicy) PurposeEnabled(purpose string) bool {

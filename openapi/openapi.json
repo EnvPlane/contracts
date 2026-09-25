@@ -7050,6 +7050,13 @@
             ],
             "type": "string"
           },
+          "provider": {
+            "enum": [
+              "openai",
+              "anthropic"
+            ],
+            "type": "string"
+          },
           "mode": {
             "enum": [
               "disabled",
@@ -7104,6 +7111,10 @@
             "minLength": 1,
             "type": "string",
             "writeOnly": true
+          },
+          "provider": {
+            "enum": ["openai", "anthropic"],
+            "type": "string"
           }
         },
         "required": ["apiKey"],
@@ -7114,6 +7125,7 @@
         "properties": {
           "configured": { "type": "boolean" },
           "revision": { "type": "string" },
+          "provider": { "enum": ["openai", "anthropic"], "type": "string" },
           "source": { "enum": ["settings", "none"], "type": "string" }
         },
         "required": ["configured", "source"],
