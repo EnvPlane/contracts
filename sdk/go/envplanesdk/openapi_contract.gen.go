@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "40dd1d81a5da15d945019c688189e93c5d9974d5685a8add22a47e7e86b50083"
+const CanonicalOpenAPISHA256 = "b8787a4a0c167aa83d71768e7e90b03d96fc76d643f2ce5650f070711f26f39c"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -17,6 +17,7 @@ var CanonicalOperations = []string{
 	"DELETE /api/v1/remote-clusters/{id}",
 	"DELETE /api/v1/saml/providers/{providerID}",
 	"DELETE /api/v1/settings/authentication",
+	"DELETE /api/v1/tenants/{tenantID}/ai-provider-credentials",
 	"DELETE /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"DELETE /scim/v2/{tenantID}/Users/{id}",
 	"GET /api/dashboard/summary",
@@ -105,6 +106,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/siem/export/status",
 	"GET /api/v1/tenants/{tenantID}/ai-capabilities",
 	"GET /api/v1/tenants/{tenantID}/ai-policy",
+	"GET /api/v1/tenants/{tenantID}/ai-provider-credentials",
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
 	"GET /api/v1/tenants/{tenantID}/budget",
 	"GET /api/v1/tenants/{tenantID}/memberships",
@@ -247,6 +249,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/settings",
 	"PUT /api/v1/settings/authentication",
 	"PUT /api/v1/tenants/{tenantID}/ai-policy",
+	"PUT /api/v1/tenants/{tenantID}/ai-provider-credentials",
 	"PUT /api/v1/tenants/{tenantID}/audit-retention-policy",
 	"PUT /api/v1/tenants/{tenantID}/budget",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
