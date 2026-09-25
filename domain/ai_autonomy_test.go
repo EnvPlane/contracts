@@ -41,3 +41,23 @@ func TestAIAutonomyMatrixIsTenantScoped(t *testing.T) {
 		t.Fatalf("matrix leaked tenant scope: %#v", matrixForOther)
 	}
 }
+
+func TestAIAutonomyMatrixHonorsRestrictedPolicyForImplementedPlanPurposes(t *testing.T) {
+	policy := DefaultTenantAIPolicy("tenant-a")
+	policy.Mode = AIPolicyExternal
+	policy.MaxAutonomy = AIAutonomyApprovalRequired
+	policy.Purposes = map[string]bool{"release.engineering": true, "incident.response": true, "security.compliance": true}
+	for _, purpose := range []string{"release.engineering", "incident.response", "security.compliance"} {
+		capability := ResolveAICapability(policy, purpose, map[string]string{
+			"release.engineering": "release.plan",
+			"incident.response":   "incident.plan",
+			"security.compliance": "security.plan",
+		}[purpose])
+		if !capability.Known || !capability.Enabled || capability.EffectiveAutonomy != AIAutonomyApprovalRequired {
+			t.Fatalf("implemented plan capability %q was not visible and enabled: %#v", purpose, capability)
+		}
+	}
+	if capability := ResolveAICapability(policy, "scm.diagnosis", "scm.explain_or_propose"); capability.Enabled || capability.Reason != "purpose_disabled_by_tenant_policy" {
+		t.Fatalf("restricted policy did not disable SCM diagnosis: %#v", capability)
+	}
+}

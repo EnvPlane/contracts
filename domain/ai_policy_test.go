@@ -29,3 +29,13 @@ func TestOfflineTenantPolicyIsAValidNoEgressMode(t *testing.T) {
 		t.Fatalf("offline policy rejected: %v", err)
 	}
 }
+
+func TestTenantAIPolicyAllowsEveryCatalogPurpose(t *testing.T) {
+	policy := DefaultTenantAIPolicy("tenant-a")
+	for _, capability := range AICapabilityCatalog() {
+		policy.Purposes[capability.Purpose] = true
+	}
+	if err := policy.Validate(); err != nil {
+		t.Fatalf("catalog purposes rejected by tenant policy: %v", err)
+	}
+}

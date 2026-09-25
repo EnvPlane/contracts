@@ -58,7 +58,7 @@ func (p TenantAIPolicy) Validate() error {
 		return fmt.Errorf("unsupported maximum AI autonomy %q", p.MaxAutonomy)
 	}
 	for purpose := range p.Purposes {
-		if purpose != "diagnosis" && purpose != "bootstrap_troubleshooting" && purpose != "bootstrap.scan" && purpose != "configuration_proposal" && purpose != "environment_creation" && purpose != "approved_actions" && purpose != "finops_explanation" {
+		if purpose != "diagnosis" && purpose != "bootstrap_troubleshooting" && purpose != "bootstrap.scan" && purpose != "configuration_proposal" && purpose != "environment_creation" && purpose != "approved_actions" && purpose != "finops_explanation" && purpose != "gitops.diagnosis" && purpose != "kubernetes.diagnosis" && purpose != "scm.diagnosis" && purpose != "release.engineering" && purpose != "incident.response" && purpose != "security.compliance" {
 			return fmt.Errorf("unsupported AI purpose %q", purpose)
 		}
 	}
