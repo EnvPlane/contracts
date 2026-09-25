@@ -7096,6 +7096,29 @@
         ],
         "type": "object"
       },
+      "AIProviderCredentialRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "apiKey": {
+            "description": "Write-only provider key. It is never returned or persisted in the API data store.",
+            "minLength": 1,
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": ["apiKey"],
+        "type": "object"
+      },
+      "AIProviderCredentialStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "configured": { "type": "boolean" },
+          "revision": { "type": "string" },
+          "source": { "enum": ["settings", "none"], "type": "string" }
+        },
+        "required": ["configured", "source"],
+        "type": "object"
+      },
       "EnvironmentCreateProposalRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -18883,6 +18906,27 @@
           }
         },
         "summary": "Update tenant AI privacy policy without provider secrets"
+      }
+    },
+    "/api/v1/tenants/{tenantID}/ai-provider-credentials": {
+      "get": {
+        "operationId": "getTenantAIProviderCredentials",
+        "parameters": [{ "in": "path", "name": "tenantID", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AIProviderCredentialStatus" } } }, "description": "Write-only provider credential status" }, "403": { "description": "Forbidden" }, "503": { "description": "Credential storage unavailable" } },
+        "summary": "Read AI provider credential status"
+      },
+      "put": {
+        "operationId": "putTenantAIProviderCredentials",
+        "parameters": [{ "in": "path", "name": "tenantID", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AIProviderCredentialRequest" } } }, "required": true },
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AIProviderCredentialStatus" } } }, "description": "Stored write-only provider credential" }, "400": { "description": "Invalid key" }, "403": { "description": "Forbidden" }, "503": { "description": "Credential storage unavailable" } },
+        "summary": "Store a write-only AI provider credential"
+      },
+      "delete": {
+        "operationId": "deleteTenantAIProviderCredentials",
+        "parameters": [{ "in": "path", "name": "tenantID", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AIProviderCredentialStatus" } } }, "description": "Removed provider credential" }, "403": { "description": "Forbidden" }, "503": { "description": "Credential storage unavailable" } },
+        "summary": "Remove the Settings-managed AI provider credential"
       }
     },
     "/api/v1/projects/{id}/environment-proposals/preview": {
