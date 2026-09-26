@@ -26,6 +26,12 @@ const (
 	FeatureAIEnvironment   = "ai.environment_create"
 	FeatureAIFinOps        = "ai.finops"
 	FeatureAIApproved      = "ai.approved_actions"
+	FeatureAIGitOps        = "ai.gitops"
+	FeatureAIKubernetes    = "ai.kubernetes"
+	FeatureAISCM           = "ai.scm"
+	FeatureAIRelease       = "ai.release"
+	FeatureAIIncident      = "ai.incident"
+	FeatureAISecurity      = "ai.security"
 )
 
 const (
@@ -48,6 +54,7 @@ var knownPlanFeatureKeys = map[string]struct{}{
 	FeatureFleetUpgradeWaves: {}, FeatureSupportSLA: {},
 	FeatureAuditSIEM: {},
 	FeatureAIDiagnosis: {}, FeatureAIBootstrap: {}, FeatureAIConfiguration: {}, FeatureAIEnvironment: {}, FeatureAIFinOps: {}, FeatureAIApproved: {},
+	FeatureAIGitOps: {}, FeatureAIKubernetes: {}, FeatureAISCM: {}, FeatureAIRelease: {}, FeatureAIIncident: {}, FeatureAISecurity: {},
 	// These aliases are retained for existing entitlement and quota callers.
 	"projects": {}, "environments": {}, "gitops": {}, "helmDirect": {}, "audit": {},
 }
