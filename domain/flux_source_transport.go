@@ -17,6 +17,19 @@ const (
 	FluxSourceCommandFailed    FluxSourceCommandStatus = "failed"
 )
 
+// FluxSourceCommandErrorCode is a safe, stable classification of an Agent
+// materialization failure. It intentionally contains no Kubernetes response or
+// SCM credential detail.
+type FluxSourceCommandErrorCode string
+
+const (
+	FluxSourceErrorApplyFailed        FluxSourceCommandErrorCode = "apply_failed"
+	FluxSourceErrorCredentialFetch    FluxSourceCommandErrorCode = "credential_fetch_failed"
+	FluxSourceErrorSecretApply        FluxSourceCommandErrorCode = "secret_apply_failed"
+	FluxSourceErrorGitRepositoryApply FluxSourceCommandErrorCode = "git_repository_apply_failed"
+	FluxSourceErrorKustomizationApply FluxSourceCommandErrorCode = "kustomization_apply_failed"
+)
+
 // AgentFluxSourceCommand carries only the immutable, non-secret binding for a
 // project-owned Flux GitRepository and its owning Kustomization. The
 // credential is obtained separately by the authenticated Agent after it has
@@ -59,16 +72,16 @@ func (c AgentFluxSourceCommand) Validate() error {
 }
 
 type AgentFluxSourceResult struct {
-	ContractVersion string                  `json:"contractVersion"`
-	CommandID       string                  `json:"commandId"`
-	AttemptID       string                  `json:"attemptId"`
-	TenantID        string                  `json:"tenantId"`
-	ProjectID       string                  `json:"projectId"`
-	ClusterID       string                  `json:"clusterId"`
-	AgentID         string                  `json:"agentId"`
-	Status          FluxSourceCommandStatus `json:"status"`
-	ErrorCode       string                  `json:"errorCode,omitempty"`
-	FinishedAt      time.Time               `json:"finishedAt"`
+	ContractVersion string                     `json:"contractVersion"`
+	CommandID       string                     `json:"commandId"`
+	AttemptID       string                     `json:"attemptId"`
+	TenantID        string                     `json:"tenantId"`
+	ProjectID       string                     `json:"projectId"`
+	ClusterID       string                     `json:"clusterId"`
+	AgentID         string                     `json:"agentId"`
+	Status          FluxSourceCommandStatus    `json:"status"`
+	ErrorCode       FluxSourceCommandErrorCode `json:"errorCode,omitempty"`
+	FinishedAt      time.Time                  `json:"finishedAt"`
 }
 
 func (r AgentFluxSourceResult) Validate() error {
@@ -78,7 +91,7 @@ func (r AgentFluxSourceResult) Validate() error {
 	if r.Status != FluxSourceCommandSucceeded && r.Status != FluxSourceCommandFailed {
 		return errors.New("flux source result is not terminal")
 	}
-	if r.Status == FluxSourceCommandSucceeded && strings.TrimSpace(r.ErrorCode) != "" {
+	if r.Status == FluxSourceCommandSucceeded && strings.TrimSpace(string(r.ErrorCode)) != "" {
 		return errors.New("successful Flux source result has an error code")
 	}
 	return nil

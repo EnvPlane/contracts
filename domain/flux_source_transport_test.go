@@ -21,4 +21,9 @@ func TestAgentFluxSourceTransportIsCredentialFreeAndBound(t *testing.T) {
 	if err := result.Validate(); err != nil {
 		t.Fatalf("validate result: %v", err)
 	}
+	result.Status = FluxSourceCommandFailed
+	result.ErrorCode = FluxSourceErrorGitRepositoryApply
+	if err := result.Validate(); err != nil {
+		t.Fatalf("validate classified failed result: %v", err)
+	}
 }
