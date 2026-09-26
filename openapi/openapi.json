@@ -18136,6 +18136,46 @@
         }
       }
     },
+    "/api/v1/projects/{id}/namespaces": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "summary": "List project-owned namespaces requested in a managed remote cluster",
+        "security": [{ "apiToken": [] }],
+        "responses": {
+          "200": {
+            "description": "Project-owned namespace requests",
+            "content": { "application/json": { "schema": {
+              "type": "object",
+              "properties": { "items": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "status": { "type": "string", "enum": ["requested", "ready", "blocked"] }, "reason": { "type": "string" } } } } }
+            } } }
+          },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Project or remote cluster not found" }
+        }
+      },
+      "post": {
+        "summary": "Request a project-owned namespace through the managed remote reconciler",
+        "security": [{ "apiToken": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": {
+          "type": "object", "required": ["suffix"], "properties": { "suffix": { "type": "string" } }
+        } } } },
+        "responses": {
+          "202": { "description": "Namespace provisioning requested", "content": { "application/json": { "schema": {
+            "type": "object", "properties": { "name": { "type": "string" }, "status": { "type": "string" } }
+          } } } },
+          "400": { "description": "Invalid namespace suffix or policy" },
+          "403": { "description": "Forbidden" },
+          "409": { "description": "Namespace already assigned or limit reached" }
+        }
+      }
+    },
     "/api/v1/projects/{id}/cost-policy": {
       "parameters": [
         {

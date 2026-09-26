@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "a86cb0b3624451f9b56cda0853a4000da83b59a5bef32460ec03bbbce96c351c"
+const CanonicalOpenAPISHA256 = "7488f92cfc1dfbeafdc7e48514d060d6a8814f780e0df4639cd1980039c051c1"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -85,6 +85,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/finops/optimization",
 	"GET /api/v1/projects/{id}/gitops/diagnosis",
 	"GET /api/v1/projects/{id}/hybrid-config",
+	"GET /api/v1/projects/{id}/namespaces",
 	"GET /api/v1/projects/{id}/runtime-bundle",
 	"GET /api/v1/projects/{id}/scm-webhook",
 	"GET /api/v1/projects/{id}/scm-webhook-credential",
@@ -196,6 +197,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/configuration-proposals/preview",
 	"POST /api/v1/projects/{id}/environment-proposals/actions",
 	"POST /api/v1/projects/{id}/environment-proposals/preview",
+	"POST /api/v1/projects/{id}/namespaces",
 	"POST /api/v1/projects/{id}/runner-config",
 	"POST /api/v1/projects/{id}/runtime-tokens/revoke",
 	"POST /api/v1/projects/{id}/scm-webhook/reconcile",
