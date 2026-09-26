@@ -24,7 +24,7 @@ type FluxSourceCommandErrorCode string
 
 const (
 	FluxSourceErrorApplyFailed        FluxSourceCommandErrorCode = "apply_failed"
-	FluxSourceErrorCredentialFetch    FluxSourceCommandErrorCode = "credential_fetch_failed"
+	FluxSourceErrorCredentialFetch    FluxSourceCommandErrorCode = "credential_fetch_failed" // #nosec G101 -- protocol error code, not a credential.
 	FluxSourceErrorSecretApply        FluxSourceCommandErrorCode = "secret_apply_failed"
 	FluxSourceErrorGitRepositoryApply FluxSourceCommandErrorCode = "git_repository_apply_failed"
 	FluxSourceErrorKustomizationApply FluxSourceCommandErrorCode = "kustomization_apply_failed"
