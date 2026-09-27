@@ -2398,6 +2398,14 @@
           }
         }
       },
+      "TenantFinOpsCurrency": {
+        "type": "object",
+        "required": ["tenantId", "currency"],
+        "properties": {
+          "tenantId": {"type": "string"},
+          "currency": {"type": "string", "description": "Configured ISO 4217 code, or empty when not configured"}
+        }
+      },
       "MonthlyBudget": {
         "type": "object",
         "required": [
@@ -19128,6 +19136,28 @@
           "403": {"description": "Forbidden"},
           "404": {"description": "Audit entry not found"},
           "503": {"description": "Audit store unavailable"}
+        }
+      }
+    },
+    "/api/v1/tenants/{tenantID}/finops-currency": {
+      "get": {
+        "operationId": "getTenantFinOpsCurrency",
+        "summary": "Read the tenant FinOps currency without a budget policy",
+        "responses": {
+          "200": {"description": "Tenant FinOps currency setting", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/TenantFinOpsCurrency"}}}},
+          "403": {"description": "Forbidden"},
+          "503": {"description": "Currency store unavailable"}
+        }
+      },
+      "put": {
+        "operationId": "putTenantFinOpsCurrency",
+        "summary": "Save a tenant FinOps currency without changing budget policy",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["currency"], "properties": {"currency": {"type": "string"}}}}}},
+        "responses": {
+          "200": {"description": "Saved tenant FinOps currency", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/TenantFinOpsCurrency"}}}},
+          "400": {"description": "Invalid ISO 4217 currency code"},
+          "403": {"description": "Forbidden"},
+          "503": {"description": "Currency store unavailable"}
         }
       }
     },
