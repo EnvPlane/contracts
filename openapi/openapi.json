@@ -1317,6 +1317,16 @@
           }
         }
       },
+      "WebhookEndpointProfile": {
+        "type": "object",
+        "required": ["endpoint"],
+        "properties": {
+          "endpoint": { "type": "string" },
+          "source": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
       "PlanDefinition": {
         "type": "object",
         "required": [
@@ -13900,6 +13910,30 @@
           "404": {"$ref": "#/components/responses/NotFound"},
           "409": {"$ref": "#/components/responses/Conflict"},
           "429": {"$ref": "#/components/responses/TooManyRequests"}
+        }
+      }
+    },
+    "/api/v1/webhook-endpoint-profile": {
+      "get": {
+        "operationId": "getWebhookEndpointProfile",
+        "summary": "Read the configured public SCM webhook endpoint profile",
+        "security": [{"apiToken": []}],
+        "responses": {
+          "200": {"description": "Webhook endpoint profile or missing-profile state", "content": {"application/json": {"schema": {"oneOf": [{"$ref": "#/components/schemas/WebhookEndpointProfile"}, {"type": "object", "required": ["state", "reason"], "properties": {"state": {"type": "string", "enum": ["missing"]}, "reason": {"type": "string"}}}]}}}},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "503": {"description": "Webhook endpoint profile store unavailable"}
+        }
+      },
+      "put": {
+        "operationId": "saveWebhookEndpointProfile",
+        "summary": "Save the public SCM webhook endpoint profile",
+        "security": [{"apiToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WebhookEndpointProfile"}}}},
+        "responses": {
+          "200": {"description": "Saved webhook endpoint profile", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/WebhookEndpointProfile"}}}},
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "403": {"$ref": "#/components/responses/Forbidden"},
+          "503": {"description": "Webhook endpoint profile store unavailable"}
         }
       }
     },
