@@ -3731,6 +3731,18 @@
           }
         }
       },
+      "ProjectNamespaceRetirementPreview": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "type": "string", "enum": ["requested", "ready", "retiring", "blocked"] },
+          "reason": { "type": "string" },
+          "owned": { "type": "boolean" },
+          "active_environment_count": { "type": "integer", "minimum": 0 },
+          "workloads": { "type": "array", "items": { "type": "string" } }
+        }
+      },
       "ProjectCostPolicy": {
         "type": "object",
         "properties": {
@@ -18161,7 +18173,7 @@
             "description": "Project-owned namespace requests",
             "content": { "application/json": { "schema": {
               "type": "object",
-              "properties": { "items": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "status": { "type": "string", "enum": ["requested", "ready", "blocked"] }, "reason": { "type": "string" } } } } }
+              "properties": { "items": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "status": { "type": "string", "enum": ["requested", "ready", "retiring", "blocked"] }, "reason": { "type": "string" }, "owned": { "type": "boolean" }, "active_environment_count": { "type": "integer", "minimum": 0 }, "workloads": { "type": "array", "items": { "type": "string" } } } } } }
             } } }
           },
           "403": { "description": "Forbidden" },
@@ -18181,6 +18193,41 @@
           "400": { "description": "Invalid namespace suffix or policy" },
           "403": { "description": "Forbidden" },
           "409": { "description": "Namespace already assigned or limit reached" }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/namespaces/{namespace}/retirement-preview": {
+      "parameters": [
+        { "in": "path", "name": "id", "required": true, "schema": { "type": "string" } },
+        { "in": "path", "name": "namespace", "required": true, "schema": { "type": "string" } }
+      ],
+      "get": {
+        "summary": "Preview safe retirement of a project-owned remote namespace",
+        "security": [{ "apiToken": [] }],
+        "responses": {
+          "200": { "description": "Retirement safety preview", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectNamespaceRetirementPreview" } } } },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Project or remote cluster not found" },
+          "409": { "description": "Namespace is not project-owned" },
+          "503": { "description": "Remote cluster inspection is unavailable" }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/namespaces/{namespace}/retire": {
+      "parameters": [
+        { "in": "path", "name": "id", "required": true, "schema": { "type": "string" } },
+        { "in": "path", "name": "namespace", "required": true, "schema": { "type": "string" } }
+      ],
+      "post": {
+        "summary": "Request retirement of an empty project-owned remote namespace",
+        "security": [{ "apiToken": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["confirm_name"], "properties": { "confirm_name": { "type": "string" } } } } } },
+        "responses": {
+          "202": { "description": "Namespace retirement requested", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProjectNamespaceRetirementPreview" } } } },
+          "400": { "description": "Confirmation does not match namespace" },
+          "403": { "description": "Forbidden" },
+          "409": { "description": "Namespace has workloads, active environments, or mismatched ownership" },
+          "503": { "description": "Remote cluster inspection is unavailable" }
         }
       }
     },
