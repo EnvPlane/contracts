@@ -86,7 +86,7 @@ func (f BootstrapConfigProposalFields) Validate() error {
 		seen[id] = struct{}{}
 	}
 	for key, strategy := range f.SecretStrategies {
-		if strings.TrimSpace(key) == "" || (strategy != "" && strategy != "reference existing secret" && strategy != "external secret" && strategy != "encrypted clone" && strategy != "manual input") {
+		if strings.TrimSpace(key) == "" || !isSupportedBootstrapSecretStrategy(strategy) {
 			return errors.New("unsupported secret strategy")
 		}
 	}
@@ -98,4 +98,13 @@ func (f BootstrapConfigProposalFields) Validate() error {
 		}
 	}
 	return nil
+}
+
+func isSupportedBootstrapSecretStrategy(value string) bool {
+	switch strings.TrimSpace(value) {
+	case "", "reference existing secret", "external secret", "encrypted clone", "manual input", "generated", "generated credentials", "generated database credentials":
+		return true
+	default:
+		return false
+	}
 }
