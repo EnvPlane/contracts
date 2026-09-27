@@ -14,6 +14,9 @@ type ControlPlaneSettings struct {
 	// Secret-reference metadata; certificate, kubeconfig and token bytes never
 	// belong in settings or an API response.
 	ManagementEndpointProfile *ManagementEndpointProfile `json:"management_endpoint_profile,omitempty"`
+	// WebhookEndpointProfile is the safe, API-managed public HTTPS address used
+	// by SCM providers to deliver webhooks. It contains no provider credentials.
+	WebhookEndpointProfile    *WebhookEndpointProfile    `json:"webhook_endpoint_profile,omitempty"`
 	Authentication            AuthenticationSettings     `json:"authentication"`
 	AuthenticationTransaction *AuthenticationTransaction `json:"authentication_transaction,omitempty"`
 	// FirstRun is an installation-scoped, safe progress cursor. Its zero value
@@ -68,6 +71,16 @@ type ManagementEndpointCondition struct {
 	Reason             string     `json:"reason,omitempty"`
 	ObservedGeneration int64      `json:"observed_generation,omitempty"`
 	LastTransitionAt   *time.Time `json:"last_transition_at,omitempty"`
+}
+
+// WebhookEndpointProfile describes the externally reachable base URL of the
+// control-plane webhook receiver. It is configured through Settings so a
+// Bootstrap user does not need to modify Helm values for a public receiver.
+type WebhookEndpointProfile struct {
+	Endpoint  string    `json:"endpoint"`
+	Source    string    `json:"source,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 type ConfiguredRepository struct {
