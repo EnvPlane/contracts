@@ -89,6 +89,9 @@ type ProjectFluxCDConfig struct {
 	SourceRefName     string `json:"sourceRefName,omitempty"`
 	SourceRefNamespace string `json:"sourceRefNamespace,omitempty"`
 	KustomizationName string `json:"kustomizationName"`
+	// KustomizationPath is the repository-root-relative Flux source directory
+	// that owns the generated environment manifests.
+	KustomizationPath string `json:"kustomizationPath,omitempty"`
 	CommitMode        string `json:"commitMode"`
 }
 
