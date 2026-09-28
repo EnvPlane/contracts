@@ -26,19 +26,25 @@ const (
 )
 
 type Environment struct {
-	TenantID                    string                     `json:"tenant_id,omitempty"`
-	ID                          string                     `json:"id"`
-	DisplayName                 string                     `json:"displayName,omitempty"`
-	CompatibilityAliases        []string                   `json:"compatibilityAliases,omitempty"`
-	Endpoints                   []IngressEndpoint          `json:"endpoints,omitempty"`
-	PrimaryEndpoint             string                     `json:"primaryEndpoint,omitempty"`
-	EndpointPreflight           EndpointPreflight          `json:"endpointPreflight"`
-	Project                     string                     `json:"project"`
-	Product                     string                     `json:"product"`
-	ClusterID                   string                     `json:"clusterId,omitempty"`
-	Namespace                   string                     `json:"namespace"`
-	TargetNamespace             string                     `json:"targetNamespace,omitempty"`
-	HelmReleaseName             string                     `json:"helmReleaseName,omitempty"`
+	TenantID             string            `json:"tenant_id,omitempty"`
+	ID                   string            `json:"id"`
+	DisplayName          string            `json:"displayName,omitempty"`
+	CompatibilityAliases []string          `json:"compatibilityAliases,omitempty"`
+	Endpoints            []IngressEndpoint `json:"endpoints,omitempty"`
+	PrimaryEndpoint      string            `json:"primaryEndpoint,omitempty"`
+	EndpointPreflight    EndpointPreflight `json:"endpointPreflight"`
+	Project              string            `json:"project"`
+	Product              string            `json:"product"`
+	ClusterID            string            `json:"clusterId,omitempty"`
+	Namespace            string            `json:"namespace"`
+	TargetNamespace      string            `json:"targetNamespace,omitempty"`
+	HelmReleaseName      string            `json:"helmReleaseName,omitempty"`
+	// DeploymentBackend and DeploymentConfig are immutable execution metadata
+	// captured when the environment is created. They keep later project-wide
+	// deployment changes from rerouting an existing environment lifecycle.
+	DeploymentBackend           DeploymentBackend          `json:"deploymentBackend,omitempty"`
+	DeploymentConfig            map[string]any             `json:"deploymentConfig,omitempty"`
+	DeploymentConfigVersion     int                        `json:"deploymentConfigVersion,omitempty"`
 	Mode                        EnvironmentMode            `json:"mode"`
 	Status                      EnvironmentStatus          `json:"status"`
 	Domain                      string                     `json:"domain"`
