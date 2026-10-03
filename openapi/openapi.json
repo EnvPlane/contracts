@@ -1083,6 +1083,10 @@
           "cleanup": {
             "type": "object",
             "properties": {
+              "observedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
               "phase": {
                 "type": "string"
               },

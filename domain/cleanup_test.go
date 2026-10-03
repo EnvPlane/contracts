@@ -1,6 +1,26 @@
 package domain
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+	"time"
+)
+
+func TestCleanupObservationSurvivesJSONRoundTrip(t *testing.T) {
+	now := time.Unix(123, 0).UTC()
+	state := CleanupState{Phase: CleanupWaitingFinalizer, ObservedAt: &now}
+	data, err := json.Marshal(state)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var restored CleanupState
+	if err := json.Unmarshal(data, &restored); err != nil {
+		t.Fatal(err)
+	}
+	if restored.ObservedAt == nil || !restored.ObservedAt.Equal(now) {
+		t.Fatal("cleanup observation lost")
+	}
+}
 
 func TestCleanupInventoryExcludesUnownedResources(t *testing.T) {
 	plan := EnvironmentReleasePlan{RenderedResources: []RenderedResource{{Kind: "Service", Namespace: "feature", Name: "api", Digest: "d"}, {Kind: "ConfigMap", Namespace: "base", Name: "shared", Digest: "b"}}, Ownership: []OwnershipRecord{{Kind: "Service", Namespace: "feature", Name: "api"}}}

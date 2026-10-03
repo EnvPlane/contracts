@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 type CleanupPhase string
@@ -17,6 +18,7 @@ const (
 )
 
 type CleanupState struct {
+	ObservedAt *time.Time                 `json:"observedAt,omitempty"`
 	Phase      CleanupPhase               `json:"phase"`
 	Inventory  []ReleasePlanInventoryItem `json:"inventory,omitempty"`
 	Attempts   int                        `json:"attempts,omitempty"`
