@@ -209,9 +209,10 @@ type RenderPreviewManifest struct {
 }
 
 type UpdateEnvironmentStatusRequest struct {
-	Status    EnvironmentStatus `json:"status"`
-	Message   string            `json:"message"`
-	ClusterID string            `json:"clusterId,omitempty"`
+	NamespaceCleanup *NamespaceCleanupObservation `json:"namespaceCleanup,omitempty"`
+	Status           EnvironmentStatus            `json:"status"`
+	Message          string                       `json:"message"`
+	ClusterID        string                       `json:"clusterId,omitempty"`
 }
 
 type KubernetesEvent struct {

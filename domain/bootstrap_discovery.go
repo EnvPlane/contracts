@@ -15,12 +15,13 @@ type ClusterCapabilities struct {
 
 // NamespaceStatusReport is the agent-to-control-plane status payload.
 type NamespaceStatusReport struct {
-	EnvironmentID string            `json:"environmentId"`
-	Namespace     string            `json:"namespace"`
-	Status        EnvironmentStatus `json:"status"`
-	Message       string            `json:"message,omitempty"`
-	EventType     string            `json:"eventType,omitempty"`
-	Phase         string            `json:"phase,omitempty"`
+	NamespaceCleanup *NamespaceCleanupObservation `json:"namespaceCleanup,omitempty"`
+	EnvironmentID    string                       `json:"environmentId"`
+	Namespace        string                       `json:"namespace"`
+	Status           EnvironmentStatus            `json:"status"`
+	Message          string                       `json:"message,omitempty"`
+	EventType        string                       `json:"eventType,omitempty"`
+	Phase            string                       `json:"phase,omitempty"`
 }
 
 type ClusterCapabilityReport struct {

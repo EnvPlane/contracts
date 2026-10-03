@@ -55,6 +55,25 @@
       }
     },
     "schemas": {
+      "NamespaceCleanupObservation": {
+        "type": "object",
+        "required": ["namespace", "finalizers"],
+        "properties": {
+          "namespace": { "type": "string" },
+          "finalizers": { "type": "array", "maxItems": 50, "items": { "type": "string", "maxLength": 253 } }
+        }
+      },
+      "EnvironmentStatusReport": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "environmentId": { "type": "string" },
+          "status": { "type": "string" },
+          "message": { "type": "string" },
+          "clusterId": { "type": "string" },
+          "namespaceCleanup": { "$ref": "#/components/schemas/NamespaceCleanupObservation" }
+        }
+      },
       "SCMWebhookBootstrapProof": {
         "type": "object",
         "properties": {
@@ -1083,6 +1102,14 @@
           "cleanup": {
             "type": "object",
             "properties": {
+              "namespaceObservation": {
+                "type": "object",
+                "required": ["namespace", "finalizers"],
+                "properties": {
+                  "namespace": { "type": "string" },
+                  "finalizers": { "type": "array", "maxItems": 50, "items": { "type": "string", "maxLength": 253 } }
+                }
+              },
               "observedAt": {
                 "type": "string",
                 "format": "date-time"
@@ -16163,7 +16190,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EmptyObject"
+                "$ref": "#/components/schemas/EnvironmentStatusReport"
               }
             }
           }

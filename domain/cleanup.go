@@ -18,13 +18,21 @@ const (
 )
 
 type CleanupState struct {
-	ObservedAt *time.Time                 `json:"observedAt,omitempty"`
-	Phase      CleanupPhase               `json:"phase"`
-	Inventory  []ReleasePlanInventoryItem `json:"inventory,omitempty"`
-	Attempts   int                        `json:"attempts,omitempty"`
-	Verified   bool                       `json:"verified"`
-	Finalizers []string                   `json:"finalizers,omitempty"`
-	LastError  string                     `json:"lastError,omitempty"`
+	NamespaceObservation *NamespaceCleanupObservation `json:"namespaceObservation,omitempty"`
+	ObservedAt           *time.Time                   `json:"observedAt,omitempty"`
+	Phase                CleanupPhase                 `json:"phase"`
+	Inventory            []ReleasePlanInventoryItem   `json:"inventory,omitempty"`
+	Attempts             int                          `json:"attempts,omitempty"`
+	Verified             bool                         `json:"verified"`
+	Finalizers           []string                     `json:"finalizers,omitempty"`
+	LastError            string                       `json:"lastError,omitempty"`
+}
+
+// NamespaceCleanupObservation contains only Kubernetes namespace metadata.
+// It is not an inventory of remaining namespaced resources.
+type NamespaceCleanupObservation struct {
+	Namespace  string   `json:"namespace"`
+	Finalizers []string `json:"finalizers"`
 }
 
 func (s *CleanupState) Advance(next CleanupPhase) error {
