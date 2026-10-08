@@ -3,6 +3,7 @@ package domain
 import "time"
 
 type FinOpsDimensionSummary struct {
+	UsedBytes         *int64          `json:"usedBytes,omitempty"`
 	Dimension         FinOpsDimension `json:"dimension"`
 	State             string          `json:"state"`
 	Reason            string          `json:"reason,omitempty"`
