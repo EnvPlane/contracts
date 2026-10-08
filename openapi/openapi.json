@@ -3343,6 +3343,8 @@
         "additionalProperties": false,
         "properties": {
           "node_inventory_enabled": {"type":"boolean"},
+          "baseline_capacity_enabled": {"type":"boolean","default":false},
+          "baseline_measured_enabled": {"type":"boolean","default":false},
           "cadvisor_containerd_uid_enabled": {"type":"boolean"},
           "prometheus_endpoint": {"type":"string","description":"Credential-free reviewed HTTPS metrics endpoint"},
           "allowed_origins": {"type":"array","maxItems":8,"items":{"type":"string"}},

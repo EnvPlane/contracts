@@ -10,6 +10,8 @@ import (
 // or raw CA contents. The referenced CA must already exist in each Agent's
 // target namespace; the installer must not copy credentials across projects.
 type RemoteClusterFinOpsConfig struct {
+	BaselineCapacityEnabled      bool             `json:"baseline_capacity_enabled,omitempty"`
+	BaselineMeasuredEnabled      bool             `json:"baseline_measured_enabled,omitempty"`
 	NodeInventoryEnabled         bool             `json:"node_inventory_enabled,omitempty"`
 	CadvisorContainerdUIDEnabled bool             `json:"cadvisor_containerd_uid_enabled,omitempty"`
 	PrometheusEndpoint           string           `json:"prometheus_endpoint,omitempty"`
