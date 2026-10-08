@@ -3,11 +3,14 @@ package domain
 import "time"
 
 const (
-	BudgetEffectWarn = "warn"
-	BudgetEffectDeny = "deny"
+	BudgetScopeMeasured       = "measured-cpu-memory"
+	BudgetScopeInfrastructure = "infrastructure"
+	BudgetEffectWarn          = "warn"
+	BudgetEffectDeny          = "deny"
 )
 
 type MonthlyBudget struct {
+	Scope            string    `json:"scope,omitempty"`
 	TenantID         string    `json:"tenantId"`
 	Currency         string    `json:"currency"`
 	AmountCents      int64     `json:"amountCents"`

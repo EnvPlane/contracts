@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "0b0e2a32db3513470e2ddd530b6c2036160d33a051a7635f740f870708d67b5e"
+const CanonicalOpenAPISHA256 = "4a5f901315e67f18675e99ffac158b52f48442ba74646132fdfd05e4595fcce7"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -120,6 +120,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/tenants/{tenantID}/budget",
 	"GET /api/v1/tenants/{tenantID}/finops-currency",
 	"GET /api/v1/tenants/{tenantID}/finops-prices",
+	"GET /api/v1/tenants/{tenantID}/infrastructure-costs",
 	"GET /api/v1/tenants/{tenantID}/memberships",
 	"GET /api/v1/webhook-endpoint-profile",
 	"GET /api/v1/webhook-receiver/readyz",
@@ -273,6 +274,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/tenants/{tenantID}/budget",
 	"PUT /api/v1/tenants/{tenantID}/finops-currency",
 	"PUT /api/v1/tenants/{tenantID}/finops-prices",
+	"PUT /api/v1/tenants/{tenantID}/infrastructure-costs",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"PUT /api/v1/webhook-endpoint-profile",
 	"PUT /scim/v2/{tenantID}/Groups/{id}",

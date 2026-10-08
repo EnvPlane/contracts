@@ -2619,6 +2619,7 @@
           "enforcement"
         ],
         "properties": {
+          "scope": {"type":"string","enum":["measured-cpu-memory","infrastructure"],"description":"Explicit infrastructure scope consumes reconciled full cost evidence, not workload estimates. Omitted scope preserves an existing choice on write; default for a new budget is measured-cpu-memory."},
           "tenantId": {
             "type": "string"
           },
@@ -11570,6 +11571,15 @@
           "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
         }
       },
+      "InfrastructureCostLine": {
+        "type":"object","additionalProperties":false,"required":["category","state","amountCents"],"properties":{"category":{"type":"string","enum":["compute","storage","network","gpu","managed-services","other"]},"state":{"type":"string","enum":["complete","not_applicable","unavailable"]},"amountCents":{"type":"integer","format":"int64","minimum":0,"nullable":true}}
+      },
+      "InfrastructureCostReportInput": {
+        "type":"object","additionalProperties":false,"required":["currency","periodStart","periodEnd","source","reference","lines"],"properties":{"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"source":{"type":"string","enum":["operator_reconciled"]},"reference":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},"lines":{"type":"array","minItems":6,"maxItems":6,"items":{"$ref":"#/components/schemas/InfrastructureCostLine"}}}
+      },
+      "InfrastructureCostReport": {
+        "type":"object","required":["tenantId","revision","observedAt","currency","periodStart","periodEnd","source","reference","lines"],"properties":{"tenantId":{"type":"string","readOnly":true},"revision":{"type":"integer","format":"int64","readOnly":true},"observedAt":{"type":"string","format":"date-time","readOnly":true},"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"source":{"type":"string","enum":["operator_reconciled"]},"reference":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},"lines":{"type":"array","minItems":6,"maxItems":6,"items":{"$ref":"#/components/schemas/InfrastructureCostLine"}}}
+      },
       "BaselineMetricCoverage": {
         "type":"object","required":["bindingId","bindingVersion","resourceUid","metric","state","coveredSeconds","expectedSeconds","samples"],
         "properties":{"bindingId":{"type":"string"},"bindingVersion":{"type":"integer","format":"int64"},"resourceUid":{"type":"string"},"metric":{"type":"string"},"state":{"type":"string"},"reason":{"type":"string"},"coveredSeconds":{"type":"number"},"expectedSeconds":{"type":"number"},"samples":{"type":"integer"}}
@@ -11619,6 +11629,11 @@
     }
   },
   "paths": {
+    "/api/v1/tenants/{tenantID}/infrastructure-costs": {
+      "parameters":[{"in":"path","name":"tenantID","required":true,"schema":{"type":"string"}}],
+      "get":{"operationId":"getTenantInfrastructureCosts","description":"SettingsRead scoped exclusive operator-reconciled monetary evidence. Complete recent month-to-date data required for forecast. Does not claim automatic provider verification; no workload chargeback added on top.","responses":{"200":{"description":"Latest report and coverage","content":{"application/json":{"schema":{"type":"object","required":["report","revision","forecast","complete"],"properties":{"report":{"allOf":[{"$ref":"#/components/schemas/InfrastructureCostReport"}],"nullable":true},"revision":{"type":"integer","format":"int64"},"forecast":{"allOf":[{"$ref":"#/components/schemas/BudgetForecast"}],"nullable":true},"complete":{"type":"boolean"}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Cost or budget storage unavailable"}}},
+      "put":{"operationId":"appendTenantInfrastructureCosts","description":"SettingsWrite authenticated bounded compare-and-swap report import. Server stamps tenant/revision/time; all exclusive full-infrastructure categories explicit, missing is unknown. Does not change a budget, perform payments or accept credentials/raw invoice documents.","requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["expectedRevision","report"],"properties":{"expectedRevision":{"type":"integer","format":"int64","minimum":0},"report":{"$ref":"#/components/schemas/InfrastructureCostReportInput"}}}}}},"responses":{"200":{"description":"Stored immutable report","content":{"application/json":{"schema":{"$ref":"#/components/schemas/InfrastructureCostReport"}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"503":{"description":"Storage unavailable"}}}
+    },
     "/api/v1/finops/dimension-allocations": {
       "get":{"operationId":"getFinOpsDimensionAllocations","description":"Bounded last-24h project dimension evidence with immutable chargeback price provenance. At most 500 entries; truncated is explicit. This does not widen measured CPU/RAM budget scope or prove provider-invoice spend.","parameters":[{"in":"query","name":"projectId","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Scoped dimension cost evidence","content":{"application/json":{"schema":{"type":"object","required":["allocations","truncated","scope","budgetScope"],"properties":{"allocations":{"type":"array","maxItems":500,"items":{"$ref":"#/components/schemas/FinOpsDimensionAllocation"}},"truncated":{"type":"boolean"},"scope":{"type":"string"},"budgetScope":{"type":"string","enum":["measured-cpu-memory"]}}}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"404":{"$ref":"#/components/responses/NotFound"},"503":{"description":"Pricing or metering unavailable"}}}
     },
