@@ -11570,6 +11570,14 @@
           "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
         }
       },
+      "BaselineMetricCoverage": {
+        "type":"object","required":["bindingId","bindingVersion","resourceUid","metric","state","coveredSeconds","expectedSeconds","samples"],
+        "properties":{"bindingId":{"type":"string"},"bindingVersion":{"type":"integer","format":"int64"},"resourceUid":{"type":"string"},"metric":{"type":"string"},"state":{"type":"string"},"reason":{"type":"string"},"coveredSeconds":{"type":"number"},"expectedSeconds":{"type":"number"},"samples":{"type":"integer"}}
+      },
+      "BaselineMeteringEvidence": {
+        "type":"object","required":["projectId","clusterId","clusterGeneration","periodStart","periodEnd","receipts","coverage","truncated","costKnown","budgetIncluded"],
+        "properties":{"projectId":{"type":"string"},"clusterId":{"type":"string"},"clusterGeneration":{"type":"integer","format":"int64"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"receipts":{"type":"array","maxItems":100,"items":{"$ref":"#/components/schemas/BaselineMeteringBatch"}},"coverage":{"type":"array","items":{"$ref":"#/components/schemas/BaselineMetricCoverage"}},"truncated":{"type":"boolean"},"costKnown":{"type":"boolean","enum":[false]},"budgetIncluded":{"type":"boolean","enum":[false]}}
+      },
       "TenantFinOpsPrices": {
         "type":"object","required":["versions","scope"],"properties":{"versions":{"type":"array","items":{"$ref":"#/components/schemas/TenantFinOpsPriceVersion"}},"scope":{"type":"string","enum":["internal-chargeback-not-provider-invoice"]}}
       },
@@ -11613,6 +11621,9 @@
   "paths": {
     "/api/v1/finops/dimension-allocations": {
       "get":{"operationId":"getFinOpsDimensionAllocations","description":"Bounded last-24h project dimension evidence with immutable chargeback price provenance. At most 500 entries; truncated is explicit. This does not widen measured CPU/RAM budget scope or prove provider-invoice spend.","parameters":[{"in":"query","name":"projectId","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Scoped dimension cost evidence","content":{"application/json":{"schema":{"type":"object","required":["allocations","truncated","scope","budgetScope"],"properties":{"allocations":{"type":"array","maxItems":500,"items":{"$ref":"#/components/schemas/FinOpsDimensionAllocation"}},"truncated":{"type":"boolean"},"scope":{"type":"string"},"budgetScope":{"type":"string","enum":["measured-cpu-memory"]}}}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"404":{"$ref":"#/components/responses/NotFound"},"503":{"description":"Pricing or metering unavailable"}}}
+    },
+    "/api/v1/projects/{project}/baseline-metering": {
+      "get":{"operationId":"getProjectBaselineMetering","description":"Project-authorized actual interval coverage and bounded baseline receipts. Window at most 24 hours. Separate non-financial ledger; not included in budget or complete cost.","parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"query","name":"clusterId","required":true,"schema":{"type":"string"}},{"in":"query","name":"start","required":true,"schema":{"type":"string","format":"date-time"}},{"in":"query","name":"end","required":true,"schema":{"type":"string","format":"date-time"}},{"in":"query","name":"limit","schema":{"type":"integer","minimum":1,"maximum":100,"default":100}}],"responses":{"200":{"description":"Scoped baseline evidence","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BaselineMeteringEvidence"}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Evidence unavailable"}}}
     },
     "/api/v1/projects/{project}/base-resource-bindings": {
       "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}}],
