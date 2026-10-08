@@ -35,7 +35,7 @@ func (c *RemoteClusterFinOpsConfig) Validate() error {
 	}
 	u, err := url.Parse(c.PrometheusEndpoint)
 	if err != nil || u.Scheme != "https" || u.Hostname() == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || strings.ContainsAny(c.PrometheusEndpoint, "\r\n") {
-		return errors.New("Prometheus endpoint must be credential-free HTTPS")
+		return errors.New("metrics endpoint must be credential-free HTTPS")
 	}
 	if len(c.AllowedOrigins) == 0 || len(c.AllowedOrigins) > 8 {
 		return errors.New("bounded exact metrics origin allowlist required")
@@ -51,7 +51,7 @@ func (c *RemoteClusterFinOpsConfig) Validate() error {
 		}
 	}
 	if !matched {
-		return errors.New("Prometheus endpoint origin is not allowed")
+		return errors.New("metrics endpoint origin is not allowed")
 	}
 	if c.TLS.CASecretRef != nil && (c.TLS.CASecretRef.Name == "" || c.TLS.CASecretRef.Key == "") {
 		return errors.New("metrics CA Secret name and key required")
