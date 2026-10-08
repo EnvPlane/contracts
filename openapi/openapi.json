@@ -55,6 +55,39 @@
       }
     },
     "schemas": {
+      "ResourceUsageSample": {
+        "type": "object",
+        "required": ["snapshotId", "tenantId", "cpuCoreHours", "memoryGiBHours", "occurredAt"],
+        "properties": {
+          "snapshotId": {"type": "string"}, "tenantId": {"type": "string"},
+          "projectId": {"type": "string"}, "clusterId": {"type": "string"},
+          "environmentId": {"type": "string"}, "componentId": {"type": "string"},
+          "measurementKind": {"type": "string", "enum": ["measured", "capacity"]}, "source": {"type": "string"},
+          "cpuCoreHours": {"type": "number", "minimum": 0}, "memoryGiBHours": {"type": "number", "minimum": 0},
+          "occurredAt": {"type": "string", "format": "date-time"},
+          "periodStart": {"type": "string", "format": "date-time"}, "periodEnd": {"type": "string", "format": "date-time"}
+        }
+      },
+      "FinOpsMeteringBatch": {
+        "type": "object", "additionalProperties": false,
+        "required": ["batchId", "projectId", "clusterId", "agentId", "periodStart", "periodEnd", "expectedPods", "measuredPods", "unattributedPods", "metricsAvailable", "samples"],
+        "properties": {
+          "batchId": {"type": "string", "maxLength": 128}, "projectId": {"type": "string"},
+          "clusterId": {"type": "string"}, "agentId": {"type": "string"},
+          "periodStart": {"type": "string", "format": "date-time"}, "periodEnd": {"type": "string", "format": "date-time"},
+          "expectedPods": {"type": "integer", "minimum": 0}, "measuredPods": {"type": "integer", "minimum": 0},
+          "unattributedPods": {"type": "integer", "minimum": 0}, "metricsAvailable": {"type": "boolean"},
+          "samples": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/components/schemas/ResourceUsageSample"}}
+        }
+      },
+      "FinOpsCoverage": {
+        "type": "object", "required": ["projectId", "clusterId", "periodStart", "periodEnd", "complete"],
+        "properties": {
+          "projectId": {"type": "string"}, "clusterId": {"type": "string"},
+          "periodStart": {"type": "string", "format": "date-time"}, "periodEnd": {"type": "string", "format": "date-time"},
+          "complete": {"type": "boolean"}, "reason": {"type": "string"}
+        }
+      },
       "NetworkPolicyProbeReport": {
         "type": "object",
         "additionalProperties": false,
@@ -2462,6 +2495,9 @@
           "periodEnd"
         ],
         "properties": {
+          "measurementKind": {"type": "string", "enum": ["measured", "capacity"]},
+          "source": {"type": "string"},
+          "clusterId": {"type": "string"},
           "snapshotId": {
             "type": "string"
           },
@@ -11483,6 +11519,20 @@
     }
   },
   "paths": {
+    "/api/v1/agents/finops/metering": {
+      "post": {
+        "operationId": "ingestFinOpsMetering",
+        "description": "Persist immutable project-cluster-scoped measured CPU/memory evidence. Tenant is derived from the current Agent bearer, never the request. Missing attribution or metrics preserves partial coverage; this is not total cloud-invoice telemetry.",
+        "security": [{"agentAuthToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/FinOpsMeteringBatch"}}}},
+        "responses": {
+          "204": {"description": "Durable evidence accepted or identical retry"},
+          "400": {"description": "Invalid bounded request"}, "401": {"description": "Invalid runtime Agent"},
+          "403": {"description": "Environment ownership mismatch"}, "422": {"description": "Conflicting or invalid metering"},
+          "503": {"description": "Durable store or inventory unavailable"}
+        }
+      }
+    },
     "/api/v1/agents/network-policy/probes/challenge": {
       "post": {
         "operationId": "issueNetworkPolicyProbeChallenge",
