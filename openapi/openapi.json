@@ -2502,6 +2502,8 @@
           "periodEnd"
         ],
         "properties": {
+          "priceRevision":{"type":"integer","format":"int64"},
+          "priceSource":{"type":"string"},
           "measurementKind": {"type": "string", "enum": ["measured", "capacity"]},
           "source": {"type": "string"},
           "clusterId": {"type": "string"},
@@ -11501,6 +11503,74 @@
           }
         }
       },
+      "FinOpsDimensionPrice": {
+        "type":"object", "additionalProperties":false,
+        "required":["dimension","unit","currency","minorUnitsPerUnit","known"],
+        "properties": {
+          "dimension":{"type":"string","enum":["storage.requested","storage.provisioned","storage.used","network.transmit","network.receive","gpu.utilization"]},
+          "unit":{"type":"string","enum":["gib_hours","gib","busy_gpu_hours"]},
+          "currency":{"type":"string","pattern":"^[A-Z]{3}$"},
+          "minorUnitsPerUnit":{"type":"integer","format":"int64","minimum":0,"maximum":1000000000},
+          "known":{"type":"boolean","enum":[true]}
+        }
+      },
+      "BaseResourcePin": {
+        "type":"object","required":["namespace","resourceKind","resourceName","resourceUid","componentId"],
+        "properties":{"namespace":{"type":"string","maxLength":63},"resourceKind":{"type":"string","enum":["Pod","PersistentVolumeClaim"]},"resourceName":{"type":"string","maxLength":253},"resourceUid":{"type":"string","format":"uuid"},"componentId":{"type":"string","minLength":1,"maxLength":128}}
+      },
+      "FinOpsDimensionAllocation": {
+        "allOf":[{"$ref":"#/components/schemas/FinOpsDimensionSample"},{"type":"object","required":["dimension","unit","measurementKind","source","projectId","clusterId","periodStart","periodEnd","cost"],"properties":{"dimension":{"type":"string"},"unit":{"type":"string"},"measurementKind":{"type":"string"},"source":{"type":"string"},"projectId":{"type":"string"},"clusterId":{"type":"string"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"cost":{"$ref":"#/components/schemas/Money"},"priceRevision":{"type":"integer","format":"int64"},"priceSource":{"type":"string"}}}]
+      },
+      "BaseResourceBinding": {
+        "allOf":[{"$ref":"#/components/schemas/BaseResourcePin"},{"type":"object","required":["id","tenantId","projectId","clusterId","clusterGeneration","version","state","createdAt","createdBy"],"properties":{"id":{"type":"string"},"tenantId":{"type":"string","readOnly":true},"projectId":{"type":"string"},"clusterId":{"type":"string"},"clusterGeneration":{"type":"integer","format":"int64","minimum":1,"readOnly":true},"version":{"type":"integer","format":"int64","minimum":1},"state":{"type":"string","enum":["active","revoked"]},"createdAt":{"type":"string","format":"date-time","readOnly":true},"createdBy":{"type":"string","readOnly":true},"revokedAt":{"type":"string","format":"date-time"},"revokedBy":{"type":"string"}}}]
+      },
+      "RegisterBaseResourceBinding": {
+        "allOf":[{"$ref":"#/components/schemas/BaseResourcePin"},{"type":"object","required":["projectId","clusterId","idempotencyKey"],"properties":{"projectId":{"type":"string"},"clusterId":{"type":"string"},"idempotencyKey":{"type":"string","minLength":1,"maxLength":128}}}]
+      },
+      "FinOpsResourceAttribution": {
+        "type":"object","additionalProperties":false,
+        "properties":{"environmentId":{"type":"string"},"baseResourceBindingId":{"type":"string"},"bindingVersion":{"type":"integer","format":"int64","minimum":1}},
+        "oneOf":[{"required":["environmentId"],"not":{"anyOf":[{"required":["baseResourceBindingId"]},{"required":["bindingVersion"]}]}},{"required":["baseResourceBindingId","bindingVersion"],"not":{"required":["environmentId"]}}]
+      },
+      "BaselineMeteringSample": {
+        "allOf":[{"$ref":"#/components/schemas/BaseResourcePin"},{"type":"object","required":["attribution","sampleId","metric","unit","measurementKind","source","quantity"],"properties":{"attribution":{"$ref":"#/components/schemas/FinOpsResourceAttribution"},"sampleId":{"type":"string"},"metric":{"type":"string"},"unit":{"type":"string"},"measurementKind":{"type":"string","enum":["capacity","measured"]},"source":{"type":"string"},"quantity":{"type":"number","minimum":0},"usedBytes":{"type":"integer","format":"int64","minimum":0}}}]
+      },
+      "BaselineMeteringBatch": {
+        "type":"object","additionalProperties":false,"required":["batchId","projectId","clusterId","agentId","periodStart","periodEnd","samples"],
+        "properties":{"batchId":{"type":"string"},"projectId":{"type":"string"},"clusterId":{"type":"string"},"agentId":{"type":"string"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"samples":{"type":"array","maxItems":1000,"items":{"$ref":"#/components/schemas/BaselineMeteringSample"}}}
+      },
+      "TenantFinOpsPriceVersion": {
+        "type":"object","additionalProperties":false,
+        "required":["revision","currency","source","effectiveFrom","createdAt","cpuCoreHourCents","memoryGiBHourCents","dimensions"],
+        "properties":{
+          "revision":{"type":"integer","format":"int64","readOnly":true},
+          "createdAt":{"type":"string","format":"date-time","readOnly":true},
+          "effectiveFrom":{"type":"string","format":"date-time"},
+          "currency":{"type":"string","pattern":"^[A-Z]{3}$"},
+          "source":{"type":"string","enum":["internal_chargeback"]},
+          "cpuCoreHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
+          "memoryGiBHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
+          "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
+        }
+      },
+      "TenantFinOpsPriceVersionRequest": {
+        "type":"object","additionalProperties":false,"required":["expectedRevision","price"],
+        "properties":{"expectedRevision":{"type":"integer","format":"int64","minimum":0},"price":{"$ref":"#/components/schemas/TenantFinOpsPriceInput"}}
+      },
+      "TenantFinOpsPriceInput": {
+        "type":"object","additionalProperties":false,"required":["currency","source"],
+        "properties":{
+          "effectiveFrom":{"type":"string","format":"date-time","description":"Omit to use server time. Backdating is rejected."},
+          "currency":{"type":"string","pattern":"^[A-Z]{3}$"},
+          "source":{"type":"string","enum":["internal_chargeback"]},
+          "cpuCoreHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
+          "memoryGiBHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
+          "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
+        }
+      },
+      "TenantFinOpsPrices": {
+        "type":"object","required":["versions","scope"],"properties":{"versions":{"type":"array","items":{"$ref":"#/components/schemas/TenantFinOpsPriceVersion"}},"scope":{"type":"string","enum":["internal-chargeback-not-provider-invoice"]}}
+      },
       "AIReplayResult": {
         "type": "object",
         "required": [
@@ -11539,6 +11609,29 @@
     }
   },
   "paths": {
+    "/api/v1/finops/dimension-allocations": {
+      "get":{"operationId":"getFinOpsDimensionAllocations","description":"Bounded last-24h project dimension evidence with immutable chargeback price provenance. At most 500 entries; truncated is explicit. This does not widen measured CPU/RAM budget scope or prove provider-invoice spend.","parameters":[{"in":"query","name":"projectId","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Scoped dimension cost evidence","content":{"application/json":{"schema":{"type":"object","required":["allocations","truncated","scope","budgetScope"],"properties":{"allocations":{"type":"array","maxItems":500,"items":{"$ref":"#/components/schemas/FinOpsDimensionAllocation"}},"truncated":{"type":"boolean"},"scope":{"type":"string"},"budgetScope":{"type":"string","enum":["measured-cpu-memory"]}}}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"404":{"$ref":"#/components/responses/NotFound"},"503":{"description":"Pricing or metering unavailable"}}}
+    },
+    "/api/v1/projects/{project}/base-resource-bindings": {
+      "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}}],
+      "get":{"operationId":"listProjectBaseResourceBindings","parameters":[{"in":"query","name":"clusterId","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Authorized binding metadata","content":{"application/json":{"schema":{"type":"object","required":["bindings"],"properties":{"bindings":{"type":"array","items":{"$ref":"#/components/schemas/BaseResourceBinding"}}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Binding prerequisites unavailable"}}},
+      "post":{"operationId":"registerBaseResourceBinding","description":"Explicit project-authorized attribution only. Current cluster generation, approved discovery scope and exact UID/component are verified; this grants no namespace ownership or runtime permissions.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/RegisterBaseResourceBinding"}}}},"responses":{"200":{"description":"Registered or identical replay","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BaseResourceBinding"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"422":{"description":"Invalid pin"},"503":{"description":"Prerequisites unavailable"}}}
+    },
+    "/api/v1/projects/{project}/base-resource-bindings/{binding}": {
+      "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"binding","required":true,"schema":{"type":"string"}}],
+      "delete":{"operationId":"revokeBaseResourceBinding","description":"Terminal compare-and-swap attribution revocation; does not delete workloads or data.","requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["clusterId","expectedVersion"],"properties":{"clusterId":{"type":"string"},"expectedVersion":{"type":"integer","format":"int64","minimum":1}}}}}},"responses":{"200":{"description":"Revoked binding","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BaseResourceBinding"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"}}}
+    },
+    "/api/v1/agents/finops/base-resource-bindings": {
+      "get":{"operationId":"listAgentBaseResourceBindings","security":[{"agentAuthToken":[]}],"parameters":[{"in":"query","name":"projectId","required":true,"schema":{"type":"string"}},{"in":"query","name":"clusterId","required":true,"schema":{"type":"string"}},{"in":"query","name":"agentId","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Current runtime-authorized bindings","content":{"application/json":{"schema":{"type":"object","properties":{"bindings":{"type":"array","items":{"$ref":"#/components/schemas/BaseResourceBinding"}}}}}}},"401":{"$ref":"#/components/responses/Unauthorized"},"403":{"$ref":"#/components/responses/Forbidden"}}}
+    },
+    "/api/v1/agents/finops/baseline-metering": {
+      "post":{"operationId":"ingestBaselineMetering","security":[{"agentAuthToken":[]}],"description":"Separate baseline receipts; cannot populate an Environment or claim complete billed spend. Current Agent, generation, binding version and resource identity verified.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/BaselineMeteringBatch"}}}},"responses":{"204":{"description":"Durable receipt accepted or identical replay"},"401":{"$ref":"#/components/responses/Unauthorized"},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"422":{"description":"Invalid evidence"}}}
+    },
+    "/api/v1/tenants/{tenantID}/finops-prices": {
+      "parameters":[{"in":"path","name":"tenantID","required":true,"schema":{"type":"string"}}],
+      "get":{"operationId":"getTenantFinOpsPrices","description":"Read tenant-isolated immutable internal chargeback pricing. Missing prices are unknown, not zero or a provider invoice.","responses":{"200":{"description":"Versioned pricing history","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TenantFinOpsPrices"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"History unavailable"}}},
+      "put":{"operationId":"appendTenantFinOpsPrices","description":"Owner/admin creates an effective-now-or-future version using compare-and-swap. No retroactive repricing, currency conversion, budget creation or automatic provider charge. Explicit zero differs from missing rates.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TenantFinOpsPriceVersionRequest"}}}},"responses":{"200":{"description":"Saved immutable version","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TenantFinOpsPriceVersion"}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"503":{"description":"History unavailable"}}}
+    },
     "/api/v1/finops/telemetry": {"get":{"operationId":"getFinOpsTelemetry","description":"Read-only tenant-scoped measurement provenance and separate dimension coverage. Missing source or price is unknown, never zero total spend. No credentials or raw resource identifiers returned.","parameters":[{"in":"query","name":"projectId","schema":{"type":"string"}}],"responses":{"200":{"description":"Safe bounded telemetry summary","content":{"application/json":{"schema":{"$ref":"#/components/schemas/FinOpsTelemetryStatus"}}}},"403":{"description":"Tenant access denied"},"404":{"description":"Project unavailable"},"503":{"description":"Durable metering unavailable"}}}},
     "/api/v1/agents/finops/metering": {
       "post": {

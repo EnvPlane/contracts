@@ -25,6 +25,8 @@ type ResourcePriceTable struct {
 }
 
 type CostAllocation struct {
+	PriceRevision   int64     `json:"priceRevision,omitempty"`
+	PriceSource     string    `json:"priceSource,omitempty"`
 	MeasurementKind string    `json:"measurementKind,omitempty"`
 	Source          string    `json:"source,omitempty"`
 	ClusterID       string    `json:"clusterId,omitempty"`

@@ -63,6 +63,8 @@ type FinOpsDimensionPrice struct {
 }
 
 type FinOpsDimensionAllocation struct {
+	PriceRevision int64  `json:"priceRevision,omitempty"`
+	PriceSource   string `json:"priceSource,omitempty"`
 	FinOpsDimensionSample
 	Dimension       FinOpsDimension `json:"dimension"`
 	Unit            string          `json:"unit"`

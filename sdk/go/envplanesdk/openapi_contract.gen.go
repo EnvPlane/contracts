@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "c73b70fc75a56fa05068b5045dfdaa194734cb552072ccfb943348a668851f9f"
+const CanonicalOpenAPISHA256 = "3f04226b80e36ac34762781d88858fbd0335d7285bd21e027391b576c154c1fe"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -14,6 +14,7 @@ var CanonicalOperations = []string{
 	"DELETE /api/v1/projects/{id}",
 	"DELETE /api/v1/projects/{id}/scm-webhook",
 	"DELETE /api/v1/projects/{id}/scm-webhook-credential",
+	"DELETE /api/v1/projects/{project}/base-resource-bindings/{binding}",
 	"DELETE /api/v1/remote-clusters/{id}",
 	"DELETE /api/v1/saml/providers/{providerID}",
 	"DELETE /api/v1/settings/authentication",
@@ -37,6 +38,7 @@ var CanonicalOperations = []string{
 	"GET /api/projects/{id}/environments",
 	"GET /api/projects/{id}/hybrid-config",
 	"GET /api/projects/{id}/runtime-bundle",
+	"GET /api/v1/agents/finops/base-resource-bindings",
 	"GET /api/v1/agents/flux-sources/commands/next",
 	"GET /api/v1/agents/flux-sources/commands/{id}/credential",
 	"GET /api/v1/agents/resource-scan/next",
@@ -58,6 +60,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/environments/{id}/scm-agent/plan",
 	"GET /api/v1/environments/{id}/secret-materialization",
 	"GET /api/v1/finops/allocation",
+	"GET /api/v1/finops/dimension-allocations",
 	"GET /api/v1/finops/telemetry",
 	"GET /api/v1/first-run/progress",
 	"GET /api/v1/health",
@@ -95,6 +98,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/scm-webhook/migration-preflight",
 	"GET /api/v1/projects/{id}/scm-webhook/status",
 	"GET /api/v1/projects/{id}/secret-materialization",
+	"GET /api/v1/projects/{project}/base-resource-bindings",
 	"GET /api/v1/remote-clusters",
 	"GET /api/v1/remote-clusters/targets",
 	"GET /api/v1/remote-clusters/{id}",
@@ -114,6 +118,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/tenants/{tenantID}/approvals/{id}",
 	"GET /api/v1/tenants/{tenantID}/budget",
 	"GET /api/v1/tenants/{tenantID}/finops-currency",
+	"GET /api/v1/tenants/{tenantID}/finops-prices",
 	"GET /api/v1/tenants/{tenantID}/memberships",
 	"GET /api/v1/webhook-endpoint-profile",
 	"GET /api/v1/webhook-receiver/readyz",
@@ -156,6 +161,7 @@ var CanonicalOperations = []string{
 	"POST /api/projects/{id}/bootstrap-session/scm-offline",
 	"POST /api/projects/{id}/bootstrap-session/simulate-pr",
 	"POST /api/projects/{id}/bootstrap-session/validate-scm",
+	"POST /api/v1/agents/finops/baseline-metering",
 	"POST /api/v1/agents/finops/metering",
 	"POST /api/v1/agents/flux-sources/commands/{id}/result",
 	"POST /api/v1/agents/heartbeat",
@@ -214,6 +220,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/scm-webhook/rotate-secret",
 	"POST /api/v1/projects/{id}/scm-webhook/test-delivery",
 	"POST /api/v1/projects/{id}/scm-webhook/verify",
+	"POST /api/v1/projects/{project}/base-resource-bindings",
 	"POST /api/v1/remote-clusters",
 	"POST /api/v1/remote-clusters/{id}/credentials",
 	"POST /api/v1/remote-clusters/{id}/credentials/rotate",
@@ -264,6 +271,7 @@ var CanonicalOperations = []string{
 	"PUT /api/v1/tenants/{tenantID}/audit-retention-policy",
 	"PUT /api/v1/tenants/{tenantID}/budget",
 	"PUT /api/v1/tenants/{tenantID}/finops-currency",
+	"PUT /api/v1/tenants/{tenantID}/finops-prices",
 	"PUT /api/v1/tenants/{tenantID}/memberships/{userID}",
 	"PUT /api/v1/webhook-endpoint-profile",
 	"PUT /scim/v2/{tenantID}/Groups/{id}",
