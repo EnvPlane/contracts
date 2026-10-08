@@ -344,7 +344,7 @@ func aiEntry(sourceType, sourceID string, fields []AIContextField) AIContextEntr
 }
 
 func environmentContextEntry(environment Environment, maxBytes int, truncated *bool) AIContextEntry {
-	return aiEntry("environment", environment.ID, []AIContextField{
+	fields := []AIContextField{
 		aiField("project", environment.Project, maxBytes, truncated),
 		aiField("status", string(environment.Status), maxBytes, truncated),
 		aiField("mode", string(environment.Mode), maxBytes, truncated),
@@ -355,7 +355,34 @@ func environmentContextEntry(environment Environment, maxBytes int, truncated *b
 		aiField("sourceProvider", environment.Source.Provider, maxBytes, truncated),
 		aiField("ttlHours", strconv.Itoa(environment.TTLHours), maxBytes, truncated),
 		aiField("pinned", strconv.FormatBool(environment.Pinned), maxBytes, truncated),
-	})
+	}
+	if code, phase := environmentFailureClassification(environment); code != "" {
+		fields = append(fields, aiField("failureCode", code, maxBytes, truncated), aiField("failurePhase", phase, maxBytes, truncated))
+		if !environment.UpdatedAt.IsZero() {
+			fields = append(fields, aiField("stateUpdatedAt", environment.UpdatedAt.UTC().Format(time.RFC3339Nano), maxBytes, truncated))
+		}
+	}
+	return aiEntry("environment", environment.ID, fields)
+}
+
+// Never export raw errors: they can contain provider credentials, manifests,
+// repository URLs, or prompt injection. Classification is evidence, not an
+// authorization or proof of a particular underlying Kubernetes denial.
+func environmentFailureClassification(environment Environment) (string, string) {
+	if environment.Status != StatusFailed && environment.Status != StatusDeleteFailed {
+		return "", ""
+	}
+	message := strings.TrimSpace(environment.LastError)
+	if message == "" {
+		return "", ""
+	}
+	if strings.HasPrefix(message, "remote project executor reconciliation failed before workload publication;") {
+		return "project_executor_reconciliation_failed", "before_workload_publication"
+	}
+	if environment.Status == StatusDeleteFailed {
+		return "cleanup_failed_details_redacted", "cleanup"
+	}
+	return "deployment_failed_details_redacted", "deployment"
 }
 
 func jobContextEntry(job Job, maxBytes int, truncated *bool) AIContextEntry {
