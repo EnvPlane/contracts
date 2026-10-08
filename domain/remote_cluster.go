@@ -14,6 +14,7 @@ type RemoteCluster struct {
 	Kubernetes        RemoteClusterKubernetesConfig   `json:"kubernetes"`
 	ControlPlane      RemoteClusterControlPlaneConfig `json:"control_plane"`
 	Agent             RemoteClusterAgentConfig        `json:"agent"`
+	FinOps            *RemoteClusterFinOpsConfig      `json:"finops,omitempty"`
 	Runner            RemoteClusterRunnerConfig       `json:"runner"`
 	Discovery         RemoteClusterDiscoveryScope     `json:"discovery"`
 	FeatureNamespaces FeatureNamespacePolicy          `json:"feature_namespaces"`
