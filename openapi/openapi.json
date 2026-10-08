@@ -720,6 +720,11 @@
           "deployment_readiness": {
             "type": "object",
             "properties": {
+              "network_policy_required": {
+                "type": "boolean",
+                "description": "Whether configured project network policies require fresh authenticated traffic-enforcement evidence."
+              },
+              "network_policy": {"$ref": "#/components/schemas/NetworkPolicyProbeObservation"},
               "ready": {
                 "type": "boolean"
               },

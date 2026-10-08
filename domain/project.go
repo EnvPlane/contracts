@@ -35,6 +35,8 @@ type Project struct {
 // topology; it is intentionally a response field rather than persisted project
 // configuration.
 type ProjectDeploymentReadiness struct {
+	NetworkPolicyRequired      bool                           `json:"network_policy_required,omitempty"`
+	NetworkPolicy              *NetworkPolicyProbeObservation `json:"network_policy,omitempty"`
 	Ready                      bool                           `json:"ready"`
 	BootstrapStatus            string                         `json:"bootstrap_status,omitempty"`
 	ResourceScanStatus         string                         `json:"resource_scan_status,omitempty"`
