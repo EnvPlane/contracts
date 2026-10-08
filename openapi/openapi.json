@@ -55,6 +55,66 @@
       }
     },
     "schemas": {
+      "NetworkPolicyProbeReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schemaVersion", "clusterUID", "generation", "checkedAt", "scope", "ingress", "egress", "state", "reason", "cleanupComplete"],
+        "properties": {
+          "schemaVersion": {"type": "integer", "enum": [1]},
+          "clusterUID": {"type": "string", "pattern": "^[a-zA-Z0-9-]{1,64}$"},
+          "generation": {"type": "integer", "minimum": 1},
+          "checkedAt": {"type": "string", "format": "date-time"},
+          "scope": {"type": "string", "enum": ["single-node-pod-ipv4-tcp"]},
+          "ingress": {"type": "string", "enum": ["passed", "failed", "unknown"]},
+          "egress": {"type": "string", "enum": ["passed", "failed", "unknown"]},
+          "state": {"type": "string", "enum": ["passed", "failed", "unknown"]},
+          "reason": {"type": "string", "enum": ["measured", "policy_not_enforced", "probe_unavailable", "cleanup_failed", "baseline_failed", "recovery_failed", "cluster_identity_changed"]},
+          "cleanupComplete": {"type": "boolean"}
+        }
+      },
+      "NetworkPolicyProbeChallengeRequest": {
+        "type": "object", "additionalProperties": false,
+        "required": ["projectId", "clusterId", "agentId", "clusterUID"],
+        "properties": {
+          "projectId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "clusterId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "agentId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "clusterUID": {"type": "string", "pattern": "^[a-zA-Z0-9-]{1,64}$"}
+        }
+      },
+      "NetworkPolicyProbeChallenge": {
+        "type": "object", "additionalProperties": false,
+        "required": ["probeId", "nonce", "generation", "issuedAt", "expiresAt"],
+        "properties": {
+          "probeId": {"type": "string", "minLength": 32, "maxLength": 32},
+          "nonce": {"type": "string", "minLength": 64, "maxLength": 64},
+          "generation": {"type": "integer", "minimum": 1},
+          "issuedAt": {"type": "string", "format": "date-time"},
+          "expiresAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "NetworkPolicyProbeSubmission": {
+        "type": "object", "additionalProperties": false,
+        "required": ["projectId", "clusterId", "agentId", "probeId", "nonce", "report"],
+        "properties": {
+          "projectId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "clusterId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "agentId": {"type": "string", "minLength": 1, "maxLength": 128},
+          "probeId": {"type": "string", "minLength": 32, "maxLength": 32},
+          "nonce": {"type": "string", "minLength": 64, "maxLength": 64},
+          "report": {"$ref": "#/components/schemas/NetworkPolicyProbeReport"}
+        }
+      },
+      "NetworkPolicyProbeObservation": {
+        "type": "object", "additionalProperties": false,
+        "required": ["fresh", "state"],
+        "properties": {
+          "report": {"$ref": "#/components/schemas/NetworkPolicyProbeReport"},
+          "receivedAt": {"type": "string", "format": "date-time"},
+          "fresh": {"type": "boolean"},
+          "state": {"type": "string", "enum": ["passed", "failed", "unknown"]}
+        }
+      },
       "AIAssistantOutput": {
         "type": "object",
         "description": "Read-only provider-backed narration with deterministic fallback. This never authorizes or replaces typed execution plans.",
@@ -11418,6 +11478,47 @@
     }
   },
   "paths": {
+    "/api/v1/agents/network-policy/probes/challenge": {
+      "post": {
+        "operationId": "issueNetworkPolicyProbeChallenge",
+        "description": "Issue a single-use ten-minute lease to the authenticated project/cluster-bound Agent. This does not authorize Kubernetes resources or prove CNI enforcement.",
+        "security": [{"agentAuthToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/NetworkPolicyProbeChallengeRequest"}}}},
+        "responses": {
+          "201": {"description": "Private one-time challenge; no-store", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/NetworkPolicyProbeChallenge"}}}},
+          "400": {"description": "Invalid bounded request"},
+          "401": {"description": "Agent identity or target binding rejected"},
+          "409": {"description": "Active lease or incompatible cluster identity"}
+        }
+      }
+    },
+    "/api/v1/agents/network-policy/probes/result": {
+      "post": {
+        "operationId": "submitNetworkPolicyProbe",
+        "description": "Consume the authenticated Agent lease and persist safe evidence atomically. Replay, stale/future evidence, mismatched generation/UID and contradictory passed reports are rejected.",
+        "security": [{"agentAuthToken": []}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/NetworkPolicyProbeSubmission"}}}},
+        "responses": {
+          "202": {"description": "Safe report durably stored; nonce consumed"},
+          "400": {"description": "Invalid bounded request"},
+          "401": {"description": "Agent identity or target binding rejected"},
+          "409": {"description": "Lease/evidence rejected or storage unavailable"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/network-policy-probe": {
+      "get": {
+        "operationId": "getProjectNetworkPolicyProbe",
+        "description": "Tenant/project-authorized safe evidence projection. Expired or generation/identity-invalid evidence is unknown, never green. No nonce, bearer, hash or raw probe output is exposed.",
+        "security": [{"apiToken": []}],
+        "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "200": {"description": "Safe observation with server-derived freshness", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/NetworkPolicyProbeObservation"}}}},
+          "403": {"description": "Tenant/project access denied"},
+          "503": {"description": "Probe storage unavailable"}
+        }
+      }
+    },
     "/auth/github/login": {
       "get": {
         "responses": {
