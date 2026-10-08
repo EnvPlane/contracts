@@ -19,19 +19,19 @@ const (
 	FeaturePolicyCustom      = "policy.custom"
 	FeatureFleetUpgradeWaves = "fleet.upgrade_waves"
 	FeatureSupportSLA        = "support.sla"
-	FeatureAuditSIEM        = "audit.siem_export"
-	FeatureAIDiagnosis     = "ai.diagnosis"
-	FeatureAIBootstrap     = "ai.bootstrap"
-	FeatureAIConfiguration = "ai.configuration"
-	FeatureAIEnvironment   = "ai.environment_create"
-	FeatureAIFinOps        = "ai.finops"
-	FeatureAIApproved      = "ai.approved_actions"
-	FeatureAIGitOps        = "ai.gitops"
-	FeatureAIKubernetes    = "ai.kubernetes"
-	FeatureAISCM           = "ai.scm"
-	FeatureAIRelease       = "ai.release"
-	FeatureAIIncident      = "ai.incident"
-	FeatureAISecurity      = "ai.security"
+	FeatureAuditSIEM         = "audit.siem_export"
+	FeatureAIDiagnosis       = "ai.diagnosis"
+	FeatureAIBootstrap       = "ai.bootstrap"
+	FeatureAIConfiguration   = "ai.configuration"
+	FeatureAIEnvironment     = "ai.environment_create"
+	FeatureAIFinOps          = "ai.finops"
+	FeatureAIApproved        = "ai.approved_actions"
+	FeatureAIGitOps          = "ai.gitops"
+	FeatureAIKubernetes      = "ai.kubernetes"
+	FeatureAISCM             = "ai.scm"
+	FeatureAIRelease         = "ai.release"
+	FeatureAIIncident        = "ai.incident"
+	FeatureAISecurity        = "ai.security"
 )
 
 const (
@@ -52,7 +52,7 @@ var knownPlanFeatureKeys = map[string]struct{}{
 	FeatureAuthOIDC: {}, FeatureAuthSAML: {}, FeatureIdentitySCIM: {}, FeatureRBACGranular: {},
 	FeatureGitOpsFlux: {}, FeatureGitOpsArgo: {}, FeatureFinOpsAllocation: {}, FeaturePolicyCustom: {},
 	FeatureFleetUpgradeWaves: {}, FeatureSupportSLA: {},
-	FeatureAuditSIEM: {},
+	FeatureAuditSIEM:   {},
 	FeatureAIDiagnosis: {}, FeatureAIBootstrap: {}, FeatureAIConfiguration: {}, FeatureAIEnvironment: {}, FeatureAIFinOps: {}, FeatureAIApproved: {},
 	FeatureAIGitOps: {}, FeatureAIKubernetes: {}, FeatureAISCM: {}, FeatureAIRelease: {}, FeatureAIIncident: {}, FeatureAISecurity: {},
 	// These aliases are retained for existing entitlement and quota callers.
@@ -69,11 +69,12 @@ var knownPlanLimitKeys = map[string]struct{}{
 }
 
 type PlanDefinition struct {
-	ID               string           `json:"id"`
-	SchemaVersion    string           `json:"schemaVersion"`
-	EffectiveVersion string           `json:"effectiveVersion"`
-	Features         map[string]bool  `json:"features"`
-	Limits           map[string]int64 `json:"limits"`
+	ID               string             `json:"id"`
+	SchemaVersion    string             `json:"schemaVersion"`
+	EffectiveVersion string             `json:"effectiveVersion"`
+	Features         map[string]bool    `json:"features"`
+	Limits           map[string]int64   `json:"limits"`
+	Offer            *SubscriptionOffer `json:"offer,omitempty"`
 }
 
 type PlanCatalog struct {
@@ -98,7 +99,7 @@ func communityPlan(version string) PlanDefinition {
 			FeatureGitOpsFlux: true, FeatureGitOpsArgo: false, FeatureFinOpsAllocation: false, FeaturePolicyCustom: false,
 			FeatureFleetUpgradeWaves: false, FeatureSupportSLA: false,
 			FeatureAuditSIEM: true,
-			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
+			"projects":       true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
 		}, Limits: map[string]int64{
 			LimitProjectsMax: 10, LimitManagedClustersMax: 3, LimitActiveEnvironmentsMax: 25,
 			LimitEnvironmentTTLHours: 720, LimitEnvironmentPinHours: 720, LimitOperatorsMax: 10, LimitAuditRetentionDays: 30,
@@ -114,7 +115,7 @@ func freePlan(version string) PlanDefinition {
 			FeatureGitOpsFlux: true, FeatureGitOpsArgo: false, FeatureFinOpsAllocation: false, FeaturePolicyCustom: false,
 			FeatureFleetUpgradeWaves: false, FeatureSupportSLA: false,
 			FeatureAuditSIEM: false,
-			"projects": true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
+			"projects":       true, "environments": true, "gitops": true, "helmDirect": true, "audit": true,
 		}, Limits: map[string]int64{
 			LimitProjectsMax: 1, LimitManagedClustersMax: 1, LimitActiveEnvironmentsMax: 2,
 			LimitEnvironmentTTLHours: 72, LimitEnvironmentPinHours: 168, LimitOperatorsMax: 3, LimitAuditRetentionDays: 7,
@@ -134,6 +135,11 @@ func (c PlanCatalog) Validate() error {
 		}
 		if plan.SchemaVersion != c.SchemaVersion {
 			return fmt.Errorf("plan %q schema version mismatch", plan.ID)
+		}
+		if plan.Offer != nil {
+			if err := plan.Offer.Validate(); err != nil {
+				return fmt.Errorf("plan %q: %w", plan.ID, err)
+			}
 		}
 		if _, ok := seen[plan.ID]; ok {
 			return fmt.Errorf("duplicate plan %q", plan.ID)
@@ -169,6 +175,10 @@ func (c PlanCatalog) Deterministic() PlanCatalog {
 		}
 		for key, value := range plan.Limits {
 			copyCatalog.Plans[i].Limits[key] = value
+		}
+		if plan.Offer != nil {
+			offer := *plan.Offer
+			copyCatalog.Plans[i].Offer = &offer
 		}
 	}
 	sort.Slice(copyCatalog.Plans, func(i, j int) bool { return copyCatalog.Plans[i].ID < copyCatalog.Plans[j].ID })

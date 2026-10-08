@@ -1408,6 +1408,17 @@
           "limits"
         ],
         "properties": {
+          "offer": {
+            "type": "object",
+            "required": ["name", "currency", "monthlyMinorUnits", "contactSales", "customerAIKey"],
+            "properties": {
+              "name": {"type": "string"},
+              "currency": {"type": "string", "enum": ["EUR"]},
+              "monthlyMinorUnits": {"type": "integer", "format": "int64", "minimum": 0},
+              "contactSales": {"type": "boolean"},
+              "customerAIKey": {"type": "boolean"}
+            }
+          },
           "id": {
             "type": "string"
           },
@@ -3118,6 +3129,10 @@
       "Capabilities": {
         "type": "object",
         "properties": {
+          "historicalPlans": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/PlanDefinition"}
+          },
           "apiContractVersion": {
             "type": "string"
           },
