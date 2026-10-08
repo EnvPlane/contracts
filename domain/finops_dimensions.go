@@ -7,6 +7,7 @@ type FinOpsDimension string
 const (
 	FinOpsStorageRequested   FinOpsDimension = "storage.requested"
 	FinOpsStorageProvisioned FinOpsDimension = "storage.provisioned"
+	FinOpsStorageUsed        FinOpsDimension = "storage.used"
 	FinOpsNetworkTransmit    FinOpsDimension = "network.transmit"
 	FinOpsNetworkReceive     FinOpsDimension = "network.receive"
 	FinOpsGPUUtilization     FinOpsDimension = "gpu.utilization"
@@ -18,6 +19,7 @@ const (
 // Each dimension has independent provenance, coverage and price semantics.
 // Provisioned storage is capacity, not bytes used or a cloud-provider invoice.
 type FinOpsDimensionSample struct {
+	UsedBytes     *int64  `json:"usedBytes,omitempty"`
 	SampleID      string  `json:"sampleId"`
 	TenantID      string  `json:"tenantId,omitempty"`
 	EnvironmentID string  `json:"environmentId"`
