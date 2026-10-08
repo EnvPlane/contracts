@@ -2,6 +2,22 @@ package domain
 
 import "time"
 
+// A failed capture records coverage, never fabricated resource identities.
+type StorageCleanupAttempt struct {
+	ID                string    `json:"id"`
+	TenantID          string    `json:"tenantId"`
+	ProjectID         string    `json:"projectId"`
+	EnvironmentID     string    `json:"environmentId"`
+	ClusterID         string    `json:"clusterId"`
+	ClusterGeneration int64     `json:"clusterGeneration"`
+	ActorID           string    `json:"actorId"`
+	RequestedAt       time.Time `json:"requestedAt"`
+	Status            string    `json:"status"`
+	Reason            string    `json:"reason"`
+	SnapshotID        string    `json:"snapshotId,omitempty"`
+	SecureErasure     string    `json:"secureErasure"`
+}
+
 // Storage evidence is independent of CleanupState.Verified. Backend deletion
 // attestation is not forensic erasure and never grants storage mutation rights.
 type StorageCleanupVolume struct {

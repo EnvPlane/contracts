@@ -55,6 +55,10 @@
       }
     },
     "schemas": {
+      "StorageCleanupAttempt": {
+        "type":"object","required":["id","tenantId","projectId","environmentId","clusterId","clusterGeneration","actorId","requestedAt","status","reason","secureErasure"],
+        "properties":{"id":{"type":"string"},"tenantId":{"type":"string"},"projectId":{"type":"string"},"environmentId":{"type":"string"},"clusterId":{"type":"string"},"clusterGeneration":{"type":"integer","format":"int64"},"actorId":{"type":"string"},"requestedAt":{"type":"string","format":"date-time"},"status":{"type":"string","enum":["captured","unavailable"]},"reason":{"type":"string","enum":["captured","metadata_unavailable"]},"snapshotId":{"type":"string"},"secureErasure":{"type":"string","enum":["unknown"]}}
+      },
       "StorageCleanupVolume": {
         "type":"object","required":["pvcName","pvcUid","pvName","pvUid","storageClass","provisioner","reclaimPolicy","backendReference"],
         "properties":{"pvcName":{"type":"string"},"pvcUid":{"type":"string","format":"uuid"},"pvName":{"type":"string"},"pvUid":{"type":"string","format":"uuid"},"storageClass":{"type":"string"},"provisioner":{"type":"string"},"reclaimPolicy":{"type":"string","enum":["Delete","Retain"]},"backendReference":{"type":"string","description":"Opaque backend identity hash; no raw node path or credential."}}
@@ -11667,7 +11671,7 @@
   "paths": {
     "/api/v1/projects/{project}/environments/{environment}/storage-cleanup": {
       "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
-      "get":{"operationId":"getStorageCleanupEvidence","description":"Authorized storage history independent of namespace cleanup. Survives environment record removal. Backend deletion is an operator attestation, never proof of secure erasure.","responses":{"200":{"description":"Independent evidence","content":{"application/json":{"schema":{"type":"object","required":["snapshots","secureErasure"],"properties":{"snapshots":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}},"secureErasure":{"type":"string","enum":["unknown"]}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Evidence unavailable"}}}
+      "get":{"operationId":"getStorageCleanupEvidence","description":"Authorized storage history independent of namespace cleanup. Survives environment record removal. Backend deletion is an operator attestation, never proof of secure erasure.","responses":{"200":{"description":"Independent evidence","content":{"application/json":{"schema":{"type":"object","required":["snapshots","attempts","secureErasure"],"properties":{"snapshots":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}},"attempts":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupAttempt"}},"secureErasure":{"type":"string","enum":["unknown"]}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Evidence unavailable"}}}
     },
     "/api/v1/projects/{project}/environments/{environment}/storage-cleanup/capture": {
       "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
