@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "da049c99e7c49efe0f679fa587ccd55507d08c3d1fd2625a281bb2cabb39a3b0"
+const CanonicalOpenAPISHA256 = "ba1f87d3d4698d1ce39e1a5073c1c8a7648265098141e24a6dbe14cd1dd73717"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -229,6 +229,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/attest",
 	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/capture",
 	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/challenge",
+	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/observe",
 	"POST /api/v1/remote-clusters",
 	"POST /api/v1/remote-clusters/{id}/credentials",
 	"POST /api/v1/remote-clusters/{id}/credentials/rotate",

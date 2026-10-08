@@ -31,16 +31,22 @@ type StorageCleanupVolume struct {
 	BackendReference string `json:"backendReference"`
 }
 type StorageCleanupObservation struct {
-	PVCUID           string    `json:"pvcUid"`
-	PVUID            string    `json:"pvUid"`
-	BackendReference string    `json:"backendReference"`
-	State            string    `json:"state"`
-	Source           string    `json:"source"`
-	Reason           string    `json:"reason,omitempty"`
-	Reference        string    `json:"reference,omitempty"`
-	ObservedAt       time.Time `json:"observedAt"`
-	ActorID          string    `json:"actorId,omitempty"`
-	SecureErasure    string    `json:"secureErasure"`
+	PVCUID                      string    `json:"pvcUid"`
+	PVUID                       string    `json:"pvUid"`
+	BackendReference            string    `json:"backendReference"`
+	State                       string    `json:"state"`
+	Source                      string    `json:"source"`
+	Reason                      string    `json:"reason,omitempty"`
+	Reference                   string    `json:"reference,omitempty"`
+	ObservedAt                  time.Time `json:"observedAt"`
+	ActorID                     string    `json:"actorId,omitempty"`
+	SecureErasure               string    `json:"secureErasure"`
+	VerifierID                  string    `json:"verifierId,omitempty"`
+	KeyID                       string    `json:"keyId,omitempty"`
+	ReceiptReference            string    `json:"receiptReference,omitempty"`
+	ErasureMethod               string    `json:"erasureMethod,omitempty"`
+	ErasureCertificateReference string    `json:"erasureCertificateReference,omitempty"`
+	VerificationScope           string    `json:"verificationScope,omitempty"`
 }
 type StorageCleanupSnapshot struct {
 	ID                string                      `json:"id"`
