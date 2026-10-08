@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "d8ba83379e44e3a9280433077925a3e17f4a399229e3a53b02ae32e1dff9af9c"
+const CanonicalOpenAPISHA256 = "ef073ceabcb2100791493b721db5eb7dec51418183ed881c2d1435c8dfe31a14"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -58,6 +58,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/environments/{id}/scm-agent/plan",
 	"GET /api/v1/environments/{id}/secret-materialization",
 	"GET /api/v1/finops/allocation",
+	"GET /api/v1/finops/telemetry",
 	"GET /api/v1/first-run/progress",
 	"GET /api/v1/health",
 	"GET /api/v1/jobs",

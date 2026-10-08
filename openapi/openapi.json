@@ -72,6 +72,7 @@
         "type": "object", "additionalProperties": false,
         "required": ["batchId", "projectId", "clusterId", "agentId", "periodStart", "periodEnd", "expectedPods", "measuredPods", "unattributedPods", "metricsAvailable", "samples"],
         "properties": {
+          "dimensions": {"type":"array","maxItems":5,"items":{"$ref":"#/components/schemas/FinOpsDimensionReport"}},
           "batchId": {"type": "string", "maxLength": 128}, "projectId": {"type": "string"},
           "clusterId": {"type": "string"}, "agentId": {"type": "string"},
           "periodStart": {"type": "string", "format": "date-time"}, "periodEnd": {"type": "string", "format": "date-time"},
@@ -88,6 +89,12 @@
           "complete": {"type": "boolean"}, "reason": {"type": "string"}
         }
       },
+      "FinOpsGPUInventory": {"type":"object","required":["clusterId","observedAt","nodes","devices","source"],"properties":{"clusterId":{"type":"string"},"observedAt":{"type":"string","format":"date-time"},"nodes":{"type":"integer"},"devices":{"type":"integer"},"source":{"type":"string"}}},
+      "FinOpsDimensionSample": {"type":"object","required":["sampleId","environmentId","componentId","namespace","resourceUid","quantity"],"properties":{"sampleId":{"type":"string"},"tenantId":{"type":"string"},"environmentId":{"type":"string"},"componentId":{"type":"string"},"namespace":{"type":"string"},"resourceUid":{"type":"string"},"quantity":{"type":"number","minimum":0}}},
+      "FinOpsDimensionReport": {"type":"object","required":["dimension","unit","measurementKind","source","periodStart","periodEnd","expectedResources","observedResources","state","samples"],"properties":{"dimension":{"type":"string"},"unit":{"type":"string"},"measurementKind":{"type":"string"},"source":{"type":"string"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"expectedResources":{"type":"integer"},"observedResources":{"type":"integer"},"state":{"type":"string","enum":["complete","partial","unavailable","not_applicable"]},"reason":{"type":"string"},"gpuInventory":{"$ref":"#/components/schemas/FinOpsGPUInventory"},"samples":{"type":"array","maxItems":1000,"items":{"$ref":"#/components/schemas/FinOpsDimensionSample"}}}},
+      "FinOpsDimensionSummary": {"type":"object","required":["dimension","state","unit","measurementKind","source","expectedResources","observedResources","quantity"],"properties":{"dimension":{"type":"string"},"state":{"type":"string"},"reason":{"type":"string"},"unit":{"type":"string"},"measurementKind":{"type":"string"},"source":{"type":"string"},"expectedResources":{"type":"integer"},"observedResources":{"type":"integer"},"quantity":{"type":"number"}}},
+      "FinOpsTelemetryWindow": {"type":"object","required":["projectId","clusterId","periodStart","periodEnd","fresh","metricsAvailable","expectedPods","measuredPods","unattributedPods","cpuCoreHours","memoryGiBHours","dimensions"],"properties":{"projectId":{"type":"string"},"clusterId":{"type":"string"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"fresh":{"type":"boolean"},"metricsAvailable":{"type":"boolean"},"expectedPods":{"type":"integer"},"measuredPods":{"type":"integer"},"unattributedPods":{"type":"integer"},"cpuCoreHours":{"type":"number"},"memoryGiBHours":{"type":"number"},"dimensions":{"type":"array","items":{"$ref":"#/components/schemas/FinOpsDimensionSummary"}}}},
+      "FinOpsTelemetryStatus": {"type":"object","required":["observedAt","scope","totalCostKnown","costUnavailableReason","windows"],"properties":{"observedAt":{"type":"string","format":"date-time"},"scope":{"type":"string"},"totalCostKnown":{"type":"boolean"},"costUnavailableReason":{"type":"string"},"windows":{"type":"array","items":{"$ref":"#/components/schemas/FinOpsTelemetryWindow"}}}},
       "NetworkPolicyProbeReport": {
         "type": "object",
         "additionalProperties": false,
@@ -11519,6 +11526,7 @@
     }
   },
   "paths": {
+    "/api/v1/finops/telemetry": {"get":{"operationId":"getFinOpsTelemetry","description":"Read-only tenant-scoped measurement provenance and separate dimension coverage. Missing source or price is unknown, never zero total spend. No credentials or raw resource identifiers returned.","parameters":[{"in":"query","name":"projectId","schema":{"type":"string"}}],"responses":{"200":{"description":"Safe bounded telemetry summary","content":{"application/json":{"schema":{"$ref":"#/components/schemas/FinOpsTelemetryStatus"}}}},"403":{"description":"Tenant access denied"},"404":{"description":"Project unavailable"},"503":{"description":"Durable metering unavailable"}}}},
     "/api/v1/agents/finops/metering": {
       "post": {
         "operationId": "ingestFinOpsMetering",
