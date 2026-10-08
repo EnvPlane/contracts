@@ -28,6 +28,7 @@ type FinOpsDimensionSample struct {
 }
 
 type FinOpsDimensionReport struct {
+	GPUInventory      *FinOpsGPUInventory     `json:"gpuInventory,omitempty"`
 	Dimension         FinOpsDimension         `json:"dimension"`
 	Unit              string                  `json:"unit"`
 	MeasurementKind   string                  `json:"measurementKind"`
@@ -36,9 +37,19 @@ type FinOpsDimensionReport struct {
 	PeriodEnd         time.Time               `json:"periodEnd"`
 	ExpectedResources int                     `json:"expectedResources"`
 	ObservedResources int                     `json:"observedResources"`
-	State             string                  `json:"state"` // complete, partial, unavailable; never inferred from sample count
+	State             string                  `json:"state"` // complete, partial, unavailable, not_applicable
 	Reason            string                  `json:"reason,omitempty"`
 	Samples           []FinOpsDimensionSample `json:"samples"`
+}
+
+// GPUInventory must come from an authenticated, complete cluster-node inventory,
+// not absence of exporter series. Receiver verifies cluster binding/freshness.
+type FinOpsGPUInventory struct {
+	ClusterID  string    `json:"clusterId"`
+	ObservedAt time.Time `json:"observedAt"`
+	Nodes      int       `json:"nodes"`
+	Devices    int       `json:"devices"`
+	Source     string    `json:"source"`
 }
 
 type FinOpsDimensionPrice struct {
@@ -60,4 +71,14 @@ type FinOpsDimensionAllocation struct {
 	PeriodStart     time.Time       `json:"periodStart"`
 	PeriodEnd       time.Time       `json:"periodEnd"`
 	Cost            Money           `json:"cost"`
+}
+
+// Resource estimates do not cover idle nodes, managed/shared services or a
+// reconciled cloud invoice. Missing sources/prices must be visible separately.
+type FinOpsCostEvidence struct {
+	Scope                        string            `json:"scope"`
+	Partial                      bool              `json:"partial"`
+	TotalInfrastructureCostKnown bool              `json:"totalInfrastructureCostKnown"`
+	UnavailableDimensions        []FinOpsDimension `json:"unavailableDimensions"`
+	UnpricedDimensions           []FinOpsDimension `json:"unpricedDimensions"`
 }
