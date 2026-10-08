@@ -11572,7 +11572,7 @@
         }
       },
       "InfrastructureCostLine": {
-        "type":"object","additionalProperties":false,"required":["category","state","amountCents"],"properties":{"category":{"type":"string","enum":["compute","storage","network","gpu","managed-services","other"]},"state":{"type":"string","enum":["complete","not_applicable","unavailable"]},"amountCents":{"type":"integer","format":"int64","minimum":0,"nullable":true}}
+        "type":"object","additionalProperties":false,"required":["category","state","amountCents"],"properties":{"category":{"type":"string","enum":["compute","storage","network","gpu","managed-services","other"]},"state":{"type":"string","enum":["complete","not_applicable","unavailable"]},"amountCents":{"type":"integer","format":"int64","minimum":0,"maximum":9007199254740991,"nullable":true}}
       },
       "InfrastructureCostReportInput": {
         "type":"object","additionalProperties":false,"required":["currency","periodStart","periodEnd","source","reference","lines"],"properties":{"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"periodStart":{"type":"string","format":"date-time"},"periodEnd":{"type":"string","format":"date-time"},"source":{"type":"string","enum":["operator_reconciled"]},"reference":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},"lines":{"type":"array","minItems":6,"maxItems":6,"items":{"$ref":"#/components/schemas/InfrastructureCostLine"}}}
