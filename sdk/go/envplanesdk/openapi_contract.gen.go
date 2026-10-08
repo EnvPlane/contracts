@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "57c1bbb3743301583ab39c0f23fb874694eee42036dcc7938c1e6146be4ef334"
+const CanonicalOpenAPISHA256 = "a9082d0efe45c9de5727a725b30f8cedb96ab75b11268e31d23e97b09e771eeb"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -45,6 +45,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/agents/runtime-access",
 	"GET /api/v1/agents/secret-materialization/commands/next",
 	"GET /api/v1/audit",
+	"GET /api/v1/billing/commands",
 	"GET /api/v1/billing/subscription",
 	"GET /api/v1/capabilities",
 	"GET /api/v1/current-cluster/preflight",
@@ -178,6 +179,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/ai/security/plan",
 	"POST /api/v1/ai/triggers/preview",
 	"POST /api/v1/billing/checkout",
+	"POST /api/v1/billing/commands",
 	"POST /api/v1/billing/portal",
 	"POST /api/v1/billing/webhook",
 	"POST /api/v1/current-cluster/reconcile",

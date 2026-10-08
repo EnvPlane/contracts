@@ -11571,6 +11571,15 @@
           "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
         }
       },
+      "BillingCommandRequest": {
+        "type":"object","additionalProperties":false,"required":["commandId","expectedRevision","kind"],"properties":{"commandId":{"type":"string","minLength":8,"maxLength":128},"expectedRevision":{"type":"integer","format":"int64","minimum":0},"kind":{"type":"string","enum":["plan_change","cancel_at_period_end"]},"planId":{"type":"string","enum":["team","business"],"description":"Only for plan_change; omitted for cancellation."}}
+      },
+      "BillingCommandResult": {
+        "type":"object","required":["commandId","revision","status"],"properties":{"commandId":{"type":"string"},"revision":{"type":"integer","format":"int64","minimum":1},"status":{"type":"string","enum":["pending","completed","dead_letter"]}}
+      },
+      "BillingCommandState": {
+        "type":"object","required":["tenantId","revision","available","commands"],"properties":{"tenantId":{"type":"string"},"revision":{"type":"integer","format":"int64","minimum":0},"available":{"type":"boolean"},"commands":{"type":"array","maxItems":25,"items":{"$ref":"#/components/schemas/BillingCommandResult"}}}
+      },
       "MonthlyBudgetRequest": {
         "type":"object","additionalProperties":false,"required":["currency","amountCents","enforcement"],"properties":{"scope":{"type":"string","enum":["measured-cpu-memory","infrastructure"],"description":"Omitted scope preserves an existing scope, defaults to measured-cpu-memory for new budgets."},"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"amountCents":{"type":"integer","format":"int64","minimum":1},"monthStart":{"type":"string","format":"date-time"},"anomalyThresholdPercent":{"type":"integer","format":"int64","minimum":0,"maximum":1000},"enforcement":{"type":"string","enum":["warn","deny"]}}
       },
@@ -11632,6 +11641,10 @@
     }
   },
   "paths": {
+    "/api/v1/billing/commands": {
+      "get":{"operationId":"getBillingCommands","description":"BillingRead scoped durable command state for the current paid binding. Server derives tenant and installation. No provider account IDs or tokens are exposed.","responses":{"200":{"description":"Bound command state","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BillingCommandState"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Revisioned issuer gateway unavailable"}}},
+      "post":{"operationId":"enqueueBillingCommand","description":"BillingWrite/CSRF protected explicit next-period plan change or end-period cancellation. Compare-and-swap and a stable command ID; acceptance is not payment, provider completion or activation. No immediate cancellation, automatic refunds or data deletion.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/BillingCommandRequest"}}}},"responses":{"202":{"description":"Durable intent accepted or identical retry","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BillingCommandResult"}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"503":{"description":"Issuer unavailable; retry the same command identity"}}}
+    },
     "/api/v1/tenants/{tenantID}/infrastructure-costs": {
       "parameters":[{"in":"path","name":"tenantID","required":true,"schema":{"type":"string"}}],
       "get":{"operationId":"getTenantInfrastructureCosts","description":"SettingsRead scoped exclusive operator-reconciled monetary evidence. Complete recent month-to-date data required for forecast. Does not claim automatic provider verification; no workload chargeback added on top.","responses":{"200":{"description":"Latest report and coverage","content":{"application/json":{"schema":{"type":"object","required":["report","revision","forecast","complete"],"properties":{"report":{"allOf":[{"$ref":"#/components/schemas/InfrastructureCostReport"}],"nullable":true},"revision":{"type":"integer","format":"int64"},"forecast":{"allOf":[{"$ref":"#/components/schemas/BudgetForecast"}],"nullable":true},"complete":{"type":"boolean"}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Cost or budget storage unavailable"}}},
