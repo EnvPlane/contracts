@@ -11571,6 +11571,9 @@
           "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
         }
       },
+      "MonthlyBudgetRequest": {
+        "type":"object","additionalProperties":false,"required":["currency","amountCents","enforcement"],"properties":{"scope":{"type":"string","enum":["measured-cpu-memory","infrastructure"],"description":"Omitted scope preserves an existing scope, defaults to measured-cpu-memory for new budgets."},"currency":{"type":"string","pattern":"^[A-Z]{3}$"},"amountCents":{"type":"integer","format":"int64","minimum":1},"monthStart":{"type":"string","format":"date-time"},"anomalyThresholdPercent":{"type":"integer","format":"int64","minimum":0,"maximum":1000},"enforcement":{"type":"string","enum":["warn","deny"]}}
+      },
       "InfrastructureCostLine": {
         "type":"object","additionalProperties":false,"required":["category","state","amountCents"],"properties":{"category":{"type":"string","enum":["compute","storage","network","gpu","managed-services","other"]},"state":{"type":"string","enum":["complete","not_applicable","unavailable"]},"amountCents":{"type":"integer","format":"int64","minimum":0,"maximum":9007199254740991,"nullable":true}}
       },
@@ -19656,7 +19659,7 @@
       "put": {
         "operationId": "putTenantBudget",
         "summary": "Set the tenant monthly budget",
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MonthlyBudget"}}}},
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MonthlyBudgetRequest"}}}},
         "responses": {
           "200": {"description": "Updated tenant monthly budget", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/MonthlyBudget"}}}},
           "400": {"description": "Invalid budget"},
