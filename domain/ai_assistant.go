@@ -12,6 +12,7 @@ type AIAssistantOutput struct {
 }
 
 type AIAssistantSnapshot struct {
+	Scope     string
 	TenantID  string
 	ProjectID string
 	SubjectID string

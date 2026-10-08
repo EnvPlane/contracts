@@ -30,6 +30,7 @@ type EnvironmentCreateProposalFields struct {
 }
 
 type EnvironmentCreateProposal struct {
+	Assistant          *AIAssistantOutput                   `json:"assistant,omitempty"`
 	SchemaVersion      string                               `json:"schemaVersion"`
 	ProposalVersion    string                               `json:"proposalVersion"`
 	Kind               string                               `json:"kind"`
@@ -44,32 +45,32 @@ type EnvironmentCreateProposal struct {
 	Valid              bool                                 `json:"valid"`
 	ContextHash        string                               `json:"contextHash"`
 	TargetStateVersion string                               `json:"targetStateVersion"`
-	QuotaGuidance      *EnvironmentCreateQuotaGuidance     `json:"quotaGuidance,omitempty"`
+	QuotaGuidance      *EnvironmentCreateQuotaGuidance      `json:"quotaGuidance,omitempty"`
 }
 
 type EnvironmentCreateQuotaImpact struct {
-	Resource      string `json:"resource"`
-	Limit         int64  `json:"limit,omitempty"`
-	Requested     int64  `json:"requested,omitempty"`
-	Allowed       bool   `json:"allowed"`
-	Known         bool   `json:"known"`
-	Explanation   string `json:"explanation"`
+	Resource    string `json:"resource"`
+	Limit       int64  `json:"limit,omitempty"`
+	Requested   int64  `json:"requested,omitempty"`
+	Allowed     bool   `json:"allowed"`
+	Known       bool   `json:"known"`
+	Explanation string `json:"explanation"`
 }
 
 type EnvironmentCreateCostGuidance struct {
-	Currency          string `json:"currency"`
-	CurrentMinorUnits int64  `json:"currentMinorUnits,omitempty"`
-	CurrentKnown      bool   `json:"currentKnown"`
-	ProjectedMinorUnits int64 `json:"projectedMinorUnits,omitempty"`
-	ProjectedKnown     bool  `json:"projectedKnown"`
-	Explanation        string `json:"explanation"`
+	Currency            string `json:"currency"`
+	CurrentMinorUnits   int64  `json:"currentMinorUnits,omitempty"`
+	CurrentKnown        bool   `json:"currentKnown"`
+	ProjectedMinorUnits int64  `json:"projectedMinorUnits,omitempty"`
+	ProjectedKnown      bool   `json:"projectedKnown"`
+	Explanation         string `json:"explanation"`
 }
 
 type EnvironmentCreateQuotaGuidance struct {
-	SchemaVersion string                         `json:"schemaVersion"`
-	Quota         []EnvironmentCreateQuotaImpact `json:"quota"`
-	Cost          EnvironmentCreateCostGuidance  `json:"cost"`
-	DataSufficient bool                          `json:"dataSufficient"`
+	SchemaVersion  string                         `json:"schemaVersion"`
+	Quota          []EnvironmentCreateQuotaImpact `json:"quota"`
+	Cost           EnvironmentCreateCostGuidance  `json:"cost"`
+	DataSufficient bool                           `json:"dataSufficient"`
 }
 
 type EnvironmentCreateProposalActionRequest struct {
@@ -79,23 +80,23 @@ type EnvironmentCreateProposalActionRequest struct {
 }
 
 type EnvironmentCreateProposalActionResult struct {
-	Status         string `json:"status"`
-	ApprovalID     string `json:"approvalId,omitempty"`
-	EnvironmentID  string `json:"environmentId,omitempty"`
-	ContextHash    string `json:"contextHash"`
-	IdempotencyKey string `json:"idempotencyKey"`
-	Message        string `json:"message,omitempty"`
+	Status         string                    `json:"status"`
+	ApprovalID     string                    `json:"approvalId,omitempty"`
+	EnvironmentID  string                    `json:"environmentId,omitempty"`
+	ContextHash    string                    `json:"contextHash"`
+	IdempotencyKey string                    `json:"idempotencyKey"`
+	Message        string                    `json:"message,omitempty"`
 	Failure        *EnvironmentCreateFailure `json:"failure,omitempty"`
 }
 
 type EnvironmentCreateFailureCategory string
 
 const (
-	EnvironmentCreateFailureRender         EnvironmentCreateFailureCategory = "render_error"
-	EnvironmentCreateFailureQuota          EnvironmentCreateFailureCategory = "quota_block"
+	EnvironmentCreateFailureRender          EnvironmentCreateFailureCategory = "render_error"
+	EnvironmentCreateFailureQuota           EnvironmentCreateFailureCategory = "quota_block"
 	EnvironmentCreateFailureInvalidOverride EnvironmentCreateFailureCategory = "invalid_override"
-	EnvironmentCreateFailureTimeout        EnvironmentCreateFailureCategory = "job_timeout"
-	EnvironmentCreateFailureUnknown        EnvironmentCreateFailureCategory = "unknown"
+	EnvironmentCreateFailureTimeout         EnvironmentCreateFailureCategory = "job_timeout"
+	EnvironmentCreateFailureUnknown         EnvironmentCreateFailureCategory = "unknown"
 )
 
 type EnvironmentCreateProposalDiff struct {
@@ -107,10 +108,10 @@ type EnvironmentCreateProposalDiff struct {
 
 type EnvironmentCreateFailure struct {
 	Category        EnvironmentCreateFailureCategory `json:"category"`
-	Diagnosis       AIDiagnosisResult                 `json:"diagnosis"`
+	Diagnosis       AIDiagnosisResult                `json:"diagnosis"`
 	FollowUp        *EnvironmentCreateProposal       `json:"followUp,omitempty"`
 	Diff            []EnvironmentCreateProposalDiff  `json:"diff,omitempty"`
-	SuggestionsLeft int                               `json:"suggestionsLeft"`
+	SuggestionsLeft int                              `json:"suggestionsLeft"`
 }
 
 func (f EnvironmentCreateProposalFields) Deterministic() EnvironmentCreateProposalFields {

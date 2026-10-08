@@ -18,24 +18,25 @@ const (
 )
 
 type AISCMChangePlan struct {
-	SchemaVersion    string      `json:"schemaVersion"`
-	PlanID           string      `json:"planId"`
-	TenantID         string      `json:"tenantId"`
-	ProjectID        string      `json:"projectId"`
-	Provider         Provider    `json:"provider"`
-	Repository       string      `json:"repository"`
-	ChangeID         string      `json:"changeId"`
-	EventID          string      `json:"eventId"`
-	Action           EventAction `json:"action"`
-	Branch           string      `json:"branch,omitempty"`
-	CommitSHA        string      `json:"commitSha,omitempty"`
-	ChangedPaths     []string    `json:"changedPaths,omitempty"`
-	Impact           AISCMImpact `json:"impact"`
-	UntrustedInput   bool        `json:"untrustedInput"`
-	ApprovalRequired bool        `json:"approvalRequired"`
-	CleanupAllowed   bool        `json:"cleanupAllowed"`
-	IdempotencyKey   string      `json:"idempotencyKey"`
-	GeneratedAt      time.Time   `json:"generatedAt"`
+	Assistant        *AIAssistantOutput `json:"assistant,omitempty"`
+	SchemaVersion    string             `json:"schemaVersion"`
+	PlanID           string             `json:"planId"`
+	TenantID         string             `json:"tenantId"`
+	ProjectID        string             `json:"projectId"`
+	Provider         Provider           `json:"provider"`
+	Repository       string             `json:"repository"`
+	ChangeID         string             `json:"changeId"`
+	EventID          string             `json:"eventId"`
+	Action           EventAction        `json:"action"`
+	Branch           string             `json:"branch,omitempty"`
+	CommitSHA        string             `json:"commitSha,omitempty"`
+	ChangedPaths     []string           `json:"changedPaths,omitempty"`
+	Impact           AISCMImpact        `json:"impact"`
+	UntrustedInput   bool               `json:"untrustedInput"`
+	ApprovalRequired bool               `json:"approvalRequired"`
+	CleanupAllowed   bool               `json:"cleanupAllowed"`
+	IdempotencyKey   string             `json:"idempotencyKey"`
+	GeneratedAt      time.Time          `json:"generatedAt"`
 }
 
 func (p AISCMChangePlan) Validate() error {

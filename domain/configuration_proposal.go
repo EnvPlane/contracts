@@ -71,6 +71,7 @@ type ConfigurationProposalRenderPreview struct {
 }
 
 type ConfigurationProposal struct {
+	Assistant          *AIAssistantOutput                   `json:"assistant,omitempty"`
 	SchemaVersion      string                               `json:"schemaVersion"`
 	ProposalVersion    string                               `json:"proposalVersion"`
 	TenantID           string                               `json:"tenantId"`

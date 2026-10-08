@@ -54,16 +54,17 @@ const (
 )
 
 type AITriggerResult struct {
-	SchemaVersion string            `json:"schema_version"`
-	RuleID        string            `json:"rule_id"`
-	EventID       string            `json:"event_id"`
-	TenantID      string            `json:"tenant_id"`
-	Decision      AITriggerDecision `json:"decision"`
-	RunKey        string            `json:"run_key"`
-	Reason        string            `json:"reason"`
-	Autonomy      AIAutonomyLevel   `json:"autonomy"`
-	ScheduledAt   *time.Time        `json:"scheduled_at,omitempty"`
-	State         AITriggerState    `json:"state"`
+	Assistant     *AIAssistantOutput `json:"assistant,omitempty"`
+	SchemaVersion string             `json:"schema_version"`
+	RuleID        string             `json:"rule_id"`
+	EventID       string             `json:"event_id"`
+	TenantID      string             `json:"tenant_id"`
+	Decision      AITriggerDecision  `json:"decision"`
+	RunKey        string             `json:"run_key"`
+	Reason        string             `json:"reason"`
+	Autonomy      AIAutonomyLevel    `json:"autonomy"`
+	ScheduledAt   *time.Time         `json:"scheduled_at,omitempty"`
+	State         AITriggerState     `json:"state"`
 }
 
 type AITriggerPreviewRequest struct {

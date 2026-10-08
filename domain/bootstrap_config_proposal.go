@@ -40,6 +40,7 @@ type BootstrapConfigProposalRejectedField struct {
 }
 
 type BootstrapConfigProposal struct {
+	Assistant          *AIAssistantOutput                     `json:"assistant,omitempty"`
 	SchemaVersion      string                                 `json:"schemaVersion"`
 	ProposalVersion    string                                 `json:"proposalVersion"`
 	Kind               string                                 `json:"kind"`

@@ -62,6 +62,7 @@ type AIReleaseRepairProposal struct {
 	DigestRequired   bool                `json:"digest_required"`
 }
 type AIReleaseAgentPlan struct {
+	Assistant      *AIAssistantOutput        `json:"assistant,omitempty"`
 	SchemaVersion  string                    `json:"schema_version"`
 	PlanID         string                    `json:"plan_id"`
 	TenantID       string                    `json:"tenant_id"`

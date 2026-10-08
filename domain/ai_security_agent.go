@@ -80,6 +80,7 @@ type AISecurityAgentRequest struct {
 }
 
 type AISecurityAgentPlan struct {
+	Assistant        *AIAssistantOutput              `json:"assistant,omitempty"`
 	SchemaVersion    string                          `json:"schema_version"`
 	PlanID           string                          `json:"plan_id"`
 	TenantID         string                          `json:"tenant_id"`

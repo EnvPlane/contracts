@@ -64,6 +64,7 @@ type AIFinOpsDataQuality struct {
 }
 
 type AIFinOpsExplanation struct {
+	Assistant       *AIAssistantOutput        `json:"assistant,omitempty"`
 	SchemaVersion   string                    `json:"schemaVersion"`
 	TenantID        string                    `json:"tenantId"`
 	ProjectID       string                    `json:"projectId"`

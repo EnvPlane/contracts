@@ -35,7 +35,10 @@ type AIRun struct {
 }
 
 func (r AIRun) Validate() error {
-	if r.SchemaVersion != AIRunSchemaVersion || strings.TrimSpace(r.ID) == "" || strings.TrimSpace(r.IdempotencyKey) == "" || strings.TrimSpace(r.TenantID) == "" || strings.TrimSpace(r.ProjectID) == "" || strings.TrimSpace(r.Purpose) == "" || strings.TrimSpace(r.Provider) == "" || strings.TrimSpace(r.Model) == "" || strings.TrimSpace(r.PromptTemplateVersion) == "" || strings.TrimSpace(r.ContextHash) == "" {
+	if r.SubjectType == "tenant_assistant_snapshot" && !r.TenantAssistantScope() {
+		return errors.New("tenant assistant run scope is invalid")
+	}
+	if r.SchemaVersion != AIRunSchemaVersion || strings.TrimSpace(r.ID) == "" || strings.TrimSpace(r.IdempotencyKey) == "" || strings.TrimSpace(r.TenantID) == "" || (strings.TrimSpace(r.ProjectID) == "" && !r.TenantAssistantScope()) || strings.TrimSpace(r.Purpose) == "" || strings.TrimSpace(r.Provider) == "" || strings.TrimSpace(r.Model) == "" || strings.TrimSpace(r.PromptTemplateVersion) == "" || strings.TrimSpace(r.ContextHash) == "" {
 		return errors.New("AI run identity and metadata are required")
 	}
 	if r.Status != AIRunStatusQueued && r.Status != AIRunStatusRunning && r.Status != AIRunStatusSucceeded && r.Status != AIRunStatusFailed && r.Status != AIRunStatusCanceled && r.Status != AIRunStatusPaused {

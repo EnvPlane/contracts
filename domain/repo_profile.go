@@ -14,14 +14,15 @@ type RepoManifest struct {
 }
 
 type RepoProfile struct {
-	SchemaVersion       string         `json:"schemaVersion"`
-	TenantID            string         `json:"tenantId"`
-	ProjectID           string         `json:"projectId"`
-	Manifests           []RepoManifest `json:"manifests,omitempty"`
-	DeclaredPorts       []int          `json:"declaredPorts,omitempty"`
-	EnvironmentNames    []string       `json:"environmentNames,omitempty"`
-	ComponentCatalogIDs []string       `json:"componentCatalogIds,omitempty"`
-	BootstrapFieldNames []string       `json:"bootstrapFieldNames,omitempty"`
+	Assistant           *AIAssistantOutput `json:"assistant,omitempty"`
+	SchemaVersion       string             `json:"schemaVersion"`
+	TenantID            string             `json:"tenantId"`
+	ProjectID           string             `json:"projectId"`
+	Manifests           []RepoManifest     `json:"manifests,omitempty"`
+	DeclaredPorts       []int              `json:"declaredPorts,omitempty"`
+	EnvironmentNames    []string           `json:"environmentNames,omitempty"`
+	ComponentCatalogIDs []string           `json:"componentCatalogIds,omitempty"`
+	BootstrapFieldNames []string           `json:"bootstrapFieldNames,omitempty"`
 }
 
 func (p RepoProfile) Deterministic() RepoProfile {

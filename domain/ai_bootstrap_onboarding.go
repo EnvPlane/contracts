@@ -31,6 +31,7 @@ type AIBootstrapFieldSuggestion struct {
 }
 
 type AIBootstrapOnboardingPlan struct {
+	Assistant           *AIAssistantOutput           `json:"assistant,omitempty"`
 	SchemaVersion       string                       `json:"schemaVersion"`
 	PlanID              string                       `json:"planId"`
 	TenantID            string                       `json:"tenantId"`

@@ -90,6 +90,7 @@ type AIIncidentAgentRequest struct {
 }
 
 type AIIncidentAgentPlan struct {
+	Assistant          *AIAssistantOutput    `json:"assistant,omitempty"`
 	SchemaVersion      string                `json:"schema_version"`
 	IncidentID         string                `json:"incident_id"`
 	TenantID           string                `json:"tenant_id"`
