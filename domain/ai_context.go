@@ -62,6 +62,7 @@ type AIContextInput struct {
 	Capabilities []ClusterCapabilities
 	Resources    []ResourceSnapshot
 	Bootstrap    []AIBootstrapSnapshot
+	Assistants   []AIAssistantSnapshot
 }
 
 type AIContextThreatAssessment struct {
@@ -162,6 +163,16 @@ func (b AIContextBuilder) Build(input AIContextInput) (AIContext, error) {
 			return AIContext{}, errors.New("AI bootstrap tenant does not match context tenant")
 		}
 		appendEntry(bootstrapContextEntry(snapshot, b.limits.MaxStringBytes, &truncated))
+	}
+	for _, snapshot := range input.Assistants {
+		if snapshot.TenantID != input.TenantID || snapshot.ProjectID == "" || snapshot.SubjectID == "" || snapshot.Purpose == "" {
+			return AIContext{}, errors.New("AI assistant snapshot scope is invalid")
+		}
+		appendEntry(aiEntry("assistant_snapshot", snapshot.SubjectID, []AIContextField{
+			aiField("project", snapshot.ProjectID, b.limits.MaxStringBytes, &truncated),
+			aiField("purpose", snapshot.Purpose, b.limits.MaxStringBytes, &truncated),
+			aiField("deterministicObservations", snapshot.Summary, b.limits.MaxStringBytes, &truncated),
+		}))
 	}
 	sort.Slice(context.Entries, func(i, j int) bool {
 		left, right := context.Entries[i], context.Entries[j]

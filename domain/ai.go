@@ -152,6 +152,8 @@ func (e AIProviderError) Validate() error {
 }
 
 type AIDiagnosisResult struct {
+	ExecutionMode  string                 `json:"executionMode,omitempty"`
+	FallbackReason string                 `json:"fallbackReason,omitempty"`
 	SchemaVersion  string                 `json:"schemaVersion"`
 	RequestID      string                 `json:"requestId"`
 	TenantID       string                 `json:"tenantId"`

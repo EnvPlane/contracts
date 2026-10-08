@@ -55,6 +55,37 @@
       }
     },
     "schemas": {
+      "AIAssistantOutput": {
+        "type": "object",
+        "description": "Read-only provider-backed narration with deterministic fallback. This never authorizes or replaces typed execution plans.",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "ai",
+              "deterministic"
+            ]
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "fallbackReason": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AIDiagnosisResult"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
       "NamespaceCleanupObservation": {
         "type": "object",
         "required": ["namespace", "finalizers"],
@@ -6114,6 +6145,8 @@
       "AIDiagnosisResult": {
         "additionalProperties": false,
         "properties": {
+          "executionMode": { "type": "string", "enum": ["ai", "deterministic"] },
+          "fallbackReason": { "type": "string" },
           "confidence": {
             "type": "object"
           },
@@ -6296,6 +6329,7 @@
       },
       "AIFinOpsExplanation": {
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "anomalies": {
             "items": {
               "properties": {
@@ -6610,6 +6644,7 @@
       },
       "BootstrapConfigProposal": {
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "contextHash": {
             "type": "string"
           },
@@ -6755,6 +6790,7 @@
       },
       "ConfigurationProposal": {
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "diff": {
             "items": {
               "$ref": "#/components/schemas/ConfigurationProposalDiff"
@@ -7035,6 +7071,7 @@
       },
       "RepoProfile": {
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "bootstrapFieldNames": {
             "items": {
               "type": "string"
@@ -7313,6 +7350,7 @@
           "targetStateVersion"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schemaVersion": {
             "type": "string"
           },
@@ -9490,6 +9528,7 @@
           "generatedAt"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schemaVersion": {
             "type": "string",
             "enum": [
@@ -9667,6 +9706,7 @@
           "generatedAt"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schemaVersion": {
             "type": "string"
           },
@@ -9929,6 +9969,7 @@
           "generatedAt"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schemaVersion": {
             "type": "string"
           },
@@ -10011,6 +10052,7 @@
           "generatedAt"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schemaVersion": {
             "type": "string"
           },
@@ -10184,6 +10226,7 @@
           "generatedAt"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schemaVersion": {
             "type": "string"
           },
@@ -10371,6 +10414,7 @@
           "generated_at"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schema_version": {
             "type": "string"
           },
@@ -10639,6 +10683,7 @@
           "generated_at"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schema_version": {
             "type": "string"
           },
@@ -10935,6 +10980,7 @@
           "generated_at"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schema_version": {
             "type": "string"
           },
@@ -11138,6 +11184,7 @@
           "state"
         ],
         "properties": {
+          "assistant": { "$ref": "#/components/schemas/AIAssistantOutput" },
           "schema_version": {
             "type": "string"
           },
