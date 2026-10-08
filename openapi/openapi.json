@@ -55,6 +55,30 @@
       }
     },
     "schemas": {
+      "StorageCleanupVolume": {
+        "type":"object","required":["pvcName","pvcUid","pvName","pvUid","storageClass","provisioner","reclaimPolicy","backendReference"],
+        "properties":{"pvcName":{"type":"string"},"pvcUid":{"type":"string","format":"uuid"},"pvName":{"type":"string"},"pvUid":{"type":"string","format":"uuid"},"storageClass":{"type":"string"},"provisioner":{"type":"string"},"reclaimPolicy":{"type":"string","enum":["Delete","Retain"]},"backendReference":{"type":"string","description":"Opaque backend identity hash; no raw node path or credential."}}
+      },
+      "StorageCleanupObservation": {
+        "type":"object","required":["pvcUid","pvUid","backendReference","state","source","observedAt","secureErasure"],
+        "properties":{"pvcUid":{"type":"string","format":"uuid"},"pvUid":{"type":"string","format":"uuid"},"backendReference":{"type":"string"},"state":{"type":"string","enum":["unknown","pending_reclaim","retained","backend_asset_deleted"]},"source":{"type":"string","enum":["captured_metadata","operator_attestation"]},"reason":{"type":"string"},"reference":{"type":"string"},"observedAt":{"type":"string","format":"date-time"},"actorId":{"type":"string"},"secureErasure":{"type":"string","enum":["unknown"]}}
+      },
+      "StorageCleanupSnapshot": {
+        "type":"object","required":["id","tenantId","projectId","environmentId","clusterId","clusterGeneration","namespace","namespaceUid","revision","capturedAt","volumes","observations"],
+        "properties":{"id":{"type":"string"},"tenantId":{"type":"string"},"projectId":{"type":"string"},"environmentId":{"type":"string"},"clusterId":{"type":"string"},"clusterGeneration":{"type":"integer","format":"int64"},"namespace":{"type":"string"},"namespaceUid":{"type":"string","format":"uuid"},"revision":{"type":"integer","format":"int64"},"capturedAt":{"type":"string","format":"date-time"},"volumes":{"type":"array","minItems":1,"maxItems":64,"items":{"$ref":"#/components/schemas/StorageCleanupVolume"}},"observations":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupObservation"}}}
+      },
+      "StorageCleanupChallenge": {
+        "type":"object","required":["snapshotId","leaseId","token","expectedRevision","expiresAt"],
+        "properties":{"snapshotId":{"type":"string"},"leaseId":{"type":"string"},"token":{"type":"string","description":"One-use actor-bound nonce. Never logged."},"expectedRevision":{"type":"integer","format":"int64"},"expiresAt":{"type":"string","format":"date-time"}}
+      },
+      "StorageCleanupAttestationRequest": {
+        "type":"object","additionalProperties":false,"required":["snapshotId","leaseId","token","expectedRevision","observation"],
+        "properties":{"snapshotId":{"type":"string"},"leaseId":{"type":"string"},"token":{"type":"string"},"expectedRevision":{"type":"integer","format":"int64"},"observation":{"$ref":"#/components/schemas/StorageCleanupAttestationObservation"}}
+      },
+      "StorageCleanupAttestationObservation": {
+        "type":"object","additionalProperties":false,"required":["pvcUid","pvUid","backendReference","state"],
+        "properties":{"pvcUid":{"type":"string","format":"uuid"},"pvUid":{"type":"string","format":"uuid"},"backendReference":{"type":"string"},"state":{"type":"string","enum":["unknown","pending_reclaim","retained","backend_asset_deleted"]},"reason":{"type":"string","description":"Sanitized reason code only."},"reference":{"type":"string","description":"Opaque evidence identifier only; never raw paths, credentials or report contents."},"observedAt":{"type":"string","format":"date-time"},"secureErasure":{"type":"string","enum":["unknown"]}}
+      },
       "ResourceUsageSample": {
         "type": "object",
         "required": ["snapshotId", "tenantId", "cpuCoreHours", "memoryGiBHours", "occurredAt"],
@@ -11641,6 +11665,25 @@
     }
   },
   "paths": {
+    "/api/v1/projects/{project}/environments/{environment}/storage-cleanup": {
+      "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
+      "get":{"operationId":"getStorageCleanupEvidence","description":"Authorized storage history independent of namespace cleanup. Survives environment record removal. Backend deletion is an operator attestation, never proof of secure erasure.","responses":{"200":{"description":"Independent evidence","content":{"application/json":{"schema":{"type":"object","required":["snapshots","secureErasure"],"properties":{"snapshots":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}},"secureErasure":{"type":"string","enum":["unknown"]}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Evidence unavailable"}}}
+    },
+    "/api/v1/projects/{project}/environments/{environment}/storage-cleanup/capture": {
+      "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
+      "post":{"operationId":"captureStorageCleanupEvidence","description":"Capture exact owned namespace/PVC/PV metadata before deletion. No resource mutation or permission expansion.","responses":{"200":{"description":"Pinned snapshot","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Exact identities unavailable"}}}
+    },
+    "/api/v1/projects/{project}/environments/{environment}/storage-cleanup/challenge": {
+      "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
+      "post":{"operationId":"challengeStorageCleanupAttestation","description":"SettingsWrite owner/admin actor-bound one-use ten-minute lease with CAS revision and current cluster generation.","requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["snapshotId","expectedRevision"],"properties":{"snapshotId":{"type":"string"},"expectedRevision":{"type":"integer","format":"int64","minimum":1}}}}}},"responses":{"200":{"description":"No-store challenge","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StorageCleanupChallenge"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"}}}
+    },
+    "/api/v1/projects/{project}/environments/{environment}/storage-cleanup/attest": {
+      "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
+      "post":{"operationId":"attestStorageCleanupEvidence","description":"Operator declaration with exact pinned volume identity, one-use lease and CAS. Source/actor are server stamped; secure erasure remains unknown. Retain cannot be declared deleted under this policy.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/StorageCleanupAttestationRequest"}}}},"responses":{"200":{"description":"Updated evidence","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"422":{"description":"Rejected evidence"}}}
+    },
+    "/api/v1/runner/storage-cleanup/capture": {
+      "post":{"operationId":"captureRunnerStorageCleanupEvidence","security":[{"runnerAuthToken":[]}],"description":"Current leased cleanup command only. Runner cannot choose tenant or attest deletion. Failure does not block normal cleanup.","requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","additionalProperties":false,"required":["projectId","clusterId","runnerId","commandId","environmentId"],"properties":{"projectId":{"type":"string"},"clusterId":{"type":"string"},"runnerId":{"type":"string"},"commandId":{"type":"string"},"environmentId":{"type":"string"}}}}}},"responses":{"200":{"description":"Pinned snapshot","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Exact identities unavailable"}}}
+    },
     "/api/v1/billing/commands": {
       "get":{"operationId":"getBillingCommands","description":"BillingRead scoped durable command state for the current paid binding. Server derives tenant and installation. No provider account IDs or tokens are exposed.","responses":{"200":{"description":"Bound command state","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BillingCommandState"}}}},"403":{"$ref":"#/components/responses/Forbidden"},"502":{"description":"Unconfirmed or unavailable issuer state"},"503":{"description":"Revisioned issuer gateway unavailable"}}},
       "post":{"operationId":"enqueueBillingCommand","description":"BillingWrite/CSRF protected explicit next-period plan change or end-period cancellation. Compare-and-swap and a stable command ID; acceptance is not payment, provider completion or activation. No immediate cancellation, automatic refunds or data deletion.","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/BillingCommandRequest"}}}},"responses":{"202":{"description":"Durable intent accepted or identical retry","content":{"application/json":{"schema":{"$ref":"#/components/schemas/BillingCommandResult"}}}},"400":{"$ref":"#/components/responses/BadRequest"},"403":{"$ref":"#/components/responses/Forbidden"},"409":{"$ref":"#/components/responses/Conflict"},"502":{"description":"Uncertain or unavailable issuer acknowledgement; retry the same command identity"},"503":{"description":"Issuer unavailable; retry the same command identity"}}}

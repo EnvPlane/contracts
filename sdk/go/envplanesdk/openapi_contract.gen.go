@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "1a603a3c2546da5403ff50b72f2ec4b93013abddcd5ff34ba8d1683a64b231be"
+const CanonicalOpenAPISHA256 = "72a144876682240fdd167d1babe913bc7eceeaa1bb2abe43322a8f3a6644dc54"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -101,6 +101,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/secret-materialization",
 	"GET /api/v1/projects/{project}/base-resource-bindings",
 	"GET /api/v1/projects/{project}/baseline-metering",
+	"GET /api/v1/projects/{project}/environments/{environment}/storage-cleanup",
 	"GET /api/v1/remote-clusters",
 	"GET /api/v1/remote-clusters/targets",
 	"GET /api/v1/remote-clusters/{id}",
@@ -225,6 +226,9 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/scm-webhook/test-delivery",
 	"POST /api/v1/projects/{id}/scm-webhook/verify",
 	"POST /api/v1/projects/{project}/base-resource-bindings",
+	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/attest",
+	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/capture",
+	"POST /api/v1/projects/{project}/environments/{environment}/storage-cleanup/challenge",
 	"POST /api/v1/remote-clusters",
 	"POST /api/v1/remote-clusters/{id}/credentials",
 	"POST /api/v1/remote-clusters/{id}/credentials/rotate",
@@ -234,6 +238,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/remote-clusters/{id}/repair",
 	"POST /api/v1/remote-clusters/{id}/rotate",
 	"POST /api/v1/render/preview",
+	"POST /api/v1/runner/storage-cleanup/capture",
 	"POST /api/v1/runners/commands/{id}/lease",
 	"POST /api/v1/runners/commands/{id}/result",
 	"POST /api/v1/runners/heartbeat",
