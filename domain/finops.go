@@ -19,9 +19,11 @@ type ResourceUsageSample struct {
 }
 
 type ResourcePriceTable struct {
-	Currency           string `json:"currency"`
-	CPUCoreHourCents   int64  `json:"cpuCoreHourCents"`
-	MemoryGiBHourCents int64  `json:"memoryGiBHourCents"`
+	Currency           string            `json:"currency"`
+	CPUCoreHourCents   int64             `json:"cpuCoreHourCents"`
+	MemoryGiBHourCents int64             `json:"memoryGiBHourCents"`
+	CPUCoreHourRate    *FinOpsScaledRate `json:"cpuCoreHourRate,omitempty"`
+	MemoryGiBHourRate  *FinOpsScaledRate `json:"memoryGiBHourRate,omitempty"`
 }
 
 type CostAllocation struct {

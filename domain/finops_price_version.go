@@ -13,5 +13,7 @@ type TenantFinOpsPriceVersion struct {
 	CreatedAt          time.Time              `json:"createdAt"`
 	CPUCoreHourCents   *int64                 `json:"cpuCoreHourCents"`
 	MemoryGiBHourCents *int64                 `json:"memoryGiBHourCents"`
+	CPUCoreHourRate    *FinOpsScaledRate      `json:"cpuCoreHourRate,omitempty"`
+	MemoryGiBHourRate  *FinOpsScaledRate      `json:"memoryGiBHourRate,omitempty"`
 	Dimensions         []FinOpsDimensionPrice `json:"dimensions"`
 }

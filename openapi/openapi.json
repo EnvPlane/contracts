@@ -11534,6 +11534,11 @@
           }
         }
       },
+      "FinOpsScaledRate": {
+        "type":"object","additionalProperties":false,"required":["minorUnits","scale"],
+        "description":"Exact minorUnits / 10^scale per resource unit, not rounded money. Maximum effective rate is 1000000000 minor units/unit. Aggregated money uses cumulative half-up rounding; budgets stay integer minor units.",
+        "properties":{"minorUnits":{"type":"integer","format":"int64","minimum":0,"maximum":1000000000000000},"scale":{"type":"integer","minimum":0,"maximum":6}}
+      },
       "FinOpsDimensionPrice": {
         "type":"object", "additionalProperties":false,
         "required":["dimension","unit","currency","minorUnitsPerUnit","known"],
@@ -11542,8 +11547,10 @@
           "unit":{"type":"string","enum":["gib_hours","gib","busy_gpu_hours"]},
           "currency":{"type":"string","pattern":"^[A-Z]{3}$"},
           "minorUnitsPerUnit":{"type":"integer","format":"int64","minimum":0,"maximum":1000000000},
-          "known":{"type":"boolean","enum":[true]}
-        }
+          "known":{"type":"boolean","description":"Legacy whole-minor-unit price knowledge. Scaled prices set this false so old readers remain UNKNOWN."},
+          "scaledRate":{"$ref":"#/components/schemas/FinOpsScaledRate"}
+        },
+        "oneOf":[{"properties":{"known":{"enum":[true]}},"not":{"required":["scaledRate"]}},{"required":["scaledRate"],"properties":{"known":{"enum":[false]},"minorUnitsPerUnit":{"enum":[0]}}}]
       },
       "BaseResourcePin": {
         "type":"object","required":["namespace","resourceKind","resourceName","resourceUid","componentId"],
@@ -11572,6 +11579,7 @@
       },
       "TenantFinOpsPriceVersion": {
         "type":"object","additionalProperties":false,
+        "allOf":[{"not":{"required":["cpuCoreHourRate","cpuCoreHourCents"],"properties":{"cpuCoreHourCents":{"type":"integer"}}}},{"not":{"required":["memoryGiBHourRate","memoryGiBHourCents"],"properties":{"memoryGiBHourCents":{"type":"integer"}}}}],
         "required":["revision","currency","source","effectiveFrom","createdAt","cpuCoreHourCents","memoryGiBHourCents","dimensions"],
         "properties":{
           "revision":{"type":"integer","format":"int64","readOnly":true},
@@ -11581,6 +11589,8 @@
           "source":{"type":"string","enum":["internal_chargeback"]},
           "cpuCoreHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
           "memoryGiBHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
+          "cpuCoreHourRate":{"$ref":"#/components/schemas/FinOpsScaledRate"},
+          "memoryGiBHourRate":{"$ref":"#/components/schemas/FinOpsScaledRate"},
           "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
         }
       },
@@ -11589,6 +11599,7 @@
         "properties":{"expectedRevision":{"type":"integer","format":"int64","minimum":0},"price":{"$ref":"#/components/schemas/TenantFinOpsPriceInput"}}
       },
       "TenantFinOpsPriceInput": {
+        "allOf":[{"not":{"required":["cpuCoreHourRate","cpuCoreHourCents"],"properties":{"cpuCoreHourCents":{"type":"integer"}}}},{"not":{"required":["memoryGiBHourRate","memoryGiBHourCents"],"properties":{"memoryGiBHourCents":{"type":"integer"}}}}],
         "type":"object","additionalProperties":false,"required":["currency","source"],
         "properties":{
           "effectiveFrom":{"type":"string","format":"date-time","description":"Omit to use server time. Backdating is rejected."},
@@ -11596,6 +11607,8 @@
           "source":{"type":"string","enum":["internal_chargeback"]},
           "cpuCoreHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
           "memoryGiBHourCents":{"type":"integer","format":"int64","nullable":true,"minimum":0,"maximum":1000000000},
+          "cpuCoreHourRate":{"$ref":"#/components/schemas/FinOpsScaledRate"},
+          "memoryGiBHourRate":{"$ref":"#/components/schemas/FinOpsScaledRate"},
           "dimensions":{"type":"array","maxItems":6,"items":{"$ref":"#/components/schemas/FinOpsDimensionPrice"}}
         }
       },

@@ -60,6 +60,9 @@ type FinOpsDimensionPrice struct {
 	Currency          string          `json:"currency"`
 	MinorUnitsPerUnit int64           `json:"minorUnitsPerUnit"`
 	Known             bool            `json:"known"`
+	// ScaledRate is exclusive with legacy Known=true. Old readers see UNKNOWN,
+	// never a fabricated zero or an unscaled numerator as a whole-cent price.
+	ScaledRate *FinOpsScaledRate `json:"scaledRate,omitempty"`
 }
 
 type FinOpsDimensionAllocation struct {
