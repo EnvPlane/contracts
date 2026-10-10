@@ -43,6 +43,7 @@ type ClusterCapabilityReport struct {
 }
 
 type ResourceSnapshot struct {
+	SourceUID       string                   `json:"sourceUid,omitempty"`
 	Kind            string                   `json:"kind"`
 	Namespace       string                   `json:"namespace"`
 	Name            string                   `json:"name"`
@@ -393,11 +394,12 @@ type RunnerRegistrationResponse struct {
 }
 
 type RunnerHeartbeatRequest struct {
-	ProjectID       string `json:"projectId,omitempty"`
-	ClusterID       string `json:"clusterId"`
-	RunnerID        string `json:"runnerId"`
-	DeploymentMode  string `json:"deploymentMode,omitempty"`
-	RunnerNamespace string `json:"runnerNamespace"`
+	PVCCopyContractVersion string `json:"pvcCopyContractVersion,omitempty"`
+	ProjectID              string `json:"projectId,omitempty"`
+	ClusterID              string `json:"clusterId"`
+	RunnerID               string `json:"runnerId"`
+	DeploymentMode         string `json:"deploymentMode,omitempty"`
+	RunnerNamespace        string `json:"runnerNamespace"`
 	// HelmTargetNamespaces is the finite, chart-rendered namespace set carrying
 	// this Runner's Helm Direct Role/RoleBinding. It is metadata only and never
 	// contains bootstrap or SCM credentials.
@@ -418,6 +420,7 @@ type RunnerHeartbeatRequest struct {
 // its pinned chart contract with a newer compiled deployment configuration.
 // None of these fields contains secret material.
 type RunnerCommand struct {
+	PVCCopyPlan                     *PVCCopyPlan               `json:"pvcCopyPlan,omitempty"`
 	ReleasePlanTransportVersion     string                     `json:"releasePlanTransportVersion,omitempty"`
 	ID                              string                     `json:"id"`
 	ProjectID                       string                     `json:"projectId"`
@@ -454,6 +457,8 @@ type RunnerCommand struct {
 }
 
 type RunnerCommandResult struct {
+	PVCCopyPlanDigest           string             `json:"pvcCopyPlanDigest,omitempty"`
+	PVCCopyVerified             bool               `json:"pvcCopyVerified,omitempty"`
 	ReleasePlanTransportVersion string             `json:"releasePlanTransportVersion,omitempty"`
 	ProjectID                   string             `json:"projectId"`
 	ClusterID                   string             `json:"clusterId"`

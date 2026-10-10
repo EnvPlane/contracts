@@ -5036,6 +5036,10 @@
       },
       "ResourceSnapshot": {
         "properties": {
+          "sourceUid": {
+            "type": "string",
+            "description": "Original Kubernetes resource UID retained separately from sanitized manifests. Required by PVC copy source projection."
+          },
           "sourceMapping": {
             "$ref": "#/components/schemas/ResourceSourceMapping"
           },
@@ -5912,6 +5916,9 @@
       "FluxSourceCredential": {"type": "object", "additionalProperties": false, "required": ["username", "password"], "properties": {"username": {"type": "string"}, "password": {"type": "string", "writeOnly": true}}},
       "RunnerCommand": {
         "properties": {
+          "pvcCopyPlan": {
+            "$ref": "#/components/schemas/PVCCopyPlan"
+          },
           "secretMaterializationPlanId": {
             "type": "string"
           },
@@ -5936,6 +5943,71 @@
           "releasePlanKeyId": {
             "type": "string"
           }
+        }
+      },
+      "RunnerCommandResult": {
+        "type": "object",
+        "properties": {
+          "pvcCopyPlanDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "pvcCopyVerified": {
+            "type": "boolean",
+            "description": "Evidence for the current authenticated materialize_pvc command/attempt only; never standalone environment readiness."
+          }
+        }
+      },
+      "RunnerHeartbeatRequest": {
+        "type": "object",
+        "properties": {
+          "pvcCopyContractVersion": {
+            "type": "string",
+            "description": "Executor capability advertisement; the server must require a verified compatible runner before compiling a PVC copy plan."
+          }
+        }
+      },
+      "PVCCopyPlan": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["contractVersion", "planId", "tenantId", "projectId", "environmentId", "templateRevisionId", "templateDigest", "targetNamespace", "allowedSourceNamespaces", "items", "image", "maxBytes", "timeoutSeconds", "storageQuotaBytes", "digest"],
+        "properties": {
+          "contractVersion": {"type": "string", "enum": ["v1"]},
+          "planId": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "tenantId": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "projectId": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "environmentId": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "templateRevisionId": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "templateDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "targetNamespace": {"type": "string", "maxLength": 63, "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"},
+          "allowedSourceNamespaces": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "maxLength": 63, "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"}},
+          "items": {"type": "array", "minItems": 1, "items": {"$ref": "#/components/schemas/PVCCopyItem"}},
+          "image": {"type": "string", "pattern": "^[a-z0-9][a-z0-9./:_-]*@sha256:[0-9a-f]{64}$", "description": "Exact digest-pinned image selected from trusted verified compatibility policy, never arbitrary server narrative."},
+          "maxBytes": {"type": "integer", "format": "int64", "minimum": 1, "description": "Aggregate item maxBytes limit."},
+          "timeoutSeconds": {"type": "integer", "format": "int64", "minimum": 1, "maximum": 86400},
+          "storageQuotaBytes": {"type": "integer", "format": "int64", "minimum": 1, "description": "Aggregate requested target storage limit."},
+          "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      },
+      "PVCCopyItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "sourceTenantId", "sourceNamespace", "sourceName", "sourceUid", "sourceIdentity", "sourceRequestedBytes", "targetName", "storageClass", "accessModes", "requestedBytes", "method", "maxBytes", "timeoutSeconds"],
+        "properties": {
+          "id": {"type": "string", "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "sourceTenantId": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*(/[A-Za-z0-9][A-Za-z0-9._:-]*)*$"},
+          "sourceNamespace": {"type": "string", "maxLength": 63, "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"},
+          "sourceName": {"type": "string", "minLength": 1, "maxLength": 253},
+          "sourceUid": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,127}$"},
+          "sourceIdentity": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "sourceRequestedBytes": {"type": "integer", "format": "int64", "minimum": 1},
+          "targetName": {"type": "string", "minLength": 1, "maxLength": 253},
+          "storageClass": {"type": "string", "minLength": 1, "maxLength": 253},
+          "accessModes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "enum": ["ReadWriteOnce", "ReadWriteMany", "ReadWriteOncePod"]}},
+          "requestedBytes": {"type": "integer", "format": "int64", "minimum": 1},
+          "method": {"type": "string", "enum": ["filesystem_offline"]},
+          "maxBytes": {"type": "integer", "format": "int64", "minimum": 1},
+          "timeoutSeconds": {"type": "integer", "format": "int64", "minimum": 1, "maximum": 86400}
         }
       },
       "StatefulExecutionPlan": {
@@ -15720,6 +15792,9 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
+                  "pvcCopyContractVersion": {
+                    "type": "string"
+                  },
                   "projectId": {
                     "type": "string"
                   },
