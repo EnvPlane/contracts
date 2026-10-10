@@ -1,6 +1,7 @@
 # ADR 0014: Lifecycle-bound, metadata-only MySQL restoration
 
-Status: staged for main/worker acceptance; publication remains held.
+Status: metadata accepted for contracts-only publication after final checks;
+runtime/consumer pushes remain held for main's SQL live/native acceptance.
 Date: 2026-10-10
 
 ## Decision
@@ -142,6 +143,9 @@ lease authentication remain enforced by the existing queue owner.
 
 ## Publication boundary
 
-No publication or consumer pins until main accepts the shared schema and both
-worker/API integrations, followed by an immutable freeze and green checks.
+Main explicitly authorized publication of the frozen metadata schema while SQL
+native/CEL/UI integration completes independently. Final contracts/schema/SDK/Go
+checks and live tag recheck must pass first. Consumer pins may follow only after
+exact frozen-SHA Go CI/publisher success and tag resolution; consumer pushes and
+runtime rollout remain held for SQL live/native/shared checks and main acceptance.
 See `docs/contracts-publication-checklist.md` for workflow behavior and gates.

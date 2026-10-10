@@ -6094,6 +6094,78 @@
           "environmentCreatedAt": {"type": "string", "format": "date-time"}, "verified": {"type": "boolean"}
         }
       },
+      "PVCCopySource": {
+        "type": "object", "additionalProperties": false,
+        "required": ["tenantId", "namespace", "name", "uid", "storageClass", "accessModes", "requestedBytes", "volumeMode", "environmentClass"],
+        "properties": {
+          "tenantId": {"type": "string"}, "namespace": {"type": "string"}, "name": {"type": "string"}, "uid": {"type": "string"},
+          "storageClass": {"type": "string"}, "accessModes": {"type": "array", "items": {"type": "string"}},
+          "requestedBytes": {"type": "integer", "format": "int64", "minimum": 1},
+          "volumeMode": {"type": "string", "enum": ["Filesystem"]},
+          "environmentClass": {"type": "string", "enum": ["production", "development", "staging", "test", "preview"]}
+        }
+      },
+      "PVCSourceReviewChoices": {
+        "type": "object", "additionalProperties": false, "nullable": false,
+        "required": ["allowRootHelpers", "mysqlRestoreAllowRootInit"],
+        "minProperties": 2, "maxProperties": 2,
+        "description": "Exactly two explicit non-null boolean review choices, including false. Unknown or duplicate keys, missing fields, null, non-boolean values and trailing JSON are rejected. No source identities, images, authority or credentials can be supplied by the browser.",
+        "properties": {
+          "allowRootHelpers": {"type": "boolean", "nullable": false},
+          "mysqlRestoreAllowRootInit": {"type": "boolean", "nullable": false}
+        }
+      },
+      "PVCSourceReviewInput": {
+        "type": "object", "additionalProperties": false, "readOnly": true,
+        "required": ["tenantId", "projectId", "clusterId", "clusterUid", "runnerNamespace", "runnerServiceAccount", "runnerImage", "allowRootHelpers"],
+        "description": "Server-stamped authenticated source/image/cluster metadata and explicit review choices; never source proof accepted from a browser, Secret values, dumps or kubeconfig.",
+        "properties": {
+          "tenantId": {"type": "string"}, "projectId": {"type": "string"}, "clusterId": {"type": "string"}, "clusterUid": {"type": "string"},
+          "runnerNamespace": {"type": "string"}, "runnerServiceAccount": {"type": "string"},
+          "runnerImage": {"type": "string", "pattern": "^[a-z0-9][a-z0-9./:_-]*@sha256:[0-9a-f]{64}$"},
+          "filesystemSources": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/components/schemas/PVCCopySource"}},
+          "mysqlSources": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/components/schemas/MySQLRestoreSource"}},
+          "mysqlRestoreHelperImage": {"type": "string", "pattern": "^[a-z0-9][a-z0-9./:_-]*@sha256:[0-9a-f]{64}$"},
+          "mysqlRestoreTargetImages": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9./:_-]*@sha256:[0-9a-f]{64}$"}},
+          "allowRootHelpers": {"type": "boolean"}, "mysqlRestoreAllowRootInit": {"type": "boolean"},
+          "previousReviewDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      },
+      "PVCSourceReviewObject": {
+        "type": "object", "additionalProperties": false, "readOnly": true,
+        "required": ["apiVersion", "kind", "metadata"],
+        "description": "Server-rendered RBAC/admission preview metadata, not arbitrary Kubernetes resources or Secret/Pod payloads. Reviewing this does not install permissions or certify copy/readiness.",
+        "properties": {
+          "apiVersion": {"type": "string"},
+          "kind": {"type": "string", "enum": ["Role", "RoleBinding", "ClusterRole", "ClusterRoleBinding", "ValidatingAdmissionPolicy", "ValidatingAdmissionPolicyBinding"]},
+          "metadata": {"type": "object", "additionalProperties": false, "required": ["name"], "properties": {"name": {"type": "string"}, "namespace": {"type": "string"}, "labels": {"type": "object", "additionalProperties": {"type": "string"}}, "annotations": {"type": "object", "additionalProperties": {"type": "string"}}}},
+          "rules": {"type": "array", "items": {"type": "object", "additionalProperties": false, "properties": {"apiGroups": {"type": "array", "items": {"type": "string"}}, "resources": {"type": "array", "items": {"type": "string"}}, "verbs": {"type": "array", "items": {"type": "string"}}, "resourceNames": {"type": "array", "items": {"type": "string"}}}}},
+          "roleRef": {"type": "object", "additionalProperties": false, "properties": {"apiGroup": {"type": "string"}, "kind": {"type": "string"}, "name": {"type": "string"}}},
+          "subjects": {"type": "array", "items": {"type": "object", "additionalProperties": false, "properties": {"kind": {"type": "string"}, "name": {"type": "string"}, "namespace": {"type": "string"}, "apiGroup": {"type": "string"}}}},
+          "spec": {"type": "object", "description": "Generated admission policy expressions/match rules and binding settings only; never credentials or data payloads."}
+        }
+      },
+      "PVCSourceReview": {
+        "type": "object", "additionalProperties": false, "readOnly": true,
+        "required": ["id", "digest", "input", "objects", "runnerValues", "runnerEnv", "warnings"],
+        "properties": {
+          "id": {"type": "string"}, "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "fenceDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "input": {"$ref": "#/components/schemas/PVCSourceReviewInput"},
+          "objects": {"type": "array", "items": {"$ref": "#/components/schemas/PVCSourceReviewObject"}},
+          "runnerValues": {"type": "object", "additionalProperties": false, "description": "Rendered operator configuration metadata, never credential values.", "properties": {
+            "pvcCopy": {"type": "object", "additionalProperties": false, "properties": {"enabled": {"type": "boolean"}, "allowRootHelpers": {"type": "boolean"}, "sources": {"type": "array", "items": {"type": "object", "additionalProperties": false, "properties": {"namespace": {"type": "string"}, "name": {"type": "string"}, "uid": {"type": "string"}}}}, "fenceNames": {"type": "array", "items": {"type": "string"}}}},
+            "mysqlRestore": {"type": "object", "additionalProperties": false, "properties": {"enabled": {"type": "boolean"}, "helperImage": {"type": "string"}, "sourceNamespaces": {"type": "array", "items": {"type": "string"}}, "targetImages": {"type": "array", "items": {"type": "string"}}, "allowRootInit": {"type": "boolean"}, "sourceFences": {"type": "array", "items": {"type": "string"}}}}
+          }},
+          "runnerEnv": {"type": "object", "additionalProperties": false, "properties": {"ENVPLANE_MYSQL_RESTORE_HELPER_IMAGE": {"type": "string"}, "ENVPLANE_MYSQL_RESTORE_SOURCE_NAMESPACES": {"type": "string"}, "ENVPLANE_MYSQL_RESTORE_TARGET_IMAGES": {"type": "string"}, "ENVPLANE_MYSQL_RESTORE_ALLOW_ROOT_INIT": {"type": "string", "enum": ["true", "false"]}}},
+          "warnings": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "PVCSourceProfileResponse": {
+        "type": "object", "additionalProperties": false, "required": ["review"],
+        "properties": {"review": {"$ref": "#/components/schemas/PVCSourceReview"}, "approval": {"$ref": "#/components/schemas/ApprovalRequest"}},
+        "description": "Metadata-only review and optional existing approval request. Decisions use existing tenant approvals routes; preview/request is not approval, installation or executor authority."
+      },
       "PVCCopyPlan": {
         "type": "object",
         "additionalProperties": false,
@@ -11881,6 +11953,35 @@
     }
   },
   "paths": {
+    "/api/v1/projects/{id}/pvc-copy/source-profile": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "get": {
+        "operationId": "getProjectPVCSourceProfile", "summary": "Inspect current metadata-only source onboarding review",
+        "security": [{"apiToken": []}],
+        "description": "Authenticated tenant user with ProjectsRead and project ownership. Review is refreshed against authenticated current source scan metadata; no-store response. No source credential/data values or permission installation. Approval decisions use existing /api/v1/tenants/{tenantID}/approvals routes.",
+        "responses": {
+          "200": {"description": "Current source review and optional approval request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PVCSourceProfileResponse"}}}},
+          "401": {"$ref": "#/components/responses/Unauthorized"}, "403": {"$ref": "#/components/responses/Forbidden"}, "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"description": "Preview pending, missing or stale; save references and wait for normal reconciliation", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "503": {"description": "Source review workflow unavailable"}
+        }
+      }
+    },
+    "/api/v1/projects/{id}/pvc-copy/source-profile/review": {
+      "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
+      "post": {
+        "operationId": "reviewProjectPVCSourceProfile", "summary": "Request reviewed source onboarding approval",
+        "security": [{"apiToken": []}],
+        "description": "Authenticated tenant user with ProjectsWrite and project ownership. Body is exactly two required non-null booleans; duplicate/unknown keys and trailing JSON rejected. Source identities/images are derived by the server from fresh authenticated state, never supplied as browser proof. This requests review only; decisions use existing tenant approvals routes.",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PVCSourceReviewChoices"}}}},
+        "responses": {
+          "201": {"description": "Current review and existing approval request returned; not approval or installation", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/PVCSourceProfileResponse"}}}},
+          "400": {"$ref": "#/components/responses/BadRequest"}, "401": {"$ref": "#/components/responses/Unauthorized"}, "403": {"$ref": "#/components/responses/Forbidden"}, "404": {"$ref": "#/components/responses/NotFound"},
+          "409": {"description": "Preview pending/stale or exact review cannot currently be requested", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}},
+          "503": {"description": "Source review workflow unavailable"}
+        }
+      }
+    },
     "/api/v1/projects/{project}/environments/{environment}/storage-cleanup": {
       "parameters":[{"in":"path","name":"project","required":true,"schema":{"type":"string"}},{"in":"path","name":"environment","required":true,"schema":{"type":"string"}}],
       "get":{"operationId":"getStorageCleanupEvidence","description":"Authorized storage history independent of namespace cleanup. Survives environment record removal. Backend deletion is an operator attestation, never proof of secure erasure.","responses":{"200":{"description":"Independent evidence","content":{"application/json":{"schema":{"type":"object","required":["snapshots","attempts","secureErasure"],"properties":{"snapshots":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupSnapshot"}},"attempts":{"type":"array","items":{"$ref":"#/components/schemas/StorageCleanupAttempt"}},"secureErasure":{"type":"string","enum":["unknown"]}}}}}},"403":{"$ref":"#/components/responses/Forbidden"},"503":{"description":"Evidence unavailable"}}}

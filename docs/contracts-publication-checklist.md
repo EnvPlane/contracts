@@ -1,7 +1,9 @@
 # Contracts publication coordination
 
-Status: HOLD. Schema staged; main/worker acceptance and final authorization pending.
-Snapshot inspected 2026-10-10. This document does not authorize publication.
+Status: main explicitly authorized CONTRACTS-ONLY publication after final
+source-profile OpenAPI/SDK/schema/released-Go/brand checks and live tag recheck.
+Consumer pushes and runtime rollout remain held for SQL live/native/shared checks
+and UI adapter acceptance. Snapshot inspected 2026-10-10.
 
 ## Verified remote baseline
 
@@ -33,6 +35,13 @@ chooses the version from live tag state; record its actual output. A version tag
 can exist even when broader parallel CI fails; both must be green before pinning.
 
 ## Freeze and local gates
+
+Main accepts the frozen metadata contract for publication independently of
+unfinished SQL native/CEL/UI integration. The integration/live checkboxes below
+remain runtime/consumer-push gates, not evidence that those tasks are complete.
+A published module must never be represented as successful live SQL execution.
+Local schema/checks and exact remote CI/publisher/tag verification still gate
+publication and subsequent dependency updates respectively.
 
 - [ ] Main and Huygens accept the shared source/target/service/TLS/backup/DDL
   schema and worker adapter. No data/credential payloads or automatic DB grants.
@@ -87,7 +96,8 @@ can exist even when broader parallel CI fails; both must be green before pinning
    consumers. No consumer pins were changed in this preparation.
 5. Update only each consumer's go.mod/go.sum to the verified published tag.
    Preserve unrelated edits; do not change frontend package.json or generated API
-   files. Main owns frontend generation and code changes.
+   files. Main owns frontend generation and code changes. Do NOT push consumer
+   repositories until main accepts SQL live/native/shared checks and UI alignment.
 6. Use GOWORK=off for consumer validation, check that replacements do not mask
    publication, verify checksum resolution, and run each consumer's relevant
    tests/build. If typed integration fails, hand code failures to main/worker;

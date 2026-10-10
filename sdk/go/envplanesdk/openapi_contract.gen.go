@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "64df9014aedc23698a195a599cbb3d6ae62aa1d625c233855c1e9426cd097868"
+const CanonicalOpenAPISHA256 = "d726e2c238e6085a5ff9a4f7eb093ab68e90f21ac3a92e09e3e7e5941d94ee86"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -93,6 +93,7 @@ var CanonicalOperations = []string{
 	"GET /api/v1/projects/{id}/namespaces",
 	"GET /api/v1/projects/{id}/namespaces/{namespace}/retirement-preview",
 	"GET /api/v1/projects/{id}/network-policy-probe",
+	"GET /api/v1/projects/{id}/pvc-copy/source-profile",
 	"GET /api/v1/projects/{id}/runtime-bundle",
 	"GET /api/v1/projects/{id}/scm-webhook",
 	"GET /api/v1/projects/{id}/scm-webhook-credential",
@@ -218,6 +219,7 @@ var CanonicalOperations = []string{
 	"POST /api/v1/projects/{id}/environment-proposals/preview",
 	"POST /api/v1/projects/{id}/namespaces",
 	"POST /api/v1/projects/{id}/namespaces/{namespace}/retire",
+	"POST /api/v1/projects/{id}/pvc-copy/source-profile/review",
 	"POST /api/v1/projects/{id}/runner-config",
 	"POST /api/v1/projects/{id}/runtime-tokens/revoke",
 	"POST /api/v1/projects/{id}/scm-webhook/reconcile",
