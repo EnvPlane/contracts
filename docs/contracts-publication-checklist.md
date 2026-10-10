@@ -43,6 +43,9 @@ can exist even when broader parallel CI fails; both must be green before pinning
   optional Secret OutputUID are implemented by authenticated consumers.
 - [ ] Source UID scans cover PVC, StatefulSet, Service and Secret. Missing
   production classification, reviewed image, CA or backup authority fails closed.
+- [ ] Main/Worker derive TLS connection host exactly as service.namespace.svc or
+  service.namespace.svc.cluster.local from the bound Service/namespace. Arbitrary
+  suffixes and custom cluster domains are refused before credential use.
 - [ ] Actual generated target Secret UID is acknowledged by the trusted current
   Secret-materialization command/attempt before compiling the MySQL plan.
 - [ ] Trusted mysql-password-v1 generator independently produces app/root

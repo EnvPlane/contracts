@@ -47,6 +47,15 @@ binds a same-namespace CA Secret name/UID/key and Service DNS server name.
 VERIFY_IDENTITY is mandatory; no insecure option exists. Operator-provisioned
 trusted TLS may be required when chart defaults are self-signed.
 
+TLS `ServerName` is also the connection host, not merely a certificate label.
+V1 permits only exact `<service>.<namespace>.svc` or
+`<service>.<namespace>.svc.cluster.local`, derived from the bound source Service
+and namespace. A prefix such as `<service>.<namespace>.svc.attacker.example`
+does not establish Service ownership and is rejected, even if supplied in the
+reviewed source projection. Main source-policy/UI validation and Worker must
+enforce the same exact derivation. Custom cluster DNS requires a future trusted,
+authenticated cluster-domain contract; it is not enabled by caller/profile flags.
+
 The contract mirrors initial worker limits: matching source/target image and
 database, non-root app/target principal, no system database, at most six hours
 per plan, at most 1 TiB per item copy/storage, 1 KiB–16 MiB statement limit,

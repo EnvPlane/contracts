@@ -181,7 +181,7 @@ func (s MySQLRestoreSource) CanonicalIdentity() (string, error) {
 		return "", errors.New("invalid distinct backup-admin credential metadata")
 	}
 	dns := s.Service + "." + s.Namespace + ".svc"
-	if !pvcCopyName(s.TLS.CASecretName, false) || !pvcCopyUIDPattern.MatchString(s.TLS.CASecretUID) || !mysqlRestoreSecretKey.MatchString(s.TLS.CAKey) || !pvcCopyName(s.TLS.ServerName, false) || (s.TLS.ServerName != dns && !strings.HasPrefix(s.TLS.ServerName, dns+".")) {
+	if !pvcCopyName(s.TLS.CASecretName, false) || !pvcCopyUIDPattern.MatchString(s.TLS.CASecretUID) || !mysqlRestoreSecretKey.MatchString(s.TLS.CAKey) || !pvcCopyName(s.TLS.ServerName, false) || (s.TLS.ServerName != dns && s.TLS.ServerName != dns+".cluster.local") {
 		return "", errors.New("MySQL source requires reviewed CA Secret and Service DNS TLS identity")
 	}
 	s.AccessModes = append([]string(nil), s.AccessModes...)

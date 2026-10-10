@@ -6000,7 +6000,7 @@
           "caSecretName": {"type": "string", "minLength": 1, "maxLength": 253},
           "caSecretUid": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,127}$"},
           "caKey": {"type": "string", "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,252}$"},
-          "serverName": {"type": "string", "minLength": 1, "maxLength": 253, "description": "Reviewed Service DNS identity; VERIFY_IDENTITY is mandatory, no insecure mode."}
+          "serverName": {"type": "string", "minLength": 1, "maxLength": 253, "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\\.svc(\\.cluster\\.local)?$", "description": "Must equal the source Service and namespace joined as service.namespace.svc or service.namespace.svc.cluster.local. No arbitrary suffix, custom cluster domain, endpoint flag or insecure TLS mode; VERIFY_IDENTITY is mandatory."}
         }
       },
       "MySQLRestoreSource": {

@@ -106,6 +106,43 @@ func TestMySQLRestoreRejectsForgedAndUnsafeMetadata(t *testing.T) {
 	}
 }
 
+func TestMySQLRestoreSourceTLSExactServiceDNS(t *testing.T) {
+	for _, serverName := range []string{"mysql.base.svc", "mysql.base.svc.cluster.local"} {
+		t.Run(serverName, func(t *testing.T) {
+			p, sources, permission := mysqlRestoreFixture(t)
+			sources[0].TLS.ServerName = serverName
+			p.Items[0].Source.TLS.ServerName = serverName
+			if _, err := sources[0].CanonicalIdentity(); err != nil {
+				t.Fatal("exact Service hostname rejected", err)
+			}
+			if _, err := CompileMySQLRestorePlan(p, sources, permission); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+	for _, serverName := range []string{
+		"mysql.base.svc.attacker.example", "mysql.base.svc.cluster.local.attacker.example",
+		"mysql.base.svc.custom.internal", "mysql.base.svc.cluster.local.cluster.local",
+		"mysql.base.svc-evil.example", "mysql.other.svc.cluster.local", "other.base.svc.cluster.local",
+		"mysql.base.svc.", "mysql.base.svc.cluster.local.", "MYSQL.base.svc.cluster.local",
+		"127.0.0.1", "localhost", "mysql.base.svc:3306", "mysql.base.svc.cluster.local@attacker.example",
+	} {
+		t.Run(serverName, func(t *testing.T) {
+			p, sources, permission := mysqlRestoreFixture(t)
+			// Even if reviewed-source input and plan agree, arbitrary suffixes
+			// cannot redirect credentials to a host outside the exact Service.
+			sources[0].TLS.ServerName = serverName
+			p.Items[0].Source.TLS.ServerName = serverName
+			if _, err := sources[0].CanonicalIdentity(); err == nil {
+				t.Fatal("untrusted TLS endpoint accepted")
+			}
+			if _, err := CompileMySQLRestorePlan(p, sources, permission); err == nil {
+				t.Fatal("untrusted endpoint compiled")
+			}
+		})
+	}
+}
+
 func TestMySQLRestoreTargetDataSubPath(t *testing.T) {
 	if MySQLRestoreTargetDataSubPath != "mysql" {
 		t.Fatal("restored target layout must match the sealed feature workload's mysql subpath")
