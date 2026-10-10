@@ -37,7 +37,7 @@ func TestPVCCopyCanonicalOpenAPIFields(t *testing.T) {
 	if err := json.Unmarshal(raw, &doc); err != nil {
 		t.Fatal(err)
 	}
-	for name, typ := range map[string]reflect.Type{"PVCCopyPlan": reflect.TypeOf(domain.PVCCopyPlan{}), "PVCCopyItem": reflect.TypeOf(domain.PVCCopyItem{})} {
+	for name, typ := range map[string]reflect.Type{"PVCCopyPlan": reflect.TypeOf(domain.PVCCopyPlan{}), "PVCCopyItem": reflect.TypeOf(domain.PVCCopyItem{}), "MySQLRestorePlan": reflect.TypeOf(domain.MySQLRestorePlan{}), "MySQLRestoreItem": reflect.TypeOf(domain.MySQLRestoreItem{}), "MySQLRestoreSource": reflect.TypeOf(domain.MySQLRestoreSource{}), "MySQLRestoreResult": reflect.TypeOf(domain.MySQLRestoreResult{})} {
 		s := doc.Components.Schemas[name]
 		if s.AdditionalProperties == nil || *s.AdditionalProperties {
 			t.Fatalf("%s must reject unknown fields", name)
@@ -62,8 +62,8 @@ func TestPVCCopyCanonicalOpenAPIFields(t *testing.T) {
 		}
 	}
 	for name, fields := range map[string][]string{
-		"RunnerCommand": {"pvcCopyPlan"}, "RunnerCommandResult": {"pvcCopyPlanDigest", "pvcCopyVerified"},
-		"ResourceSnapshot": {"sourceUid"}, "RunnerHeartbeatRequest": {"pvcCopyContractVersion"},
+		"RunnerCommand": {"pvcCopyPlan", "mysqlRestorePlan"}, "RunnerCommandResult": {"pvcCopyPlanDigest", "pvcCopyVerified", "mysqlRestorePlanDigest", "mysqlRestoreVerified"},
+		"ResourceSnapshot": {"sourceUid"}, "RunnerHeartbeatRequest": {"pvcCopyContractVersion", "mysqlRestoreContractVersion"},
 	} {
 		for _, field := range fields {
 			if _, ok := doc.Components.Schemas[name].Properties[field]; !ok {

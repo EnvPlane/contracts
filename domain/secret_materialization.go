@@ -96,6 +96,7 @@ type SecretMaterializationItemResult struct {
 	IdempotencyKey  string                         `json:"idempotencyKey"`
 	InputDigest     string                         `json:"inputDigest"`
 	OutputDigest    string                         `json:"outputDigest,omitempty"`
+	OutputUID       string                         `json:"outputUid,omitempty"` // Kubernetes UID; never Secret data.
 	Status          SecretMaterializationItemState `json:"status"`
 	ErrorCode       SecretMaterializationErrorCode `json:"errorCode,omitempty"`
 	Attempt         int                            `json:"attempt"`
@@ -291,6 +292,9 @@ func (p SecretMaterializationPlan) Validate() error {
 		}
 		if result.OutputDigest != "" && result.Status != SecretItemReady && result.Status != SecretItemDeleted {
 			return errors.New("output digest is only valid for ready or deleted results")
+		}
+		if result.OutputUID != "" && (!pvcCopyUIDPattern.MatchString(result.OutputUID) || (result.Status != SecretItemReady && result.Status != SecretItemDeleted)) {
+			return errors.New("output UID must identify a ready or deleted Secret")
 		}
 	}
 	return nil

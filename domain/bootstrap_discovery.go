@@ -394,6 +394,7 @@ type RunnerRegistrationResponse struct {
 }
 
 type RunnerHeartbeatRequest struct {
+	MySQLRestoreContractVersion string `json:"mysqlRestoreContractVersion,omitempty"`
 	PVCCopyContractVersion  string   `json:"pvcCopyContractVersion,omitempty"`
 	PVCCopySourceNamespaces []string `json:"pvcCopySourceNamespaces,omitempty"`
 	PVCCopyHelperImage      string   `json:"pvcCopyHelperImage,omitempty"`
@@ -422,6 +423,7 @@ type RunnerHeartbeatRequest struct {
 // its pinned chart contract with a newer compiled deployment configuration.
 // None of these fields contains secret material.
 type RunnerCommand struct {
+	MySQLRestorePlan                *MySQLRestorePlan          `json:"mysqlRestorePlan,omitempty"`
 	PVCCopyPlan                     *PVCCopyPlan               `json:"pvcCopyPlan,omitempty"`
 	ReleasePlanTransportVersion     string                     `json:"releasePlanTransportVersion,omitempty"`
 	ID                              string                     `json:"id"`
@@ -459,6 +461,8 @@ type RunnerCommand struct {
 }
 
 type RunnerCommandResult struct {
+	MySQLRestorePlanDigest      string             `json:"mysqlRestorePlanDigest,omitempty"`
+	MySQLRestoreVerified        bool               `json:"mysqlRestoreVerified,omitempty"`
 	PVCCopyPlanDigest           string             `json:"pvcCopyPlanDigest,omitempty"`
 	PVCCopyVerified             bool               `json:"pvcCopyVerified,omitempty"`
 	ReleasePlanTransportVersion string             `json:"releasePlanTransportVersion,omitempty"`
