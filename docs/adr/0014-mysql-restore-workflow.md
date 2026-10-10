@@ -63,6 +63,16 @@ managed ownership labels and plan digest before treating OutputUID as evidence.
 Results are excluded from existing Secret-plan canonical digests, preserving
 compatibility. Source credentials are never cloned into the target.
 
+`TargetRootPasswordKey` is mandatory and covered by the plan digest. It must be
+a valid Secret key different from `TargetPasswordKey`; trusted target-Secret
+approval additionally binds `RootPasswordKey`, preventing a re-sealed plan from
+selecting a different key. The trusted `mysql-password-v1` generator independently
+produces root and app credentials; its fixed root key is `MYSQL_ROOT_PASSWORD`
+(`MySQLRestoreRootPasswordKey`). Main/runtime accept that generator constant,
+never a client-controlled key flag. Metadata key separation does not prove value
+independence: generator and executor tests must verify distinct generated values
+without persisting/logging them in contracts. Root init must not reuse app values.
+
 The plan pins helper and target MySQL images; trusted policy allowlists both.
 Target storage/copy bytes and timeout use positive, aggregate, overflow-safe
 bounds. Source requested bytes must match the trusted scan; target capacity must

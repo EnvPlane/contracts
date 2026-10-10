@@ -6035,7 +6035,7 @@
       },
       "MySQLRestoreItem": {
         "type": "object", "additionalProperties": false,
-        "required": ["ddlMode", "maxStatementBytes", "maxTables", "maxRows", "id", "source", "sourceIdentity", "targetPvcName", "targetSecretName", "targetSecretUid", "targetPasswordKey", "targetDatabase", "targetUsername", "secretMaterializationPlanDigest", "storageClass", "accessModes", "requestedBytes", "maxBytes", "timeoutSeconds"],
+        "required": ["ddlMode", "maxStatementBytes", "maxTables", "maxRows", "id", "source", "sourceIdentity", "targetPvcName", "targetSecretName", "targetSecretUid", "targetPasswordKey", "targetRootPasswordKey", "targetDatabase", "targetUsername", "secretMaterializationPlanDigest", "storageClass", "accessModes", "requestedBytes", "maxBytes", "timeoutSeconds"],
         "properties": {
           "ddlMode": {"type": "string", "enum": ["backup_lock", "quiescence"]},
           "quiescenceRef": {"type": "string", "minLength": 1, "maxLength": 256},
@@ -6049,6 +6049,7 @@
           "targetSecretName": {"type": "string", "minLength": 1, "maxLength": 253},
           "targetSecretUid": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,127}$"},
           "targetPasswordKey": {"type": "string", "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,252}$"},
+          "targetRootPasswordKey": {"type": "string", "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,252}$", "description": "Independent generated root-password key; must differ from targetPasswordKey and match trusted completed Secret gate metadata. Never a credential value."},
           "targetDatabase": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"},
           "targetUsername": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"},
           "secretMaterializationPlanDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},

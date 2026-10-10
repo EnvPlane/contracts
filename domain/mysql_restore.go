@@ -15,6 +15,7 @@ const MySQLRestoreContractVersion = "v1"
 const RunnerOperationRestoreMySQL = "restore_mysql"
 const MySQLRestoreMaxTimeoutSeconds int64 = 21600
 const MySQLRestoreMaxBytes int64 = 1 << 40
+const MySQLRestoreRootPasswordKey = "MYSQL_ROOT_PASSWORD" // #nosec G101 -- fixed Kubernetes Secret key name, never a credential value.
 
 type MySQLRestoreCredentialRef struct {
 	Namespace   string `json:"namespace"`
@@ -74,6 +75,7 @@ type MySQLRestoreItem struct {
 	TargetSecretName                string             `json:"targetSecretName"`
 	TargetSecretUID                 string             `json:"targetSecretUid"`
 	TargetPasswordKey               string             `json:"targetPasswordKey"`
+	TargetRootPasswordKey           string             `json:"targetRootPasswordKey"`
 	TargetDatabase                  string             `json:"targetDatabase"`
 	TargetUsername                  string             `json:"targetUsername"`
 	SecretMaterializationPlanDigest string             `json:"secretMaterializationPlanDigest"`
@@ -122,6 +124,7 @@ type MySQLRestorePermission struct {
 
 type MySQLRestoreTargetSecret struct {
 	Name, UID, PasswordKey, Username, SecretMaterializationPlanDigest string
+	RootPasswordKey                                                   string
 }
 
 // MySQLRestoreResult is prerequisite evidence, not environment Ready. Validate
@@ -228,6 +231,9 @@ func (p MySQLRestorePlan) Validate() error {
 			return errors.New("ambiguous or mismatched MySQL source selection")
 		}
 		ids[item.ID], targets[item.TargetPVCName], secrets[item.TargetSecretName], sources[key] = true, true, true, true
+		if !mysqlRestoreSecretKey.MatchString(item.TargetRootPasswordKey) || item.TargetRootPasswordKey == item.TargetPasswordKey {
+			return errors.New("MySQL target root password requires a distinct valid Secret key")
+		}
 		if !pvcCopyName(item.TargetPVCName, false) || !pvcCopyName(item.TargetSecretName, false) || !pvcCopyUIDPattern.MatchString(item.TargetSecretUID) || item.TargetSecretUID == s.SecretUID || !mysqlRestoreSecretKey.MatchString(item.TargetPasswordKey) || !mysqlRestoreDatabase(item.TargetDatabase) || item.TargetDatabase != s.Database || p.TargetImage != s.SourceImage || !mysqlRestoreIdentifier.MatchString(item.TargetUsername) || strings.EqualFold(item.TargetUsername, "root") || !pvcCopyDigestPattern.MatchString(item.SecretMaterializationPlanDigest) || !pvcCopyName(item.StorageClass, false) || !pvcCopyModes(item.AccessModes) || pvcCopyContains(item.AccessModes, "ReadOnlyMany") {
 			return errors.New("invalid MySQL target or generated Secret binding")
 		}
@@ -316,7 +322,7 @@ func ValidateMySQLRestorePlan(p MySQLRestorePlan, sources []MySQLRestoreSource, 
 		}
 		approved := false
 		for _, secret := range permission.TargetSecrets {
-			if secret == (MySQLRestoreTargetSecret{item.TargetSecretName, item.TargetSecretUID, item.TargetPasswordKey, item.TargetUsername, item.SecretMaterializationPlanDigest}) {
+			if secret == (MySQLRestoreTargetSecret{Name: item.TargetSecretName, UID: item.TargetSecretUID, PasswordKey: item.TargetPasswordKey, Username: item.TargetUsername, SecretMaterializationPlanDigest: item.SecretMaterializationPlanDigest, RootPasswordKey: item.TargetRootPasswordKey}) {
 				approved = true
 			}
 		}

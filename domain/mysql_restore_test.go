@@ -16,8 +16,9 @@ func mysqlRestoreFixture(t *testing.T) (MySQLRestorePlan, []MySQLRestoreSource, 
 	s.BackupAdminSecretRef = &MySQLRestoreCredentialRef{Namespace: "base", Name: "mysql-backup", UID: "backup-uid", Username: "backup", PasswordKey: "password"}
 	s.TLS = MySQLRestoreTLS{CASecretName: "mysql-ca", CASecretUID: "ca-uid", CAKey: "ca.crt", ServerName: "mysql.base.svc.cluster.local"}
 	item := MySQLRestoreItem{ID: "mysql", Source: s, TargetPVCName: "mysql-new", TargetSecretName: "mysql-generated", TargetSecretUID: "generated-uid", TargetPasswordKey: "password", TargetDatabase: "app", TargetUsername: "target", SecretMaterializationPlanDigest: digest, StorageClass: "standard", AccessModes: []string{"ReadWriteOnce"}, RequestedBytes: 2048, MaxBytes: 2048, TimeoutSeconds: 300, DDLMode: "backup_lock", MaxStatementBytes: 1024, MaxTables: 100, MaxRows: 10000}
+	item.TargetRootPasswordKey = MySQLRestoreRootPasswordKey
 	p := MySQLRestorePlan{PlanID: "restore-1", TenantID: "tenant", ProjectID: "project", EnvironmentID: "environment", EnvironmentCreatedAt: time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC), TemplateRevisionID: "revision", TemplateDigest: digest, TargetNamespace: "preview", AllowedSourceNamespaces: []string{"base"}, HelperImage: "registry/helper@" + digest, TargetImage: "registry/mysql@" + digest, Items: []MySQLRestoreItem{item}, MaxBytes: 2048, TimeoutSeconds: 300, StorageQuotaBytes: 2048}
-	permission := MySQLRestorePermission{PlanID: p.PlanID, TenantID: p.TenantID, ProjectID: p.ProjectID, EnvironmentID: p.EnvironmentID, EnvironmentCreatedAt: p.EnvironmentCreatedAt, TemplateRevisionID: p.TemplateRevisionID, TemplateDigest: p.TemplateDigest, TargetNamespace: p.TargetNamespace, AllowedSourceNamespaces: []string{"base"}, AllowedHelperImages: []string{p.HelperImage}, AllowedTargetImages: []string{p.TargetImage}, MaxBytes: p.MaxBytes, TimeoutSeconds: p.TimeoutSeconds, StorageQuotaBytes: p.StorageQuotaBytes, TargetSecrets: []MySQLRestoreTargetSecret{{item.TargetSecretName, item.TargetSecretUID, item.TargetPasswordKey, item.TargetUsername, item.SecretMaterializationPlanDigest}}}
+	permission := MySQLRestorePermission{PlanID: p.PlanID, TenantID: p.TenantID, ProjectID: p.ProjectID, EnvironmentID: p.EnvironmentID, EnvironmentCreatedAt: p.EnvironmentCreatedAt, TemplateRevisionID: p.TemplateRevisionID, TemplateDigest: p.TemplateDigest, TargetNamespace: p.TargetNamespace, AllowedSourceNamespaces: []string{"base"}, AllowedHelperImages: []string{p.HelperImage}, AllowedTargetImages: []string{p.TargetImage}, MaxBytes: p.MaxBytes, TimeoutSeconds: p.TimeoutSeconds, StorageQuotaBytes: p.StorageQuotaBytes, TargetSecrets: []MySQLRestoreTargetSecret{{Name: item.TargetSecretName, UID: item.TargetSecretUID, PasswordKey: item.TargetPasswordKey, Username: item.TargetUsername, SecretMaterializationPlanDigest: item.SecretMaterializationPlanDigest, RootPasswordKey: item.TargetRootPasswordKey}}}
 	permission.ApprovedBackupAdminSecrets = []MySQLRestoreCredentialRef{*s.BackupAdminSecretRef}
 	return p, []MySQLRestoreSource{s}, permission
 }
@@ -102,6 +103,68 @@ func TestMySQLRestoreRejectsForgedAndUnsafeMetadata(t *testing.T) {
 				t.Fatal("unsafe source/plan accepted")
 			}
 		})
+	}
+}
+
+func TestMySQLRestoreIndependentRootPasswordBinding(t *testing.T) {
+	for _, key := range []string{"", "password", "../root", "root;id", "root\n", strings.Repeat("r", 254)} {
+		t.Run(key, func(t *testing.T) {
+			p, sources, permission := mysqlRestoreFixture(t)
+			p.Items[0].TargetRootPasswordKey = key
+			if _, err := CompileMySQLRestorePlan(p, sources, permission); err == nil {
+				t.Fatal("missing, reused or invalid root password key accepted")
+			}
+		})
+	}
+	p, sources, permission := mysqlRestoreFixture(t)
+	compiled, err := CompileMySQLRestorePlan(p, sources, permission)
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded, _ := json.Marshal(compiled)
+	var decoded MySQLRestorePlan
+	if err := json.Unmarshal(encoded, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	if decoded.Items[0].TargetRootPasswordKey != MySQLRestoreRootPasswordKey {
+		t.Fatal("transport dropped independent root key")
+	}
+	if err := ValidateMySQLRestorePlan(decoded, sources, permission); err != nil {
+		t.Fatal(err)
+	}
+	changed := compiled
+	changed.Items = append([]MySQLRestoreItem(nil), compiled.Items...)
+	changed.Items[0].TargetRootPasswordKey = "OTHER_ROOT_KEY"
+	if err := changed.Validate(); err == nil {
+		t.Fatal("root key mutation retained immutable digest")
+	}
+	changed.Digest, _ = changed.CanonicalDigest()
+	if changed.Digest == compiled.Digest {
+		t.Fatal("root key omitted from canonical digest")
+	}
+	if err := changed.Validate(); err != nil {
+		t.Fatal("distinct syntactically valid root key should require out-of-band policy check", err)
+	}
+	if err := ValidateMySQLRestorePlan(changed, sources, permission); err == nil {
+		t.Fatal("re-sealed unapproved root key accepted")
+	}
+	permission.TargetSecrets[0].RootPasswordKey = ""
+	if err := ValidateMySQLRestorePlan(compiled, sources, permission); err == nil {
+		t.Fatal("trusted Secret gate missing root key accepted")
+	}
+	permission.TargetSecrets[0].RootPasswordKey = "OTHER_ROOT_KEY"
+	if err := ValidateMySQLRestorePlan(compiled, sources, permission); err == nil {
+		t.Fatal("mismatched trusted Secret root key accepted")
+	}
+	// The unpublished MySQL schema deliberately refuses old plans lacking the
+	// root binding rather than silently defaulting back to the app password.
+	withoutRoot := strings.Replace(string(encoded), `"targetRootPasswordKey":"MYSQL_ROOT_PASSWORD",`, "", 1)
+	if err := json.Unmarshal([]byte(withoutRoot), &decoded); err != nil {
+		t.Fatal(err)
+	}
+	decoded.Digest, _ = decoded.CanonicalDigest()
+	if err := decoded.Validate(); err == nil {
+		t.Fatal("old MySQL plan without root binding accepted")
 	}
 }
 

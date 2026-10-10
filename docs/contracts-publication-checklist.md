@@ -45,6 +45,13 @@ can exist even when broader parallel CI fails; both must be green before pinning
   production classification, reviewed image, CA or backup authority fails closed.
 - [ ] Actual generated target Secret UID is acknowledged by the trusted current
   Secret-materialization command/attempt before compiling the MySQL plan.
+- [ ] Trusted mysql-password-v1 generator independently produces app/root
+  credentials. TargetRootPasswordKey is the fixed MYSQL_ROOT_PASSWORD key,
+  distinct from the app key and matched by trusted target-Secret metadata.
+  Worker initialization never reuses the app password or overwrites the Secret.
+- [ ] Main accepts real MySQL live proof with the final driver and independently
+  generated root/app credentials, including refusal and cleanup cases. This
+  coordinator performs no live actions; local contracts checks are not live proof.
 - [ ] Main lifecycle wait/dispatch/evidence paths bind current CreatedAt and
   immutable plan digest; no prior lifecycle result can release a new workload.
 - [ ] Existing PVC/fake-state guards and both backend publication prerequisites
