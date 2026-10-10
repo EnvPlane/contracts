@@ -15,6 +15,11 @@ const MySQLRestoreContractVersion = "v1"
 const RunnerOperationRestoreMySQL = "restore_mysql"
 const MySQLRestoreMaxTimeoutSeconds int64 = 21600
 const MySQLRestoreMaxBytes int64 = 1 << 40
+
+// MySQLRestoreTargetDataSubPath is shared by temporary target initialization
+// and the generated feature workload; source PVC root mounts are unchanged.
+const MySQLRestoreTargetDataSubPath = "mysql"
+
 const MySQLRestoreRootPasswordKey = "MYSQL_ROOT_PASSWORD" // #nosec G101 -- fixed Kubernetes Secret key name, never a credential value.
 
 type MySQLRestoreCredentialRef struct {

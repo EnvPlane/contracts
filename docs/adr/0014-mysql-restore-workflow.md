@@ -73,6 +73,27 @@ never a client-controlled key flag. Metadata key separation does not prove value
 independence: generator and executor tests must verify distinct generated values
 without persisting/logging them in contracts. Root init must not reuse app values.
 
+### Target layout and sealed workload publication invariant
+
+`MySQLRestoreTargetDataSubPath = "mysql"` is the shared fixed target layout.
+Worker target initialization writes/restores data in that subdirectory, and the
+generated **feature** SQL workload must mount its new target PVC with
+`subPath: mysql`. Existing source workloads may mount their PVC root; never
+rewrite source mounts or mount source data in restore helpers.
+
+Before sealing the feature template revision, main must bind the target data
+subpath, reviewed pinned MySQL image (`SourceImage`/matching target image),
+generated app/root Secret refs and independent root-password key together in
+the desired workload metadata. The revision digest must cover those rendered
+bindings. Both backend publication gates must preserve them and use the same
+target PVC as the verified restore. Publishing a root mount could start a new
+empty database beside the restored data; refuse any layout/image/Secret drift
+rather than releasing workload on copy evidence alone.
+
+No extra plan wire field is added: v1 has one fixed target subpath, not a
+client-selectable path. Main/worker tests must verify the fixed layout and sealed
+revision bindings; contracts constant tests alone are not runtime/live proof.
+
 The plan pins helper and target MySQL images; trusted policy allowlists both.
 Target storage/copy bytes and timeout use positive, aggregate, overflow-safe
 bounds. Source requested bytes must match the trusted scan; target capacity must

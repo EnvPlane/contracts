@@ -52,6 +52,11 @@ can exist even when broader parallel CI fails; both must be green before pinning
 - [ ] Main accepts real MySQL live proof with the final driver and independently
   generated root/app credentials, including refusal and cleanup cases. This
   coordinator performs no live actions; local contracts checks are not live proof.
+- [ ] Before template revision sealing, generated feature SQL workload metadata
+  binds target PVC `subPath: mysql` (MySQLRestoreTargetDataSubPath), the reviewed
+  pinned MySQL image and generated app/root Secret refs. Worker target layout and
+  both backend publication gates match those digest-covered bindings; original
+  source root mounts remain untouched. Refuse a root mount or later binding drift.
 - [ ] Main lifecycle wait/dispatch/evidence paths bind current CreatedAt and
   immutable plan digest; no prior lifecycle result can release a new workload.
 - [ ] Existing PVC/fake-state guards and both backend publication prerequisites

@@ -106,6 +106,12 @@ func TestMySQLRestoreRejectsForgedAndUnsafeMetadata(t *testing.T) {
 	}
 }
 
+func TestMySQLRestoreTargetDataSubPath(t *testing.T) {
+	if MySQLRestoreTargetDataSubPath != "mysql" {
+		t.Fatal("restored target layout must match the sealed feature workload's mysql subpath")
+	}
+}
+
 func TestMySQLRestoreIndependentRootPasswordBinding(t *testing.T) {
 	for _, key := range []string{"", "password", "../root", "root;id", "root\n", strings.Repeat("r", 254)} {
 		t.Run(key, func(t *testing.T) {
