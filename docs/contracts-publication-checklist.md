@@ -22,11 +22,15 @@ freeze. Re-read HEAD, status, remote head/tags and ahead log before authorizatio
 
 ## Publication mechanism and safety boundary
 
-`.github/workflows/publish-module.yaml` triggers on **every main push** and on
-workflow_dispatch. It tests the module, builds with GOWORK=off, allocates the next
-patch from fetched tags, then pushes a new annotated immutable tag. It runs
+`.github/workflows/publish-module.yaml` runs on main pushes and manual dispatch.
+Automatic runs skip regular docs-only and exact publisher-metadata-only changes
+since the latest immutable release; unknown and semantic paths still release.
+Manual main dispatch remains explicit, with idempotence for released commits.
+See [the current classification and safety policy](module-publication-policy.md).
+Release candidates pass race tests and build with GOWORK=off, then allocate the
+next patch from freshly fetched tags and push a new annotated immutable tag. It runs
 independently of broader Go CI (vulnerability scan, vet, lint, race, coverage and
-boundaries). Therefore a main push itself is publication-triggering: do not push
+boundaries). Therefore a semantic main push is publication-triggering: do not push
 to main or dispatch the publisher before main's explicit final acceptance.
 
 Do not invent the next version, create manual speculative tags, move existing
