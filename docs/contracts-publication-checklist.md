@@ -5,12 +5,12 @@ Snapshot inspected 2026-10-10. This document does not authorize publication.
 
 ## Verified remote baseline
 
-Remote `https://github.com/EnvPlane/contracts.git` is public, default branch main.
+Remote `origin` (`github.com/envplane/contracts`) is public, default branch main.
 Latest observed tag `v0.1.109` is annotated and resolves to
 `05dad4c60719fe91fdbb7ec3aee58ce714eb34b9`, also the observed remote main head.
-[Go CI](https://github.com/EnvPlane/contracts/actions/runs/37916751755),
-[publisher](https://github.com/EnvPlane/contracts/actions/runs/37916751825) and
-[brand guard](https://github.com/EnvPlane/contracts/actions/runs/37916751723)
+[Go CI](https://github.com/envplane/contracts/actions/runs/37916751755),
+[publisher](https://github.com/envplane/contracts/actions/runs/37916751825) and
+[brand guard](https://github.com/envplane/contracts/actions/runs/37916751723)
 passed for that SHA. These are NOT evidence for the local unpublished changes.
 
 At initial inspection the local clean main was `ec3c162`, two commits ahead:

@@ -2,7 +2,7 @@
 
 **Status:** Accepted for contracts; executor integration is separate.
 **Date:** 2026-10-10
-**Deciders:** EnvPlane workflow owners
+**Deciders:** Workflow owners
 
 ## Context
 
