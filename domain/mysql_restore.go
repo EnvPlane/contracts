@@ -7,36 +7,66 @@ import (
 	"reflect"
 	"regexp"
 	"sort"
+	"strings"
 	"time"
 )
 
 const MySQLRestoreContractVersion = "v1"
 const RunnerOperationRestoreMySQL = "restore_mysql"
+const MySQLRestoreMaxTimeoutSeconds int64 = 21600
+const MySQLRestoreMaxBytes int64 = 1 << 40
+
+type MySQLRestoreCredentialRef struct {
+	Namespace   string `json:"namespace"`
+	Name        string `json:"name"`
+	UID         string `json:"uid"`
+	Username    string `json:"username,omitempty"`
+	UsernameKey string `json:"usernameKey,omitempty"`
+	PasswordKey string `json:"passwordKey"`
+}
+
+type MySQLRestoreTLS struct {
+	CASecretName string `json:"caSecretName"`
+	CASecretUID  string `json:"caSecretUid"`
+	CAKey        string `json:"caKey"`
+	ServerName   string `json:"serverName"`
+}
 
 // MySQLRestoreSource is trusted scan metadata, never credential values or dumps.
 // Secret UID is preserved separately from the sanitized Secret manifest.
 type MySQLRestoreSource struct {
-	TenantID         string   `json:"tenantId"`
-	Namespace        string   `json:"namespace"`
-	PVCName          string   `json:"pvcName"`
-	PVCUID           string   `json:"pvcUid"`
-	WorkloadKind     string   `json:"workloadKind"`
-	WorkloadName     string   `json:"workloadName"`
-	WorkloadUID      string   `json:"workloadUid"`
-	Container        string   `json:"container"`
-	Database         string   `json:"database"`
-	Username         string   `json:"username"`
-	SecretName       string   `json:"secretName"`
-	SecretUID        string   `json:"secretUid"`
-	PasswordKey      string   `json:"passwordKey"`
-	SourceImage      string   `json:"sourceImage"`
-	StorageClass     string   `json:"storageClass"`
-	AccessModes      []string `json:"accessModes"`
-	RequestedBytes   int64    `json:"requestedBytes"`
-	EnvironmentClass string   `json:"environmentClass"`
+	Service              string                     `json:"service"`
+	ServiceUID           string                     `json:"serviceUid"`
+	Port                 int                        `json:"port"`
+	BackupAdminSecretRef *MySQLRestoreCredentialRef `json:"backupAdminSecretRef,omitempty"`
+	TLS                  MySQLRestoreTLS            `json:"tls"`
+	UsernameKey          string                     `json:"usernameKey,omitempty"`
+	TenantID             string                     `json:"tenantId"`
+	Namespace            string                     `json:"namespace"`
+	PVCName              string                     `json:"pvcName"`
+	PVCUID               string                     `json:"pvcUid"`
+	WorkloadKind         string                     `json:"workloadKind"`
+	WorkloadName         string                     `json:"workloadName"`
+	WorkloadUID          string                     `json:"workloadUid"`
+	Container            string                     `json:"container"`
+	Database             string                     `json:"database"`
+	Username             string                     `json:"username"`
+	SecretName           string                     `json:"secretName"`
+	SecretUID            string                     `json:"secretUid"`
+	PasswordKey          string                     `json:"passwordKey"`
+	SourceImage          string                     `json:"sourceImage"`
+	StorageClass         string                     `json:"storageClass"`
+	AccessModes          []string                   `json:"accessModes"`
+	RequestedBytes       int64                      `json:"requestedBytes"`
+	EnvironmentClass     string                     `json:"environmentClass"`
 }
 
 type MySQLRestoreItem struct {
+	DDLMode                         string             `json:"ddlMode"`
+	QuiescenceRef                   string             `json:"quiescenceRef,omitempty"`
+	MaxStatementBytes               int                `json:"maxStatementBytes"`
+	MaxTables                       int                `json:"maxTables"`
+	MaxRows                         int64              `json:"maxRows"`
 	ID                              string             `json:"id"`
 	Source                          MySQLRestoreSource `json:"source"`
 	SourceIdentity                  string             `json:"sourceIdentity"`
@@ -79,6 +109,8 @@ type MySQLRestorePlan struct {
 // MySQLRestorePermission is never accepted from clients as an approval flag.
 // Target bindings must come from the completed generated Secret gate.
 type MySQLRestorePermission struct {
+	ApprovedBackupAdminSecrets                                        []MySQLRestoreCredentialRef
+	ApprovedQuiescenceRefs                                            []string
 	PlanID, TenantID, ProjectID, EnvironmentID                        string
 	EnvironmentCreatedAt                                              time.Time
 	TemplateRevisionID, TemplateDigest, TargetNamespace               string
@@ -107,16 +139,42 @@ type MySQLRestoreResult struct {
 	Verified             bool      `json:"verified"`
 }
 
-var mysqlRestoreIdentifier = regexp.MustCompile(`^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$`)
+var mysqlRestoreIdentifier = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9_]{0,63}$`)
 var mysqlRestoreSecretKey = regexp.MustCompile(`^[A-Za-z0-9_][A-Za-z0-9_.-]{0,252}$`)
+
+func (r MySQLRestoreCredentialRef) valid() bool {
+	return pvcCopyName(r.Namespace, true) && pvcCopyName(r.Name, false) && pvcCopyUIDPattern.MatchString(r.UID) && mysqlRestoreSecretKey.MatchString(r.PasswordKey) && ((mysqlRestoreIdentifier.MatchString(r.Username) && r.UsernameKey == "") || (r.Username == "" && mysqlRestoreSecretKey.MatchString(r.UsernameKey)))
+}
+
+func mysqlRestoreDatabase(s string) bool {
+	if !mysqlRestoreIdentifier.MatchString(s) {
+		return false
+	}
+	switch strings.ToLower(s) {
+	case "mysql", "sys", "information_schema", "performance_schema":
+		return false
+	}
+	return true
+}
 
 func (s MySQLRestoreSource) CanonicalIdentity() (string, error) {
 	pvc := PVCCopySource{TenantID: s.TenantID, Namespace: s.Namespace, Name: s.PVCName, UID: s.PVCUID, StorageClass: s.StorageClass, AccessModes: s.AccessModes, RequestedBytes: s.RequestedBytes, VolumeMode: "Filesystem", EnvironmentClass: s.EnvironmentClass}
 	if _, err := pvc.CanonicalIdentity(); err != nil {
 		return "", err
 	}
-	if (s.WorkloadKind != "StatefulSet" && s.WorkloadKind != "Deployment") || !pvcCopyName(s.WorkloadName, false) || !pvcCopyUIDPattern.MatchString(s.WorkloadUID) || !pvcCopyName(s.Container, true) || !pvcCopyName(s.SecretName, false) || !pvcCopyUIDPattern.MatchString(s.SecretUID) || !mysqlRestoreSecretKey.MatchString(s.PasswordKey) || !mysqlRestoreIdentifier.MatchString(s.Database) || !mysqlRestoreIdentifier.MatchString(s.Username) || !pvcCopyImagePattern.MatchString(s.SourceImage) {
+	if s.WorkloadKind != "StatefulSet" || !pvcCopyName(s.WorkloadName, false) || !pvcCopyUIDPattern.MatchString(s.WorkloadUID) || !pvcCopyName(s.Container, true) || !mysqlRestoreDatabase(s.Database) || !pvcCopyImagePattern.MatchString(s.SourceImage) || !pvcCopyName(s.Service, true) || !pvcCopyUIDPattern.MatchString(s.ServiceUID) || s.Port < 1 || s.Port > 65535 {
 		return "", errors.New("invalid immutable MySQL source metadata")
+	}
+	app := MySQLRestoreCredentialRef{s.Namespace, s.SecretName, s.SecretUID, s.Username, s.UsernameKey, s.PasswordKey}
+	if !app.valid() || strings.EqualFold(s.Username, "root") {
+		return "", errors.New("invalid MySQL application credential metadata")
+	}
+	if s.BackupAdminSecretRef != nil && (!s.BackupAdminSecretRef.valid() || s.BackupAdminSecretRef.Namespace != s.Namespace || s.BackupAdminSecretRef.UID == s.SecretUID || s.BackupAdminSecretRef.Name == s.SecretName) {
+		return "", errors.New("invalid distinct backup-admin credential metadata")
+	}
+	dns := s.Service + "." + s.Namespace + ".svc"
+	if !pvcCopyName(s.TLS.CASecretName, false) || !pvcCopyUIDPattern.MatchString(s.TLS.CASecretUID) || !mysqlRestoreSecretKey.MatchString(s.TLS.CAKey) || !pvcCopyName(s.TLS.ServerName, false) || (s.TLS.ServerName != dns && !strings.HasPrefix(s.TLS.ServerName, dns+".")) {
+		return "", errors.New("MySQL source requires reviewed CA Secret and Service DNS TLS identity")
 	}
 	s.AccessModes = append([]string(nil), s.AccessModes...)
 	sort.Strings(s.AccessModes)
@@ -147,7 +205,7 @@ func (p MySQLRestorePlan) Validate() error {
 			return errors.New("invalid MySQL restore identity")
 		}
 	}
-	if p.MaxBytes <= 0 || p.StorageQuotaBytes <= 0 || p.TimeoutSeconds <= 0 || p.TimeoutSeconds > PVCCopyMaxTimeoutSeconds || len(p.Items) == 0 {
+	if p.MaxBytes <= 0 || p.StorageQuotaBytes <= 0 || p.TimeoutSeconds <= 0 || p.TimeoutSeconds > MySQLRestoreMaxTimeoutSeconds || len(p.Items) == 0 {
 		return errors.New("MySQL restore requires bounded limits and items")
 	}
 	namespaces := map[string]bool{}
@@ -170,11 +228,23 @@ func (p MySQLRestorePlan) Validate() error {
 			return errors.New("ambiguous or mismatched MySQL source selection")
 		}
 		ids[item.ID], targets[item.TargetPVCName], secrets[item.TargetSecretName], sources[key] = true, true, true, true
-		if !pvcCopyName(item.TargetPVCName, false) || !pvcCopyName(item.TargetSecretName, false) || !pvcCopyUIDPattern.MatchString(item.TargetSecretUID) || item.TargetSecretUID == s.SecretUID || !mysqlRestoreSecretKey.MatchString(item.TargetPasswordKey) || !mysqlRestoreIdentifier.MatchString(item.TargetDatabase) || !mysqlRestoreIdentifier.MatchString(item.TargetUsername) || !pvcCopyDigestPattern.MatchString(item.SecretMaterializationPlanDigest) || !pvcCopyName(item.StorageClass, false) || !pvcCopyModes(item.AccessModes) || pvcCopyContains(item.AccessModes, "ReadOnlyMany") {
+		if !pvcCopyName(item.TargetPVCName, false) || !pvcCopyName(item.TargetSecretName, false) || !pvcCopyUIDPattern.MatchString(item.TargetSecretUID) || item.TargetSecretUID == s.SecretUID || !mysqlRestoreSecretKey.MatchString(item.TargetPasswordKey) || !mysqlRestoreDatabase(item.TargetDatabase) || item.TargetDatabase != s.Database || p.TargetImage != s.SourceImage || !mysqlRestoreIdentifier.MatchString(item.TargetUsername) || strings.EqualFold(item.TargetUsername, "root") || !pvcCopyDigestPattern.MatchString(item.SecretMaterializationPlanDigest) || !pvcCopyName(item.StorageClass, false) || !pvcCopyModes(item.AccessModes) || pvcCopyContains(item.AccessModes, "ReadOnlyMany") {
 			return errors.New("invalid MySQL target or generated Secret binding")
 		}
-		if item.RequestedBytes < s.RequestedBytes || item.MaxBytes <= 0 || item.MaxBytes > item.RequestedBytes || item.TimeoutSeconds <= 0 || item.TimeoutSeconds > p.TimeoutSeconds || item.RequestedBytes > p.StorageQuotaBytes-storage || item.MaxBytes > p.MaxBytes-copied {
+		if item.RequestedBytes < s.RequestedBytes || item.RequestedBytes > MySQLRestoreMaxBytes || item.MaxBytes <= 0 || item.MaxBytes > MySQLRestoreMaxBytes || item.MaxBytes > item.RequestedBytes || item.TimeoutSeconds <= 0 || item.TimeoutSeconds > p.TimeoutSeconds || item.RequestedBytes > p.StorageQuotaBytes-storage || item.MaxBytes > p.MaxBytes-copied || item.MaxStatementBytes < 1024 || item.MaxStatementBytes > 16<<20 || item.MaxTables < 1 || item.MaxTables > 1000 || item.MaxRows < 1 || item.MaxRows > 100000000 {
 			return errors.New("MySQL restore exceeds size/time/quota bounds")
+		}
+		switch item.DDLMode {
+		case "backup_lock":
+			if s.BackupAdminSecretRef == nil || !s.BackupAdminSecretRef.valid() || item.QuiescenceRef != "" {
+				return errors.New("backup_lock requires reviewed separate admin Secret")
+			}
+		case "quiescence":
+			if !pvcCopyID(item.QuiescenceRef) || len(item.QuiescenceRef) > 256 {
+				return errors.New("MySQL quiescence requires exact trusted authority reference")
+			}
+		default:
+			return errors.New("unsupported MySQL DDL protection mode")
 		}
 		storage += item.RequestedBytes
 		copied += item.MaxBytes
@@ -230,6 +300,20 @@ func ValidateMySQLRestorePlan(p MySQLRestorePlan, sources []MySQLRestoreSource, 
 				return errors.New("production MySQL source requires exact trusted approval")
 			}
 		}
+		if item.DDLMode == "backup_lock" {
+			approved := false
+			for _, ref := range permission.ApprovedBackupAdminSecrets {
+				if s.BackupAdminSecretRef != nil && ref == *s.BackupAdminSecretRef {
+					approved = true
+				}
+			}
+			if !approved {
+				return errors.New("backup admin Secret lacks trusted onboarding approval")
+			}
+		}
+		if item.DDLMode == "quiescence" && !pvcCopyContains(permission.ApprovedQuiescenceRefs, item.QuiescenceRef) {
+			return errors.New("MySQL quiescence authority reference not permitted")
+		}
 		approved := false
 		for _, secret := range permission.TargetSecrets {
 			if secret == (MySQLRestoreTargetSecret{item.TargetSecretName, item.TargetSecretUID, item.TargetPasswordKey, item.TargetUsername, item.SecretMaterializationPlanDigest}) {
@@ -251,6 +335,10 @@ func CompileMySQLRestorePlan(p MySQLRestorePlan, sources []MySQLRestoreSource, p
 	p.AllowedSourceNamespaces = append([]string(nil), p.AllowedSourceNamespaces...)
 	p.Items = append([]MySQLRestoreItem(nil), p.Items...)
 	for i := range p.Items {
+		if p.Items[i].Source.BackupAdminSecretRef != nil {
+			ref := *p.Items[i].Source.BackupAdminSecretRef
+			p.Items[i].Source.BackupAdminSecretRef = &ref
+		}
 		p.Items[i].AccessModes = append([]string(nil), p.Items[i].AccessModes...)
 		p.Items[i].Source.AccessModes = append([]string(nil), p.Items[i].Source.AccessModes...)
 		if p.Items[i].SourceIdentity == "" {
@@ -307,8 +395,19 @@ func (p *MySQLRestorePlan) UnmarshalJSON(data []byte) error {
 				return err
 			}
 			if source, ok := fields["source"]; ok {
-				if _, err := pvcCopyExactJSONKeys(source, reflect.TypeOf(MySQLRestoreSource{})); err != nil {
+				sourceFields, err := pvcCopyExactJSONKeys(source, reflect.TypeOf(MySQLRestoreSource{}))
+				if err != nil {
 					return err
+				}
+				if raw, ok := sourceFields["backupAdminSecretRef"]; ok {
+					if _, err := pvcCopyExactJSONKeys(raw, reflect.TypeOf(MySQLRestoreCredentialRef{})); err != nil {
+						return err
+					}
+				}
+				if raw, ok := sourceFields["tls"]; ok {
+					if _, err := pvcCopyExactJSONKeys(raw, reflect.TypeOf(MySQLRestoreTLS{})); err != nil {
+						return err
+					}
 				}
 			}
 		}

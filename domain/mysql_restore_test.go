@@ -11,10 +11,14 @@ import (
 func mysqlRestoreFixture(t *testing.T) (MySQLRestorePlan, []MySQLRestoreSource, MySQLRestorePermission) {
 	t.Helper()
 	digest := "sha256:" + strings.Repeat("a", 64)
-	s := MySQLRestoreSource{TenantID: "tenant", Namespace: "base", PVCName: "mysql-data", PVCUID: "pvc-uid", WorkloadKind: "StatefulSet", WorkloadName: "mysql", WorkloadUID: "workload-uid", Container: "mysql", Database: "app", Username: "reader", SecretName: "mysql-auth", SecretUID: "secret-uid", PasswordKey: "password", SourceImage: "registry/mysql@" + digest, StorageClass: "standard", AccessModes: []string{"ReadWriteOnce"}, RequestedBytes: 1024, EnvironmentClass: "development"}
-	item := MySQLRestoreItem{ID: "mysql", Source: s, TargetPVCName: "mysql-new", TargetSecretName: "mysql-generated", TargetSecretUID: "generated-uid", TargetPasswordKey: "password", TargetDatabase: "app", TargetUsername: "target", SecretMaterializationPlanDigest: digest, StorageClass: "standard", AccessModes: []string{"ReadWriteOnce"}, RequestedBytes: 2048, MaxBytes: 2048, TimeoutSeconds: 300}
+	s := MySQLRestoreSource{TenantID: "tenant", Namespace: "base", PVCName: "mysql-data", PVCUID: "pvc-uid", WorkloadKind: "StatefulSet", WorkloadName: "mysql", WorkloadUID: "workload-uid", Container: "mysql", Database: "app", Username: "reader", SecretName: "mysql-auth", SecretUID: "secret-uid", PasswordKey: "password", SourceImage: "registry/mysql@" + digest, StorageClass: "standard", AccessModes: []string{"ReadWriteOnce"}, RequestedBytes: 1024, EnvironmentClass: "development"} // #nosec G101 -- password is a Kubernetes Secret key name; no credential value is present.
+	s.Service, s.ServiceUID, s.Port = "mysql", "service-uid", 3306
+	s.BackupAdminSecretRef = &MySQLRestoreCredentialRef{Namespace: "base", Name: "mysql-backup", UID: "backup-uid", Username: "backup", PasswordKey: "password"}
+	s.TLS = MySQLRestoreTLS{CASecretName: "mysql-ca", CASecretUID: "ca-uid", CAKey: "ca.crt", ServerName: "mysql.base.svc.cluster.local"}
+	item := MySQLRestoreItem{ID: "mysql", Source: s, TargetPVCName: "mysql-new", TargetSecretName: "mysql-generated", TargetSecretUID: "generated-uid", TargetPasswordKey: "password", TargetDatabase: "app", TargetUsername: "target", SecretMaterializationPlanDigest: digest, StorageClass: "standard", AccessModes: []string{"ReadWriteOnce"}, RequestedBytes: 2048, MaxBytes: 2048, TimeoutSeconds: 300, DDLMode: "backup_lock", MaxStatementBytes: 1024, MaxTables: 100, MaxRows: 10000}
 	p := MySQLRestorePlan{PlanID: "restore-1", TenantID: "tenant", ProjectID: "project", EnvironmentID: "environment", EnvironmentCreatedAt: time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC), TemplateRevisionID: "revision", TemplateDigest: digest, TargetNamespace: "preview", AllowedSourceNamespaces: []string{"base"}, HelperImage: "registry/helper@" + digest, TargetImage: "registry/mysql@" + digest, Items: []MySQLRestoreItem{item}, MaxBytes: 2048, TimeoutSeconds: 300, StorageQuotaBytes: 2048}
 	permission := MySQLRestorePermission{PlanID: p.PlanID, TenantID: p.TenantID, ProjectID: p.ProjectID, EnvironmentID: p.EnvironmentID, EnvironmentCreatedAt: p.EnvironmentCreatedAt, TemplateRevisionID: p.TemplateRevisionID, TemplateDigest: p.TemplateDigest, TargetNamespace: p.TargetNamespace, AllowedSourceNamespaces: []string{"base"}, AllowedHelperImages: []string{p.HelperImage}, AllowedTargetImages: []string{p.TargetImage}, MaxBytes: p.MaxBytes, TimeoutSeconds: p.TimeoutSeconds, StorageQuotaBytes: p.StorageQuotaBytes, TargetSecrets: []MySQLRestoreTargetSecret{{item.TargetSecretName, item.TargetSecretUID, item.TargetPasswordKey, item.TargetUsername, item.SecretMaterializationPlanDigest}}}
+	permission.ApprovedBackupAdminSecrets = []MySQLRestoreCredentialRef{*s.BackupAdminSecretRef}
 	return p, []MySQLRestoreSource{s}, permission
 }
 
@@ -98,6 +102,80 @@ func TestMySQLRestoreRejectsForgedAndUnsafeMetadata(t *testing.T) {
 				t.Fatal("unsafe source/plan accepted")
 			}
 		})
+	}
+}
+
+func TestMySQLRestoreReviewedDDLAndTLS(t *testing.T) {
+	for _, name := range []string{"Deployment", "service UID", "port", "admin missing", "admin approval", "admin alias", "CA missing", "wrong DNS", "statement", "tables", "rows", "root", "system database", "image mismatch"} {
+		t.Run(name, func(t *testing.T) {
+			p, sources, permission := mysqlRestoreFixture(t)
+			switch name {
+			case "Deployment":
+				p.Items[0].Source.WorkloadKind = "Deployment"
+			case "service UID":
+				p.Items[0].Source.ServiceUID = ""
+			case "port":
+				p.Items[0].Source.Port = 65536
+			case "admin missing":
+				p.Items[0].Source.BackupAdminSecretRef = nil
+			case "admin approval":
+				permission.ApprovedBackupAdminSecrets = nil
+			case "admin alias":
+				r := *p.Items[0].Source.BackupAdminSecretRef
+				r.UID = p.Items[0].Source.SecretUID
+				p.Items[0].Source.BackupAdminSecretRef = &r
+			case "CA missing":
+				p.Items[0].Source.TLS.CASecretUID = ""
+			case "wrong DNS":
+				p.Items[0].Source.TLS.ServerName = "mysql.base.svc-evil.example"
+			case "statement":
+				p.Items[0].MaxStatementBytes = (16 << 20) + 1
+			case "tables":
+				p.Items[0].MaxTables = 1001
+			case "rows":
+				p.Items[0].MaxRows = 100000001
+			case "root":
+				p.Items[0].Source.Username = "root"
+			case "system database":
+				p.Items[0].Source.Database = "MYSQL"
+			case "image mismatch":
+				p.TargetImage = "registry/mysql@sha256:" + strings.Repeat("b", 64)
+				permission.AllowedTargetImages = []string{p.TargetImage}
+			}
+			if _, err := CompileMySQLRestorePlan(p, sources, permission); err == nil {
+				t.Fatal("unreviewed/unsafe MySQL mode accepted")
+			}
+		})
+	}
+	p, sources, permission := mysqlRestoreFixture(t)
+	p.Items[0].DDLMode = "quiescence"
+	p.Items[0].QuiescenceRef = "authority/lease-1"
+	p.Items[0].Source.BackupAdminSecretRef = nil
+	sources[0].BackupAdminSecretRef = nil
+	if _, err := CompileMySQLRestorePlan(p, sources, permission); err == nil {
+		t.Fatal("unapproved quiescence accepted")
+	}
+	permission.ApprovedQuiescenceRefs = []string{"authority/lease-1"}
+	compiled, err := CompileMySQLRestorePlan(p, sources, permission)
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded, _ := json.Marshal(compiled)
+	var decoded MySQLRestorePlan
+	if err := json.Unmarshal(encoded, &decoded); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateMySQLRestorePlan(decoded, sources, permission); err != nil {
+		t.Fatal(err)
+	}
+	p, sources, permission = mysqlRestoreFixture(t)
+	compiled, err = CompileMySQLRestorePlan(p, sources, permission)
+	if err != nil {
+		t.Fatal(err)
+	}
+	compiled.Items[0].Source.BackupAdminSecretRef.UID = "changed"
+	if p.Items[0].Source.BackupAdminSecretRef.UID != "backup-uid" {
+		t.Fatal("compiler aliases backup credential refs")
 	}
 }
 

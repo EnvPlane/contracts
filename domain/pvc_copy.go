@@ -125,7 +125,7 @@ func pvcCopyModes(modes []string) bool {
 		}
 		seen[mode] = true
 	}
-	return !(seen["ReadWriteOncePod"] && len(modes) != 1)
+	return !seen["ReadWriteOncePod"] || len(modes) == 1
 }
 
 func pvcCopySameSet(a, b []string) bool {

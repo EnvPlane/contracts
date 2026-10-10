@@ -11,7 +11,15 @@ and existing materialization guards. `RunnerOperationRestoreMySQL` is
 `restore_mysql`. Add optional command plan, result digest/verified metadata and
 heartbeat contract version; no existing required transport fields change.
 
-The source projection retains PVC, StatefulSet/Deployment and credential Secret
+MySQL heartbeat capabilities are independent of filesystem copy configuration:
+`MySQLRestoreContractVersion`, `MySQLRestoreSourceNamespaces`,
+`MySQLRestoreTargetImages`, `MySQLRestoreHelperImage`. Main must require an
+authenticated online heartbeat no older than 90 seconds, a verified compatible
+Runner image, a pinned independent helper and approved target image membership.
+These are operator configuration/verified compatibility metadata, never dynamic
+client flags. SQL backup scope does not inherit filesystem-offline source fences.
+
+The source projection retains PVC, StatefulSet, Service and credential Secret
 UIDs separately from sanitized manifests. It includes the selected container,
 database/principal, password **key name**, pinned source image and storage and
 environment classification metadata. It contains no passwords, database rows,
@@ -25,6 +33,25 @@ Before backup Runner must compare the pinned digest to the actual owned source
 Pod/container image ID. No `SourceObservedImage` is synthesized at compilation.
 Missing read/backup/lock privileges (including BACKUP_ADMIN where required by
 the reviewed backup mode) are prerequisites, never grounds for automatic grants.
+
+V1 accepts StatefulSet sources only; Deployment is explicitly unsupported.
+Service name/UID/port are mandatory trusted scan metadata, so Agent UID
+projection must also cover Service. `BackupAdminSecretRef` is an optional
+`*MySQLRestoreCredentialRef` that becomes mandatory for `backup_lock`. Its
+Namespace/Name/UID plus literal Username or UsernameKey and PasswordKey must
+exactly match trusted `ApprovedBackupAdminSecrets` from normal onboarding. It
+cannot alias the app credential Secret. `quiescence` instead requires a stable
+QuiescenceRef in trusted `ApprovedQuiescenceRefs` and live Authority enforcement
+by the executor; a job/client flag is never sufficient. Source TLS metadata
+binds a same-namespace CA Secret name/UID/key and Service DNS server name.
+VERIFY_IDENTITY is mandatory; no insecure option exists. Operator-provisioned
+trusted TLS may be required when chart defaults are self-signed.
+
+The contract mirrors initial worker limits: matching source/target image and
+database, non-root app/target principal, no system database, at most six hours
+per plan, at most 1 TiB per item copy/storage, 1 KiB–16 MiB statement limit,
+1–1000 tables and 1–100000000 rows. These bounds are metadata and execution
+limits, not dump/row payloads.
 
 The item binds a new target PVC, generated Secret name/UID/key/principal, target
 database and completed Secret-materialization plan digest. Target UID is required

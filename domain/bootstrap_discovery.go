@@ -394,15 +394,18 @@ type RunnerRegistrationResponse struct {
 }
 
 type RunnerHeartbeatRequest struct {
-	MySQLRestoreContractVersion string `json:"mysqlRestoreContractVersion,omitempty"`
-	PVCCopyContractVersion  string   `json:"pvcCopyContractVersion,omitempty"`
-	PVCCopySourceNamespaces []string `json:"pvcCopySourceNamespaces,omitempty"`
-	PVCCopyHelperImage      string   `json:"pvcCopyHelperImage,omitempty"`
-	ProjectID               string   `json:"projectId,omitempty"`
-	ClusterID               string   `json:"clusterId"`
-	RunnerID                string   `json:"runnerId"`
-	DeploymentMode          string   `json:"deploymentMode,omitempty"`
-	RunnerNamespace         string   `json:"runnerNamespace"`
+	MySQLRestoreContractVersion  string   `json:"mysqlRestoreContractVersion,omitempty"`
+	MySQLRestoreSourceNamespaces []string `json:"mysqlRestoreSourceNamespaces,omitempty"`
+	MySQLRestoreTargetImages     []string `json:"mysqlRestoreTargetImages,omitempty"`
+	MySQLRestoreHelperImage      string   `json:"mysqlRestoreHelperImage,omitempty"`
+	PVCCopyContractVersion       string   `json:"pvcCopyContractVersion,omitempty"`
+	PVCCopySourceNamespaces      []string `json:"pvcCopySourceNamespaces,omitempty"`
+	PVCCopyHelperImage           string   `json:"pvcCopyHelperImage,omitempty"`
+	ProjectID                    string   `json:"projectId,omitempty"`
+	ClusterID                    string   `json:"clusterId"`
+	RunnerID                     string   `json:"runnerId"`
+	DeploymentMode               string   `json:"deploymentMode,omitempty"`
+	RunnerNamespace              string   `json:"runnerNamespace"`
 	// HelmTargetNamespaces is the finite, chart-rendered namespace set carrying
 	// this Runner's Helm Direct Role/RoleBinding. It is metadata only and never
 	// contains bootstrap or SCM credentials.
