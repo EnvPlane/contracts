@@ -5964,7 +5964,9 @@
           "pvcCopyContractVersion": {
             "type": "string",
             "description": "Executor capability advertisement; the server must require a verified compatible runner before compiling a PVC copy plan."
-          }
+          },
+          "pvcCopySourceNamespaces": {"type":"array","items":{"type":"string"},"description":"Locally configured source namespace allowlist, reported by the authenticated Runner."},
+          "pvcCopyHelperImage": {"type":"string","description":"Exact configured digest-pinned compatible Runner helper image."}
         }
       },
       "PVCCopyPlan": {
@@ -15795,6 +15797,8 @@
                   "pvcCopyContractVersion": {
                     "type": "string"
                   },
+                  "pvcCopySourceNamespaces": {"type":"array","items":{"type":"string"}},
+                  "pvcCopyHelperImage": {"type":"string"},
                   "projectId": {
                     "type": "string"
                   },
