@@ -52,7 +52,7 @@ class PublicationTests(unittest.TestCase):
     def baseline(self):
         self.git("tag", "-a", "v0.1.111", "-m", "fixture baseline")
 
-    def decide(self, event="push", repository="EnvPlane/contracts", ref="refs/heads/main", target=None):
+    def decide(self, event="push", repository="envplane/contracts", ref="refs/heads/main", target=None):
         return publication.classify(event, repository, ref, target or self.git("rev-parse", "HEAD"))
 
     def remote(self):
@@ -63,7 +63,7 @@ class PublicationTests(unittest.TestCase):
 
     def release(self, target=None, event="push"):
         with contextlib.redirect_stdout(io.StringIO()):
-            return publication.publish(event, "EnvPlane/contracts", "refs/heads/main",
+            return publication.publish(event, "envplane/contracts", "refs/heads/main",
                                        target or self.git("rev-parse", "HEAD"))
 
     def test_first_documentation_commit_publishes_initial_release(self):
@@ -204,15 +204,18 @@ class PublicationTests(unittest.TestCase):
         self.assertFalse(self.decide().publish)
 
     def test_untrusted_events_refs_and_forks_do_not_read_checkout(self):
-        for event, repo, ref in (("pull_request", "EnvPlane/contracts", "refs/heads/main"),
-                                 ("pull_request_target", "EnvPlane/contracts", "refs/heads/main"),
+        for event, repo, ref in (("pull_request", "envplane/contracts", "refs/heads/main"),
+                                 ("pull_request_target", "envplane/contracts", "refs/heads/main"),
                                  ("push", "attacker/contracts", "refs/heads/main"),
-                                 ("workflow_dispatch", "EnvPlane/contracts", "refs/heads/topic"),
-                                 ("push", "EnvPlane/contracts", "refs/tags/v0.1.112")):
+                                 ("workflow_dispatch", "envplane/contracts", "refs/heads/topic"),
+                                 ("push", "envplane/contracts", "refs/tags/v0.1.112")):
             with self.subTest(event=event, repo=repo, ref=ref), mock.patch.object(publication, "git", side_effect=AssertionError("untrusted Git access")):
                 self.assertFalse(publication.classify(event, repo, ref, "missing").publish)
                 with self.assertRaises(RuntimeError):
                     publication.publish(event, repo, ref, "missing")
+
+    def test_canonical_repository_matching_is_case_insensitive(self):
+        self.assertTrue(self.decide(repository="envplane/contracts".upper()).publish)
 
     def test_checkout_identity_mismatch_refused(self):
         old = self.git("rev-parse", "HEAD")
@@ -290,7 +293,7 @@ class PublicationTests(unittest.TestCase):
         newer = self.save()
         self.git("tag", "v0.1.112")
         self.git("checkout", "-q", "--detach", old)
-        result = publication.classify("push", "EnvPlane/contracts", "refs/heads/main", old, newer)
+        result = publication.classify("push", "envplane/contracts", "refs/heads/main", old, newer)
         self.assertEqual(result, publication.Decision(False, "superseded-main-run"))
 
     def test_fetch_failure_is_not_treated_as_missing_tag(self):
@@ -303,7 +306,7 @@ class PublicationTests(unittest.TestCase):
 
     def test_workflow_keeps_trust_concurrency_and_release_gates(self):
         workflow = (SCRIPT.parents[1] / ".github/workflows/publish-module.yaml").read_text()
-        for required in ("github.repository == 'EnvPlane/contracts'", "github.ref == 'refs/heads/main'",
+        for required in ("github.repository == 'envplane/contracts'", "github.ref == 'refs/heads/main'",
                          "github.event_name == 'push'", "github.event_name == 'workflow_dispatch'",
                          "group: contracts-module-publish-main", "cancel-in-progress: false",
                          "ref: ${{ github.sha }}", "fetch-depth: 0", "--current-main",
@@ -330,6 +333,18 @@ class PublicationTests(unittest.TestCase):
             with self.assertRaises(subprocess.CalledProcessError):
                 self.release()
         self.assertEqual(self.git("--git-dir", str(self.origin), "rev-parse", "v0.1.112"), baseline)
+
+    def test_conflicting_fetched_tag_is_not_force_replaced(self):
+        self.baseline()
+        baseline = self.git("rev-parse", "v0.1.111")
+        self.write("domain/input.go")
+        target = self.save()
+        self.remote()
+        self.git("--git-dir", str(self.origin), "update-ref", "refs/tags/v0.1.111", target)
+        with self.assertRaises(subprocess.CalledProcessError):
+            self.release()
+        self.assertEqual(self.git("rev-parse", "v0.1.111"), baseline)
+        self.assertEqual(publication.latest_release(), "v0.1.111")
 
 
 if __name__ == "__main__":

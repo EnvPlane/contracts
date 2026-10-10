@@ -1,7 +1,7 @@
 # Immutable Go module publication policy
 
 The publisher accepts only `push` and `workflow_dispatch` on
-`EnvPlane/contracts` `refs/heads/main`. It checks out the event's exact SHA.
+`envplane/contracts` `refs/heads/main`. It checks out the event's exact SHA.
 Pull requests, fork repositories, tags and other branches cannot publish.
 
 Automatic runs compare the candidate tree against the highest canonical stable

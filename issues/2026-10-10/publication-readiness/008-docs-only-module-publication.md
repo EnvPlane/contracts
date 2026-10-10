@@ -32,7 +32,7 @@ Never force or rewrite a tag. Do not change domain/OpenAPI or consumer files.
 
 ## Local verification
 
-30 Python regression tests pass using temporary local Git repositories,
+32 Python regression tests pass using temporary local Git repositories,
 including competing tag rejection and missing-remote failure. Actionlint
 v1.7.12 accepted the modified workflow. Released-mode Go 1.26.9 race tests,
 vet, build, SDK-generated consistency, changed-file brand guard and diff checks

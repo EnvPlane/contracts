@@ -93,7 +93,7 @@ def embedded_path_change(revision, paths):
 
 def classify(event, repository, ref, target, current_main=None):
     # No Git/file execution is needed for untrusted events or forks.
-    if repository != "EnvPlane/contracts" or ref != "refs/heads/main" or event not in ("push", "workflow_dispatch"):
+    if repository.casefold() != "envplane/contracts" or ref != "refs/heads/main" or event not in ("push", "workflow_dispatch"):
         return Decision(False, "untrusted-event-or-ref")
     target = commit(target)
     if commit("HEAD") != target:
@@ -134,7 +134,7 @@ def next_version(latest):
 
 
 def publish(event, repository, ref, target):
-    if repository != "EnvPlane/contracts" or ref != "refs/heads/main" or event not in ("push", "workflow_dispatch"):
+    if repository.casefold() != "envplane/contracts" or ref != "refs/heads/main" or event not in ("push", "workflow_dispatch"):
         raise RuntimeError("publication requires a trusted canonical main event")
     # Refresh again after tests. No force: a moved/replaced immutable tag fails fetch.
     git("fetch", "origin", "refs/heads/main:refs/remotes/origin/main", "--tags")
