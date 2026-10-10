@@ -3,7 +3,10 @@
 
 import argparse
 from dataclasses import dataclass
+import fnmatch
+import posixpath
 import re
+import shlex
 import subprocess
 import sys
 
@@ -48,12 +51,44 @@ def regular_document(revision, path):
     return not entry or entry.startswith(b"100644 blob ")
 
 
-def has_embeds(revision):
-    # Fail conservatively if documentation might be runtime/test embedded data.
-    result = subprocess.run(["git", "grep", "-q", "-e", "go:embed", revision, "--", "*.go"])
+def embedded_path_change(revision, paths):
+    # Patterns are relative to the Go source directory. Unrelated OpenAPI embeds
+    # must not turn every documentation/publisher change into a release.
+    result = subprocess.run(["git", "grep", "-l", "-z", "-e", "go:embed", revision, "--", "*.go"],
+                            stdout=subprocess.PIPE)
     if result.returncode not in (0, 1):
         raise RuntimeError("unable to inspect embedded module inputs")
-    return result.returncode == 0
+    for entry in result.stdout.split(b"\0"):
+        if not entry:
+            continue
+        source = entry.decode("utf-8", errors="surrogateescape").split(":", 1)[1]
+        text = git("show", revision + ":" + source).decode("utf-8", errors="surrogateescape")
+        for directive in re.findall(r"^\s*//go:embed\s+(.+)$", text, flags=re.MULTILINE):
+            # Unusual Go quoting/escapes are conservative rather than guessed.
+            if "`" in directive or "\\" in directive:
+                return True
+            try:
+                patterns = shlex.split(directive)
+            except ValueError:
+                return True
+            if not patterns:
+                return True
+            for pattern in patterns:
+                pattern = pattern.removeprefix("all:")
+                if (not pattern or "[" in pattern or pattern.startswith("/")
+                        or ".." in pattern.split("/")):
+                    return True
+                for path in paths:
+                    relative = posixpath.relpath(path, posixpath.dirname(source) or ".")
+                    if relative.startswith("../"):
+                        continue
+                    parts = relative.split("/")
+                    # Directory embeds include descendants. fnmatch's broader
+                    # star matching can over-publish but never under-classify.
+                    if any(fnmatch.fnmatchcase("/".join(parts[:i]), pattern)
+                           for i in range(1, len(parts) + 1)):
+                        return True
+    return False
 
 
 def classify(event, repository, ref, target, current_main=None):
@@ -79,11 +114,11 @@ def classify(event, repository, ref, target, current_main=None):
     paths = [path.decode("utf-8", errors="surrogateescape") for path in changed if path]
     if not paths:
         return Decision(False, "no-module-changes")
-    if has_embeds(baseline) or has_embeds(target):
-        return Decision(True, "possible-embedded-input-change")
     for path in paths:
         if (not docs_path(path) and path not in PUBLICATION_METADATA) or not regular_document(baseline, path) or not regular_document(target, path):
             return Decision(True, "module-or-unknown-path-change")
+    if embedded_path_change(baseline, paths) or embedded_path_change(target, paths):
+        return Decision(True, "possible-embedded-input-change")
     reason = "publication-metadata-only" if any(path in PUBLICATION_METADATA for path in paths) else "documentation-only"
     return Decision(False, reason)
 

@@ -19,9 +19,11 @@ These exemptions prevent the publisher fix itself from generating an unnecessary
 module release. They do not exempt other scripts/workflows, licenses, data,
 schemas or arbitrary new paths. Any module Go code/test, dependency, SDK,
 OpenAPI/schema, mixed or unknown change releases. Symlinks, executable docs and
-renames out of the exemption set release. If Go embedding is present in either
-tree, classification conservatively releases rather than guessing whether
-documentation is embedded module input.
+renames out of the exemption set release. Go embed patterns in either tree are
+checked relative to their source directory, including directory descendants.
+Matching documentation releases; uncertain quoting/pattern syntax fails
+conservatively to publication. An unrelated OpenAPI embed does not require
+publishing documentation or pipeline metadata.
 
 Manual main dispatch explicitly publishes a new candidate even when its changes
 are only documentation or publisher metadata. Dispatching the already-published

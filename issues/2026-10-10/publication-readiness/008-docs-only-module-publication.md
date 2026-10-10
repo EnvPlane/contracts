@@ -32,7 +32,7 @@ Never force or rewrite a tag. Do not change domain/OpenAPI or consumer files.
 
 ## Local verification
 
-26 Python regression tests passed using temporary local Git repositories,
+30 Python regression tests pass using temporary local Git repositories,
 including competing tag rejection and missing-remote failure. Actionlint
 v1.7.12 accepted the modified workflow. Released-mode Go 1.26.9 race tests,
 vet, build, SDK-generated consistency, changed-file brand guard and diff checks
@@ -41,3 +41,9 @@ The classifier's exact metadata exemption permits this pipeline-only iteration
 to be pushed later without automatically allocating another module release.
 Hosted verification and publication remain intentionally unperformed until
 main's shared-verification greenlight.
+
+Final real-tree classification returns `publish=false` and
+`reason=publication-metadata-only`. The repository embeds OpenAPI, not the
+changed Markdown/pipeline files; regression coverage distinguishes that from
+embedded documentation. Historical local tag collisions are tracked separately
+in ticket 009; no force-fetch or tag repair is part of this iteration.

@@ -155,10 +155,43 @@ class PublicationTests(unittest.TestCase):
         self.assertTrue(self.decide().publish)
 
     def test_embedded_markdown_is_conservatively_published(self):
-        self.write("domain/embed.go", '//go:embed docs/*.md\n')
+        self.write("embed.go", '//go:embed docs/*.md\n')
         self.save()
         self.baseline()
         self.write("docs/input.md")
+        self.save()
+        self.assertTrue(self.decide().publish)
+
+    def test_unrelated_openapi_embed_does_not_publish_docs_or_pipeline(self):
+        self.write("openapi.go", "//go:embed openapi/openapi.json\n")
+        self.save()
+        self.baseline()
+        self.write("docs/only.md")
+        self.write("scripts/module_publication.py")
+        self.save()
+        self.assertFalse(self.decide().publish)
+
+    def test_directory_and_quoted_embeds_publish_changed_docs(self):
+        self.write("embed.go", '//go:embed "docs/a b.md" all:issues\n')
+        self.save()
+        self.baseline()
+        self.write("issues/nested/ticket.md")
+        self.save()
+        self.assertTrue(self.decide().publish)
+
+    def test_uncertain_embed_quoting_is_not_guessed(self):
+        self.write("embed.go", '//go:embed `docs/a b.md`\n')
+        self.save()
+        self.baseline()
+        self.write("docs/only.md")
+        self.save()
+        self.assertTrue(self.decide().publish)
+
+    def test_uncertain_embed_character_class_is_conservative(self):
+        self.write("embed.go", '//go:embed docs/[a-z].md\n')
+        self.save()
+        self.baseline()
+        self.write("issues/only.md")
         self.save()
         self.assertTrue(self.decide().publish)
 
