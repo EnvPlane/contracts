@@ -14,10 +14,11 @@ const ActivationCodeSchemaVersion = "v1"
 const ActivationCodeMaxLength = 8192
 
 type CommercialSnapshot struct {
-	Currency        string `json:"currency"`
-	AmountMinor     int64  `json:"amountMinor"`
-	BillingInterval string `json:"billingInterval"`
-	TaxMode         string `json:"taxMode"`
+	Currency        string             `json:"currency"`
+	AmountMinor     int64              `json:"amountMinor"`
+	BillingInterval string             `json:"billingInterval"`
+	TaxMode         string             `json:"taxMode"`
+	Amounts         *CommercialAmounts `json:"amounts,omitempty"`
 }
 
 type ActivationGrant struct {
@@ -58,7 +59,7 @@ func (g ActivationGrant) Validate(now time.Time, binding ActivationCodeBinding) 
 	if g.IssuedAt.IsZero() || g.NotBefore.IsZero() || g.ExpiresAt.IsZero() || !g.ExpiresAt.After(g.NotBefore) || now.Before(g.NotBefore) || !now.Before(g.ExpiresAt) {
 		return errors.New("activation grant is not currently valid")
 	}
-	if g.Commercial.AmountMinor < 0 || strings.TrimSpace(g.Commercial.Currency) == "" || strings.TrimSpace(g.Commercial.BillingInterval) == "" || strings.TrimSpace(g.Commercial.TaxMode) == "" {
+	if g.Commercial.ValidateAmounts() != nil || g.Commercial.AmountMinor < 0 || strings.TrimSpace(g.Commercial.Currency) == "" || strings.TrimSpace(g.Commercial.BillingInterval) == "" || strings.TrimSpace(g.Commercial.TaxMode) == "" {
 		return errors.New("invalid commercial snapshot")
 	}
 	for key, value := range g.Limits {

@@ -2000,6 +2000,65 @@
           }
         }
       },
+      "ActivationCommercialAmounts": {
+        "type": "object",
+        "description": "Normalized inclusive financial evidence; subtotal excludes inclusive tax. No discount, trial or annual offer in the fixed monthly MVP. Amounts do not grant entitlements.",
+        "required": [
+          "taxPresentationVersion",
+          "grantKind",
+          "listPriceMinor",
+          "subtotalMinor",
+          "discountMinor",
+          "taxMinor",
+          "totalMinor",
+          "chargedTotalMinor"
+        ],
+        "properties": {
+          "taxPresentationVersion": {
+            "type": "string",
+            "enum": [
+              "inclusive-gross-v1"
+            ]
+          },
+          "grantKind": {
+            "type": "string",
+            "enum": [
+              "paid",
+              "grace"
+            ]
+          },
+          "listPriceMinor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "subtotalMinor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "discountMinor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "taxMinor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "totalMinor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "chargedTotalMinor": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
       "ActivationCommercialSnapshot": {
         "type": "object",
         "required": [
@@ -2012,7 +2071,8 @@
           "currency": { "type": "string" },
           "amountMinor": { "type": "integer", "format": "int64" },
           "billingInterval": { "type": "string" },
-          "taxMode": { "type": "string" }
+          "taxMode": { "type": "string" },
+          "amounts": { "$ref": "#/components/schemas/ActivationCommercialAmounts" }
         }
       },
       "ActivationLicense": {
