@@ -23,6 +23,7 @@ func VerifyBillingWebhookSignature(raw []byte, header, secret string, now time.T
 		return reject
 	}
 	var stamp string
+	var haveStamp bool
 	var signatures []string
 	for _, part := range strings.Split(header, ",") {
 		kv := strings.SplitN(strings.TrimSpace(part), "=", 2)
@@ -30,9 +31,10 @@ func VerifyBillingWebhookSignature(raw []byte, header, secret string, now time.T
 			continue
 		}
 		if kv[0] == "t" {
-			if stamp != "" {
+			if haveStamp {
 				return reject
 			}
+			haveStamp = true
 			stamp = kv[1]
 		}
 		if kv[0] == "v1" {
@@ -108,8 +110,8 @@ func billingEventIdentifier(s string, max int) bool {
 // Signed but ambiguous JSON must not bypass the explicit environment boundary.
 func uniqueBillingJSON(raw []byte) bool {
 	d := json.NewDecoder(strings.NewReader(string(raw)))
-	var value func(int) error
-	value = func(depth int) error {
+	var value func(int, string) error
+	value = func(depth int, path string) error {
 		if depth > 64 {
 			return errors.New("depth")
 		}
@@ -130,8 +132,13 @@ func uniqueBillingJSON(raw []byte) bool {
 				if err != nil || !ok || keys[key] {
 					return errors.New("duplicate")
 				}
+				lower := strings.ToLower(key)
+				critical := (path == "" && (lower == "id" || lower == "type" || lower == "livemode" || lower == "data")) || (path == "/data" && lower == "object") || (path == "/data/object" && lower == "id")
+				if critical && key != lower {
+					return errors.New("ambiguous envelope")
+				}
 				keys[key] = true
-				if err := value(depth + 1); err != nil {
+				if err := value(depth+1, path+"/"+key); err != nil {
 					return err
 				}
 			}
@@ -141,7 +148,7 @@ func uniqueBillingJSON(raw []byte) bool {
 			}
 		case '[':
 			for d.More() {
-				if err := value(depth + 1); err != nil {
+				if err := value(depth+1, path+"/*"); err != nil {
 					return err
 				}
 			}
@@ -154,7 +161,7 @@ func uniqueBillingJSON(raw []byte) bool {
 		}
 		return nil
 	}
-	if value(0) != nil {
+	if value(0, "") != nil {
 		return false
 	}
 	return d.Decode(new(any)) == io.EOF

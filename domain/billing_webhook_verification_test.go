@@ -31,12 +31,12 @@ func TestBillingWebhookRawSignatureReplayAndEnvelope(t *testing.T) {
 	for _, tc := range []struct {
 		body        []byte
 		header, key string
-	}{{append(raw, ' '), header, "fixture"}, {raw, header, "live-key"}, {raw, sign(raw, now.Add(-6*time.Minute), "fixture"), "fixture"}, {raw, sign(raw, now.Add(6*time.Minute), "fixture"), "fixture"}, {raw, header + ",t=2000000000", "fixture"}, {[]byte(strings.Repeat("x", BillingWebhookMaxBytes+1)), header, "fixture"}} {
+	}{{append(raw, ' '), header, "fixture"}, {raw, header, "live-key"}, {raw, sign(raw, now.Add(-6*time.Minute), "fixture"), "fixture"}, {raw, sign(raw, now.Add(6*time.Minute), "fixture"), "fixture"}, {raw, header + ",t=2000000000", "fixture"}, {raw, "t=," + header, "fixture"}, {[]byte(strings.Repeat("x", BillingWebhookMaxBytes+1)), header, "fixture"}} {
 		if err := VerifyBillingWebhookSignature(tc.body, tc.header, tc.key, now, 5*time.Minute); err == nil {
 			t.Fatal("invalid signature accepted")
 		}
 	}
-	for _, body := range []string{`{"id":"evt_x","type":"invoice.paid","data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":true,"data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":true,"livemode":false,"data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":false,"data":{"object":{"id":"in_x/foreign"}}}`} {
+	for _, body := range []string{`{"id":"evt_x","type":"invoice.paid","data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":true,"data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":true,"livemode":false,"data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":true,"LiveMode":false,"data":{"object":{"id":"in_x"}}}`, `{"id":"evt_x","type":"invoice.paid","livemode":false,"data":{"object":{"id":"in_x/foreign"}}}`} {
 		if _, err := ParseVerifiedTestBillingWebhook([]byte(body)); err == nil {
 			t.Fatal("invalid envelope accepted")
 		}
