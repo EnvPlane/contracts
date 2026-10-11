@@ -1,5 +1,13 @@
 # Versioned plan catalog
 
+The current paid software offer uses `domain.CommercialPlanCatalog` and the
+`cmd/plancatalog` generator. `GOWORK=off go run ./cmd/plancatalog -check PATH`
+fails on any drift in a generated website/provisioning artifact, without writing
+it. A price change requires a new effective version; archived provider prices and
+issued invoice/license snapshots keep their exact historical version. Provider
+Price IDs and seller-only mode mappings belong to the issuer registry, not the
+public pricing artifact. Community/free have no checkout; Enterprise is quote-only.
+
 The canonical plan catalog is defined by `contracts/domain/plan.go` and is
 validated before it is consumed by entitlement resolution. The catalog is
 descriptive only: EP-COM-013 does not enforce limits, persist subscriptions,
