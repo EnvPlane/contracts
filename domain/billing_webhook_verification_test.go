@@ -10,6 +10,29 @@ import (
 	"time"
 )
 
+func TestBillingEventIdentifierAllowlist(t *testing.T) {
+	for _, tc := range []struct {
+		name, value string
+		max         int
+		want        bool
+	}{
+		{"allowed ASCII", "azAZ09_.-", 9, true},
+		{"empty", "", 128, false},
+		{"too long", "evt_x", 4, false},
+		{"slash", "evt/x", 128, false},
+		{"space", "evt x", 128, false},
+		{"control", "evt\nx", 128, false},
+		{"non ASCII", "evt_é", 128, false},
+		{"range boundaries", "@[:`{", 128, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := billingEventIdentifier(tc.value, tc.max); got != tc.want {
+				t.Fatalf("billingEventIdentifier() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestBillingWebhookRawSignatureReplayAndEnvelope(t *testing.T) {
 	now := time.Unix(2000000000, 0)
 	raw := []byte(`{"id":"evt_fixture","type":"invoice.paid","livemode":false,"data":{"object":{"id":"in_fixture","metadata":{"tenantId":"foreign","email":"private@example.invalid"}}}}`)
