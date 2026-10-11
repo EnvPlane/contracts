@@ -62,7 +62,7 @@ func VerifyBillingWebhookSignature(raw []byte, header, secret string, now time.T
 }
 func SupportedBillingWebhook(kind string) bool {
 	switch kind {
-	case "checkout.session.completed", "checkout.session.async_payment_succeeded", "checkout.session.async_payment_failed", "checkout.session.expired", "customer.subscription.created", "customer.subscription.updated", "customer.subscription.deleted", "invoice.paid", "invoice.payment_succeeded", "invoice.payment_failed", "invoice.updated":
+	case "charge.refunded", "refund.created", "refund.updated", "refund.failed", "charge.refund.updated", "charge.dispute.created", "charge.dispute.updated", "charge.dispute.closed", "charge.dispute.funds_withdrawn", "charge.dispute.funds_reinstated", "checkout.session.completed", "checkout.session.async_payment_succeeded", "checkout.session.async_payment_failed", "checkout.session.expired", "customer.subscription.created", "customer.subscription.updated", "customer.subscription.deleted", "invoice.paid", "invoice.payment_succeeded", "invoice.payment_failed", "invoice.updated":
 		return true
 	}
 	return false

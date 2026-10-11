@@ -46,3 +46,13 @@ func TestBillingWebhookRawSignatureReplayAndEnvelope(t *testing.T) {
 		t.Fatal("ignored event stores PII", ignored, err)
 	}
 }
+
+func TestFinancialWebhooksRetainIdentifiersWithoutMetadataAuthority(t *testing.T) {
+	for _, kind := range []string{"charge.refunded", "refund.created", "refund.updated", "refund.failed", "charge.refund.updated", "charge.dispute.created", "charge.dispute.updated", "charge.dispute.closed", "charge.dispute.funds_withdrawn", "charge.dispute.funds_reinstated"} {
+		raw := []byte(`{"id":"evt_financial","livemode":false,"type":"` + kind + `","data":{"object":{"id":"re_owned","metadata":{"tenantId":"foreign","support.sla":true}}}}`)
+		event, err := ParseVerifiedTestBillingWebhook(raw)
+		if err != nil || !SupportedBillingWebhook(kind) || event.ObjectID != "re_owned" || event.Mode != "test" {
+			t.Fatal("financial event contract", kind, err)
+		}
+	}
+}
