@@ -102,7 +102,8 @@
           "purchaseId": {
             "type": "string"
           },
-          "licenseId": {
+          "currentLicenseId": { "type": "string" },
+        "licenseId": {
             "type": "string"
           },
           "currency": {
@@ -170,7 +171,7 @@
           "purchaseId": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 256
+            "maxLength": 128
           }
         }
       },
@@ -6217,7 +6218,7 @@
         "required": ["ddlMode", "maxStatementBytes", "maxTables", "maxRows", "id", "source", "sourceIdentity", "targetPvcName", "targetSecretName", "targetSecretUid", "targetPasswordKey", "targetRootPasswordKey", "targetDatabase", "targetUsername", "secretMaterializationPlanDigest", "storageClass", "accessModes", "requestedBytes", "maxBytes", "timeoutSeconds"],
         "properties": {
           "ddlMode": {"type": "string", "enum": ["backup_lock", "quiescence"]},
-          "quiescenceRef": {"type": "string", "minLength": 1, "maxLength": 256},
+          "quiescenceRef": {"type": "string", "minLength": 1, "maxLength": 128},
           "maxStatementBytes": {"type": "integer", "minimum": 1024, "maximum": 16777216},
           "maxTables": {"type": "integer", "minimum": 1, "maximum": 1000},
           "maxRows": {"type": "integer", "format": "int64", "minimum": 1, "maximum": 100000000},
@@ -7678,7 +7679,7 @@
         "additionalProperties": false,
         "properties": {
           "idempotencyKey": {
-            "maxLength": 256,
+            "maxLength": 128,
             "type": "string"
           },
           "refresh": {
@@ -9977,7 +9978,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "maxLength": 256
+              "maxLength": 128
             },
             "maxItems": 128
           },
@@ -9987,7 +9988,7 @@
           },
           "revision": {
             "type": "string",
-            "maxLength": 256
+            "maxLength": 128
           },
           "unresolvedRisks": {
             "type": "array",

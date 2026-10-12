@@ -18,6 +18,7 @@ type BillingProgressRecord struct {
 	IssuanceState     string             `json:"issuanceState"`
 	State             string             `json:"state"`
 	PurchaseID        string             `json:"purchaseId,omitempty"`
+	CurrentLicenseID  string             `json:"currentLicenseId,omitempty"`
 	LicenseID         string             `json:"licenseId,omitempty"`
 	ExpiresAt         *time.Time         `json:"expiresAt,omitempty"`
 	GraceEndsAt       *time.Time         `json:"graceEndsAt,omitempty"`
@@ -71,4 +72,19 @@ func (p BillingProgress) Validate(tenant string) bool {
 		}
 	}
 	return true
+}
+
+func (r BillingIssuanceRetry) Valid() bool {
+	valid := func(s string, min, max int) bool {
+		if len(s) < min || len(s) > max {
+			return false
+		}
+		for _, c := range s {
+			if !(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '.' || c == '_' || c == ':' || c == '-') {
+				return false
+			}
+		}
+		return true
+	}
+	return valid(r.RequestID, 8, 128) && valid(r.PurchaseID, 1, 128)
 }
