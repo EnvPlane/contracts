@@ -55,6 +55,125 @@
       }
     },
     "schemas": {
+      "BillingProgressRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attemptId",
+          "planId",
+          "planVersion",
+          "subscriptionState",
+          "paymentState",
+          "issuanceState",
+          "state",
+          "retryAllowed"
+        ],
+        "properties": {
+          "attemptId": {
+            "type": "string"
+          },
+          "planId": {
+            "type": "string"
+          },
+          "planVersion": {
+            "type": "string"
+          },
+          "subscriptionState": {
+            "type": "string"
+          },
+          "paymentState": {
+            "type": "string"
+          },
+          "issuanceState": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "checkout_pending",
+              "payment_processing",
+              "paid/issuance_pending",
+              "activation_required",
+              "past_due",
+              "canceled",
+              "failed"
+            ]
+          },
+          "purchaseId": {
+            "type": "string"
+          },
+          "licenseId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "invoiceUrl": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "graceEndsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retryAllowed": {
+            "type": "boolean"
+          },
+          "amounts": {
+            "$ref": "#/components/schemas/ActivationCommercialAmounts"
+          }
+        }
+      },
+      "BillingProgress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "providerMode",
+          "records"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "providerMode": {
+            "type": "string",
+            "enum": [
+              "test"
+            ]
+          },
+          "records": {
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "$ref": "#/components/schemas/BillingProgressRecord"
+            }
+          }
+        }
+      },
+      "BillingIssuanceRetry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "purchaseId"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "purchaseId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        }
+      },
       "StorageCleanupAttempt": {
         "type":"object","required":["id","tenantId","projectId","environmentId","clusterId","clusterGeneration","actorId","requestedAt","status","reason","secureErasure"],
         "properties":{"id":{"type":"string"},"tenantId":{"type":"string"},"projectId":{"type":"string"},"environmentId":{"type":"string"},"clusterId":{"type":"string"},"clusterGeneration":{"type":"integer","format":"int64"},"actorId":{"type":"string"},"requestedAt":{"type":"string","format":"date-time"},"status":{"type":"string","enum":["captured","unavailable"]},"reason":{"type":"string","enum":["captured","metadata_unavailable"]},"snapshotId":{"type":"string"},"secureErasure":{"type":"string","enum":["unknown"]}}
@@ -12013,6 +12132,60 @@
     }
   },
   "paths": {
+    "/api/v1/billing/progress": {
+      "get": {
+        "operationId": "getBillingProgress",
+        "summary": "Read durable seller payment and issuance evidence",
+        "responses": {
+          "200": {
+            "description": "Scoped progress; signed installation activation is a separate read",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingProgress"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "BillingRead permission required"
+          },
+          "503": {
+            "description": "Progress unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/billing/issuance/retry": {
+      "post": {
+        "operationId": "retryBillingIssuance",
+        "summary": "Request retry of existing paid pending issuance; no operator redrive",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingIssuanceRetry"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable recovery request accepted; refresh progress"
+          },
+          "403": {
+            "description": "BillingWrite permission required"
+          },
+          "409": {
+            "description": "Ineligible or changed purchase; refresh progress"
+          },
+          "503": {
+            "description": "Recovery unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/projects/{id}/pvc-copy/source-profile": {
       "parameters": [{"in": "path", "name": "id", "required": true, "schema": {"type": "string"}}],
       "get": {
