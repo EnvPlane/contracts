@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// Each current issuer database belongs to one seller and the test provider.
+// Each current issuer database belongs to one seller and exactly one provider environment.
 // This is an opaque namespace, not a claim about a legal merchant/provider account.
 const BillingSellerNamespace = "issuer-default"
 const BillingScopeHeader = "X-EnvPlane-Billing-Scope"
@@ -25,7 +25,7 @@ type BillingOwner struct {
 }
 
 func (o BillingOwner) Validate() error {
-	if o.SellerID != BillingSellerNamespace || o.ProviderMode != "test" {
+	if o.SellerID != BillingSellerNamespace || (o.ProviderMode != "test" && o.ProviderMode != "live") {
 		return errors.New("billing ownership scope rejected")
 	}
 	for _, s := range []string{o.TenantID, o.InstallationID} {

@@ -33,8 +33,11 @@ type BillingIssuanceRetry struct {
 }
 
 // Validate rejects ambiguous or foreign status rather than guessing payment.
-func (p BillingProgress) Validate(tenant string) bool {
-	if p.TenantID != tenant || tenant == "" || p.ProviderMode != "test" || p.Records == nil || len(p.Records) > 25 {
+func (p BillingProgress) Validate(tenant string) bool { return p.ValidateMode(tenant, "test") }
+
+// ValidateMode rejects provider-mode crossover against configured server state.
+func (p BillingProgress) ValidateMode(tenant, mode string) bool {
+	if p.TenantID != tenant || tenant == "" || ((mode != "test" && mode != "live") || p.ProviderMode != mode) || p.Records == nil || len(p.Records) > 25 {
 		return false
 	}
 	seen := map[string]bool{}

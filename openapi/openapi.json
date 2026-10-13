@@ -158,7 +158,8 @@
           "providerMode": {
             "type": "string",
             "enum": [
-              "test"
+              "test",
+              "live"
             ]
           },
           "records": {

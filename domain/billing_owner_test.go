@@ -41,7 +41,7 @@ func TestBillingRequestScope(t *testing.T) {
 			}
 		})
 	}
-	for _, bad := range []BillingOwner{{BillingSellerNamespace, "live", "t", "i"}, {"other", "test", "t", "i"}, {BillingSellerNamespace, "test", "", "i"}, {BillingSellerNamespace, "test", "t\n", "i"}} {
+	for _, bad := range []BillingOwner{{BillingSellerNamespace, "unknown", "t", "i"}, {"other", "test", "t", "i"}, {BillingSellerNamespace, "test", "", "i"}, {BillingSellerNamespace, "test", "t\n", "i"}} {
 		if _, err := SignBillingRequestScope(bad, "POST", "/v1/internal/billing/customer", nil, "fixture", now); err == nil {
 			t.Fatal("invalid owner accepted")
 		}

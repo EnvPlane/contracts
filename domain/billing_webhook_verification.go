@@ -72,8 +72,14 @@ func SupportedBillingWebhook(kind string) bool {
 type VerifiedBillingWebhook struct{ Provider, Mode, EventID, Kind, ObjectID, PayloadHash string }
 
 func ParseVerifiedTestBillingWebhook(raw []byte) (VerifiedBillingWebhook, error) {
+	return ParseVerifiedBillingWebhook(raw, "test")
+}
+
+// ParseVerifiedBillingWebhook requires the caller's configured environment.
+// Signature verification must precede parsing; metadata never establishes ownership.
+func ParseVerifiedBillingWebhook(raw []byte, mode string) (VerifiedBillingWebhook, error) {
 	reject := errors.New("billing webhook envelope rejected")
-	if len(raw) > BillingWebhookMaxBytes || !uniqueBillingJSON(raw) {
+	if (mode != "test" && mode != "live") || len(raw) > BillingWebhookMaxBytes || !uniqueBillingJSON(raw) {
 		return VerifiedBillingWebhook{}, reject
 	}
 	var e struct {
@@ -86,14 +92,14 @@ func ParseVerifiedTestBillingWebhook(raw []byte) (VerifiedBillingWebhook, error)
 			} `json:"object"`
 		} `json:"data"`
 	}
-	if json.Unmarshal(raw, &e) != nil || e.Live == nil || *e.Live || !billingEventIdentifier(e.ID, 128) || !billingEventIdentifier(e.Kind, 128) || (SupportedBillingWebhook(e.Kind) && !billingEventIdentifier(e.Data.Object.ID, 128)) {
+	if json.Unmarshal(raw, &e) != nil || e.Live == nil || *e.Live != (mode == "live") || !billingEventIdentifier(e.ID, 128) || !billingEventIdentifier(e.Kind, 128) || (SupportedBillingWebhook(e.Kind) && !billingEventIdentifier(e.Data.Object.ID, 128)) {
 		return VerifiedBillingWebhook{}, reject
 	}
 	if !SupportedBillingWebhook(e.Kind) {
 		e.Data.Object.ID = ""
 	}
 	hash := sha256.Sum256(raw)
-	return VerifiedBillingWebhook{BillingWebhookProvider, BillingWebhookMode, e.ID, e.Kind, e.Data.Object.ID, hex.EncodeToString(hash[:])}, nil
+	return VerifiedBillingWebhook{BillingWebhookProvider, mode, e.ID, e.Kind, e.Data.Object.ID, hex.EncodeToString(hash[:])}, nil
 }
 func billingEventIdentifier(s string, max int) bool {
 	if s == "" || len(s) > max {
@@ -135,7 +141,7 @@ func uniqueBillingJSON(raw []byte) bool {
 					return errors.New("duplicate")
 				}
 				lower := strings.ToLower(key)
-				critical := (path == "" && (lower == "id" || lower == "type" || lower == "livemode" || lower == "data")) || (path == "/data" && lower == "object") || (path == "/data/object" && lower == "id")
+				critical := lower == "livemode" || (path == "" && (lower == "id" || lower == "type" || lower == "livemode" || lower == "data")) || (path == "/data" && lower == "object") || (path == "/data/object" && lower == "id")
 				if critical && key != lower {
 					return errors.New("ambiguous envelope")
 				}
@@ -168,3 +174,6 @@ func uniqueBillingJSON(raw []byte) bool {
 	}
 	return d.Decode(new(any)) == io.EOF
 }
+
+// UniqueBillingJSON rejects duplicate keys and ambiguous environment fields.
+func UniqueBillingJSON(raw []byte) bool { return uniqueBillingJSON(raw) }
