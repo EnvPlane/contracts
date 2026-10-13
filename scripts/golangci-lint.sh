@@ -114,7 +114,7 @@ lint_is_compatible() {
   [[ "${installed_lint}" == "${lint_version}" ]] || return 1
   [[ -n "${installed_builder}" ]] || return 1
   installed_builder="${installed_builder#go}"
-  version_ge "${installed_builder}" "${required_go}"
+  version_ge "${installed_builder}" "${required_go}" && version_ge "${installed_builder}" "${GO_VERSION_SELECTED}"
 }
 
 if ! lint_is_compatible; then
