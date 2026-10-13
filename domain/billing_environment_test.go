@@ -15,8 +15,11 @@ func TestVerifiedWebhookRequiresConfiguredEnvironment(t *testing.T) {
 			}
 		}
 		owner := BillingOwner{BillingSellerNamespace, mode, "tenant", "installation"}
-		if owner.Validate() != nil {
+		if owner.ValidateMode(mode) != nil {
 			t.Fatal("environment owner rejected")
+		}
+		if mode == "live" && owner.Validate() == nil {
+			t.Fatal("legacy owner admitted live")
 		}
 	}
 	if _, err := ParseVerifiedTestBillingWebhook([]byte(`{"id":"evt_live","type":"invoice.paid","livemode":true,"data":{"object":{"id":"in_live"}}}`)); err == nil {

@@ -24,8 +24,11 @@ type BillingOwner struct {
 	InstallationID string `json:"installationId"`
 }
 
-func (o BillingOwner) Validate() error {
-	if o.SellerID != BillingSellerNamespace || (o.ProviderMode != "test" && o.ProviderMode != "live") {
+func (o BillingOwner) Validate() error { return o.ValidateMode("test") }
+
+// ValidateMode binds an owner to the configured environment; legacy Validate stays test-only.
+func (o BillingOwner) ValidateMode(mode string) error {
+	if o.SellerID != BillingSellerNamespace || ((mode != "test" && mode != "live") || o.ProviderMode != mode) {
 		return errors.New("billing ownership scope rejected")
 	}
 	for _, s := range []string{o.TenantID, o.InstallationID} {
@@ -54,7 +57,7 @@ func billingBodyHash(body []byte) string {
 // SignBillingRequestScope is for trusted seller services only. Caller tenant must
 // come from authenticated authorization, not arbitrary browser/request metadata.
 func SignBillingRequestScope(owner BillingOwner, method, target string, body []byte, secret string, now time.Time) (string, error) {
-	if owner.Validate() != nil || secret == "" || (method != "POST" && method != "GET") || !strings.HasPrefix(target, "/v1/internal/billing/") {
+	if owner.ValidateMode(owner.ProviderMode) != nil || secret == "" || (method != "POST" && method != "GET") || !strings.HasPrefix(target, "/v1/internal/billing/") {
 		return "", errors.New("billing request scope rejected")
 	}
 	raw, _ := json.Marshal(BillingRequestScope{owner, BillingScopeAudience, method, target, billingBodyHash(body), now.Unix(), now.Add(2 * time.Minute).Unix()})
@@ -85,7 +88,7 @@ func VerifyBillingRequestScope(header, secret, method, target string, body []byt
 		return reject()
 	}
 	var scope BillingRequestScope
-	if json.Unmarshal(raw, &scope) != nil || scope.Owner.Validate() != nil || scope.Audience != BillingScopeAudience || scope.Method != method || scope.Target != target || scope.BodyHash != billingBodyHash(body) || scope.IssuedAt > now.Unix() || scope.ExpiresAt <= now.Unix() || scope.ExpiresAt-scope.IssuedAt != 120 || now.Unix()-scope.IssuedAt > 120 {
+	if json.Unmarshal(raw, &scope) != nil || scope.Owner.ValidateMode(scope.Owner.ProviderMode) != nil || scope.Audience != BillingScopeAudience || scope.Method != method || scope.Target != target || scope.BodyHash != billingBodyHash(body) || scope.IssuedAt > now.Unix() || scope.ExpiresAt <= now.Unix() || scope.ExpiresAt-scope.IssuedAt != 120 || now.Unix()-scope.IssuedAt > 120 {
 		return reject()
 	}
 	return scope.Owner, nil
