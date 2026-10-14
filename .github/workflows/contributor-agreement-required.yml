@@ -18,10 +18,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           persist-credentials: false
-      - name: Verify the existing contributor agreement policy
+      - name: Require verified CLA for external pull requests
         env:
           PR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
           PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_AUTHOR_ID: ${{ github.event.pull_request.user.id }}
+          PR_AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
         run: |
           set -euo pipefail
           ./scripts/check-external-contributor-cla.sh \
