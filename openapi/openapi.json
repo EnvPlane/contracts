@@ -12137,6 +12137,1119 @@
             "type": "boolean"
           }
         }
+      },
+      "InstallationBillingScope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "seller",
+          "merchant",
+          "mode",
+          "audience",
+          "installation",
+          "tenant"
+        ],
+        "properties": {
+          "seller": {
+            "type": "string",
+            "enum": [
+              "issuer-default"
+            ]
+          },
+          "merchant": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 6,
+            "pattern": "^acct_[A-Za-z0-9_]{1,250}$"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "test"
+            ]
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "envplane.install-billing.test.v1"
+            ]
+          },
+          "installation": {
+            "type": "string",
+            "maxLength": 77,
+            "minLength": 77,
+            "pattern": "^epi1_ed25519_[0-9a-f]{64}$"
+          },
+          "tenant": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "x-maxUtf8Bytes": 128,
+            "description": "Exact UTF-8, no trim/case/normalization; no controls or leading/trailing Unicode whitespace."
+          }
+        }
+      },
+      "InstallationBillingIntent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "operation",
+          "method",
+          "target",
+          "bodyDigest",
+          "currentEpoch",
+          "currentPublicKey",
+          "nextEpoch",
+          "nextPublicKey",
+          "requestId",
+          "sessionDigest"
+        ],
+        "properties": {
+          "scope": {
+            "$ref": "#/components/schemas/InstallationBillingScope"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "enroll",
+              "session.checkout",
+              "session.portal",
+              "session.status",
+              "checkout",
+              "portal",
+              "status",
+              "tenant.bind",
+              "key.rotate",
+              "key.revoke",
+              "key.status"
+            ]
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "POST"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "/v1/installation-billing/enroll",
+              "/v1/installation-billing/sessions/checkout",
+              "/v1/installation-billing/sessions/portal",
+              "/v1/installation-billing/sessions/status",
+              "/v1/installation-billing/checkout",
+              "/v1/installation-billing/portal",
+              "/v1/installation-billing/status",
+              "/v1/installation-billing/tenants/bind",
+              "/v1/installation-billing/keys/rotate",
+              "/v1/installation-billing/keys/revoke",
+              "/v1/installation-billing/keys/status"
+            ]
+          },
+          "bodyDigest": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "currentEpoch": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          },
+          "currentPublicKey": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "nextEpoch": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^(0|[1-9][0-9]*)$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          },
+          "nextPublicKey": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "requestId": {
+            "type": "string",
+            "maxLength": 22,
+            "minLength": 22,
+            "pattern": "^[A-Za-z0-9_-]{22}$"
+          },
+          "sessionDigest": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          }
+        },
+        "description": "Fixed-order binary intent frame; target must equal operation table. next fields zero outside rotation, sessionDigest nonzero only checkout/portal/status; genesis identity checked at enroll."
+      },
+      "InstallationBillingChallenge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "intentDigest",
+          "nonce",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "intentDigest": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "nonce": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "issuedAt": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          },
+          "expiresAt": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          }
+        },
+        "description": "Durable server nonce; expiresAt=issuedAt+300. now<expiresAt, at most 30s issuing clock ahead. No TTL deletion authority."
+      },
+      "InstallationBillingChallengeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "algorithm",
+          "intent",
+          "body"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": [
+              "envplane.install-billing.v1"
+            ]
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "Ed25519"
+            ]
+          },
+          "intent": {
+            "$ref": "#/components/schemas/InstallationBillingIntent"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 43691,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Unpadded base64url of exact UTF-8 business DTO bytes <=32768; SHA-256 must match intent.bodyDigest. No JSON reserialization."
+          }
+        }
+      },
+      "InstallationBillingChallengeResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "algorithm",
+          "challenge"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": [
+              "envplane.install-billing.v1"
+            ]
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "Ed25519"
+            ]
+          },
+          "challenge": {
+            "$ref": "#/components/schemas/InstallationBillingChallenge"
+          }
+        }
+      },
+      "InstallationBillingRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "algorithm",
+          "intent",
+          "body",
+          "challenge",
+          "signature",
+          "nextSignature",
+          "sessionHandle"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": [
+              "envplane.install-billing.v1"
+            ]
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "Ed25519"
+            ]
+          },
+          "intent": {
+            "$ref": "#/components/schemas/InstallationBillingIntent"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 43691,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "challenge": {
+            "$ref": "#/components/schemas/InstallationBillingChallenge"
+          },
+          "signature": {
+            "type": "string",
+            "maxLength": 86,
+            "minLength": 86,
+            "pattern": "^[A-Za-z0-9_-]{86}$"
+          },
+          "nextSignature": {
+            "type": "string",
+            "maxLength": 86,
+            "pattern": "^([A-Za-z0-9_-]{86})?$",
+            "description": "Second signature required only for rotation; empty otherwise."
+          },
+          "sessionHandle": {
+            "type": "string",
+            "maxLength": 43,
+            "pattern": "^([A-Za-z0-9_-]{43})?$",
+            "description": "Required for checkout/portal/status only; possession alone is insufficient."
+          }
+        },
+        "description": "Pure Ed25519 proof over framed intentDigest/challengeDigest. Strict parsing rejects duplicate, unknown, missing/null and case-alias keys. HTTP envelope <=65536 bytes. Validate then match persisted challenge, owner/epoch/session before any effects."
+      },
+      "InstallationBillingSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scope",
+          "currentEpoch",
+          "currentPublicKey",
+          "operation",
+          "handleDigest",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "scope": {
+            "$ref": "#/components/schemas/InstallationBillingScope"
+          },
+          "currentEpoch": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          },
+          "currentPublicKey": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "checkout",
+              "portal",
+              "status"
+            ]
+          },
+          "handleDigest": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "issuedAt": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          },
+          "expiresAt": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          }
+        },
+        "description": "Key-bound server descriptor, not signed entitlement. 300s exact lifetime."
+      },
+      "InstallationBillingRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attemptId",
+          "state",
+          "purchaseId",
+          "licenseId"
+        ],
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "checkout_pending",
+              "payment_processing",
+              "paid/issuance_pending",
+              "activation_required",
+              "past_due",
+              "canceled",
+              "failed"
+            ]
+          },
+          "purchaseId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "licenseId": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "description": "Scoped display only, no signed grant or customer authority."
+      },
+      "InstallationBillingResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "operation",
+          "requestId",
+          "intentDigest",
+          "state",
+          "keyEpoch",
+          "session",
+          "sessionHandle",
+          "url",
+          "records",
+          "cursor"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": [
+              "envplane.install-billing.v1"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "enroll",
+              "session.checkout",
+              "session.portal",
+              "session.status",
+              "checkout",
+              "portal",
+              "status",
+              "tenant.bind",
+              "key.rotate",
+              "key.revoke",
+              "key.status"
+            ]
+          },
+          "requestId": {
+            "type": "string",
+            "maxLength": 22,
+            "minLength": 22,
+            "pattern": "^[A-Za-z0-9_-]{22}$"
+          },
+          "intentDigest": {
+            "type": "string",
+            "maxLength": 43,
+            "minLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "registered",
+              "bound",
+              "ready",
+              "accepted",
+              "pending",
+              "review_required",
+              "failed",
+              "observed",
+              "rotated",
+              "revoked"
+            ]
+          },
+          "keyEpoch": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Canonical decimal uint64 string, never JSON number. Epoch max 9223372036854775807; checked by contract parser."
+          },
+          "session": {
+            "type": "object",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InstallationBillingSession"
+              }
+            ]
+          },
+          "sessionHandle": {
+            "type": "string",
+            "maxLength": 43,
+            "pattern": "^([A-Za-z0-9_-]{43})?$"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 4096,
+            "description": "Empty except ready checkout/portal. Exact https://checkout.stripe.com/ or https://billing.stripe.com/ hosted origin; never arbitrary caller URL."
+          },
+          "records": {
+            "type": "array",
+            "maxItems": 25,
+            "items": {
+              "$ref": "#/components/schemas/InstallationBillingRecord"
+            }
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 1024
+          }
+        },
+        "description": "Closed operation-discriminated response; unused values session=null/sessionHandle=\"\"/url=\"\"/records=[]/cursor=\"\". Parser enforces state/field combinations. 202 is accepted work, not payment or completion."
+      },
+      "InstallationBillingError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "code",
+          "requestId"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": [
+              "envplane.install-billing.v1"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "invalid_request",
+              "unsupported_version",
+              "unsupported_algorithm",
+              "invalid_proof",
+              "scope_rejected",
+              "authority_revoked",
+              "key_epoch_stale",
+              "session_rejected",
+              "challenge_expired",
+              "session_expired",
+              "request_conflict",
+              "challenge_consumed",
+              "rate_limited",
+              "temporarily_unavailable",
+              "not_found"
+            ]
+          },
+          "requestId": {
+            "type": "string",
+            "maxLength": 22,
+            "pattern": "^([A-Za-z0-9_-]{22})?$"
+          }
+        },
+        "description": "Allowlisted bounded code only; no provider response/message, payload, credentials or PII.",
+        "x-http-status": {
+          "invalid_request": 400,
+          "unsupported_version": 400,
+          "unsupported_algorithm": 400,
+          "invalid_proof": 400,
+          "scope_rejected": 403,
+          "authority_revoked": 403,
+          "key_epoch_stale": 403,
+          "session_rejected": 403,
+          "challenge_expired": 410,
+          "session_expired": 410,
+          "request_conflict": 409,
+          "challenge_consumed": 409,
+          "rate_limited": 429,
+          "temporarily_unavailable": 503,
+          "not_found": 404
+        }
+      },
+      "InstallationBillingEmptyBody": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [],
+        "properties": {}
+      },
+      "InstallationBillingCheckoutBody": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attemptId",
+          "planId",
+          "planVersion",
+          "returnRoute"
+        ],
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "planId": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "planVersion": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "returnRoute": {
+            "type": "string",
+            "enum": [
+              "billing"
+            ]
+          }
+        },
+        "description": "Return route is a configured allowlisted symbolic route, never a submitted URL/customerId."
+      },
+      "InstallationBillingPortalBody": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "returnRoute"
+        ],
+        "properties": {
+          "returnRoute": {
+            "type": "string",
+            "enum": [
+              "billing"
+            ]
+          }
+        }
+      },
+      "InstallationBillingStatusBody": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "attemptId",
+          "cursor",
+          "limit"
+        ],
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25
+          }
+        }
+      },
+      "InstallationBillingKeyStatusBody": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "transitionRequestId"
+        ],
+        "properties": {
+          "transitionRequestId": {
+            "type": "string",
+            "maxLength": 22,
+            "minLength": 22,
+            "pattern": "^[A-Za-z0-9_-]{22}$"
+          }
+        }
+      },
+      "InstallationBillingRequestEnroll": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "enroll"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/enroll"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestSessionCheckout": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "session.checkout"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/sessions/checkout"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestSessionPortal": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "session.portal"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/sessions/portal"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestSessionStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "session.status"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/sessions/status"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestCheckout": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "checkout"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/checkout"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingCheckoutBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestPortal": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "portal"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/portal"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingPortalBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "status"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/status"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingStatusBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestTenantBind": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "tenant.bind"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/tenants/bind"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestKeyRotate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "key.rotate"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/keys/rotate"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestKeyRevoke": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "key.revoke"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/keys/revoke"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingEmptyBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
+      },
+      "InstallationBillingRequestKeyStatus": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/InstallationBillingRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/InstallationBillingIntent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "operation": {
+                        "type": "string",
+                        "enum": [
+                          "key.status"
+                        ]
+                      },
+                      "target": {
+                        "type": "string",
+                        "enum": [
+                          "/v1/installation-billing/keys/status"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "x-decoded-body-schema": {
+          "$ref": "#/components/schemas/InstallationBillingKeyStatusBody"
+        },
+        "description": "Contract only; handler activation requires INSTALL-BILL-004 through 011."
       }
     },
     "responses": {
@@ -20739,6 +21852,1276 @@
           }
         }
       }
+    },
+  "/v1/installation-billing/enroll": {
+    "post": {
+      "operationId": "installationBillingEnroll",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestEnroll"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  "/v1/installation-billing/sessions/checkout": {
+    "post": {
+      "operationId": "installationBillingSessionCheckout",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestSessionCheckout"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/sessions/portal": {
+    "post": {
+      "operationId": "installationBillingSessionPortal",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestSessionPortal"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/sessions/status": {
+    "post": {
+      "operationId": "installationBillingSessionStatus",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestSessionStatus"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/checkout": {
+    "post": {
+      "operationId": "installationBillingCheckout",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestCheckout"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        },
+        "202": {
+          "description": "Durable work accepted, not paid/completed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/portal": {
+    "post": {
+      "operationId": "installationBillingPortal",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestPortal"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/status": {
+    "post": {
+      "operationId": "installationBillingStatus",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestStatus"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/tenants/bind": {
+    "post": {
+      "operationId": "installationBillingTenantBind",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestTenantBind"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/keys/rotate": {
+    "post": {
+      "operationId": "installationBillingKeyRotate",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestKeyRotate"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/keys/revoke": {
+    "post": {
+      "operationId": "installationBillingKeyRevoke",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestKeyRevoke"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/keys/status": {
+    "post": {
+      "operationId": "installationBillingKeyStatus",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Contract only; not enabled by this OpenAPI update. Requires key proof, persisted authority/epoch and scoped admission. No seller credential in client.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingRequestKeyStatus"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/v1/installation-billing/challenge": {
+    "post": {
+      "operationId": "installationBillingChallenge",
+      "tags": [
+        "Installation billing (seller issuer)"
+      ],
+      "description": "Bounded pre-auth challenge creation; no ID reservation or provider mutation. Contract only.",
+      "security": [],
+      "x-envplane-host": "seller-issuer",
+      "x-envplane-implementation": "contract-only",
+      "x-maxRequestBytes": 65536,
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/InstallationBillingChallengeRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "400": {
+          "description": "Invalid contract/proof",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Scope/authority/session rejected",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Owned reference not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict or consumed challenge",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "410": {
+          "description": "Expired",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "429": {
+          "description": "Admission limit",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Retryable unavailable",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingError"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "Durable bounded result, exact owner only",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstallationBillingChallengeResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   }
 }

@@ -55,3 +55,11 @@ go vet ./...
 ## Status
 
 Private product contract under active development.
+
+## Installation billing source candidate
+
+[Installation billing v1](docs/installation-billing-v1.md) adds a closed enrollment/
+session contract and [Go/TypeScript interoperability fixtures](installationbilling/testdata/v1.json).
+It is a local unpublished candidate; handlers and public ingress stay disabled.
+See [verification](docs/installation-billing-002-verification.md) before treating
+source-workspace integration as published-consumer evidence.

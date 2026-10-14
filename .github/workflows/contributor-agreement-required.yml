@@ -1,0 +1,28 @@
+name: Required contributor agreement
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  cla:
+    name: Contributor agreement / cla
+    runs-on: ubuntu-latest
+    steps:
+      # Execute the existing policy from the trusted PR base, never candidate code.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - name: Verify the existing contributor agreement policy
+        env:
+          PR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+          ./scripts/check-external-contributor-cla.sh \
+            --association "$PR_ASSOCIATION" --labels "$PR_LABELS"
