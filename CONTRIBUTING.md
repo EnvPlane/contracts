@@ -30,6 +30,9 @@ a pull request can merge. A maintainer verifies the off-repository signature
 record and adds the `cla-signed` pull-request label; the CI gate rejects
 external pull requests without it. The draft agreement is in
 [`docs/legal/INDIVIDUAL_CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md`](docs/legal/INDIVIDUAL_CONTRIBUTOR_LICENSE_AGREEMENT_DRAFT.md).
+Automated dependency updates from the verified GitHub `dependabot[bot]` account
+(user ID `49699333`, account type `Bot`) are exempt from the individual CLA.
+Dependency labels and other bot accounts do not grant this exemption.
 Corporate, employer-sponsored and contractor contributions are not accepted
 until a separate written agreement is approved. Do not upload signed agreements
 or personal data to GitHub.

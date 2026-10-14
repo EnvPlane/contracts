@@ -16,7 +16,13 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
       - name: Require verified CLA for external pull requests
-        run: >-
-          ./scripts/check-external-contributor-cla.sh
-          --association '${{ github.event.pull_request.author_association }}'
-          --labels '${{ join(github.event.pull_request.labels.*.name, ',') }}'
+        env:
+          PR_ASSOCIATION: ${{ github.event.pull_request.author_association }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_AUTHOR_ID: ${{ github.event.pull_request.user.id }}
+          PR_AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+        run: |
+          set -euo pipefail
+          ./scripts/check-external-contributor-cla.sh \
+            --association "$PR_ASSOCIATION" --labels "$PR_LABELS"
