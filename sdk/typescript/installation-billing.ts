@@ -14,6 +14,10 @@ export const ROUTES = Object.freeze({
     'session.checkout': '/v1/installation-billing/sessions/checkout',
     'session.portal': '/v1/installation-billing/sessions/portal',
     'session.status': '/v1/installation-billing/sessions/status',
+ 'session.paid.status':'/v1/installation-billing/sessions/paid-status',
+ 'session.redeem':'/v1/installation-billing/sessions/redemption',
+ 'paid.status':'/v1/installation-billing/paid-status',
+ 'redeem':'/v1/installation-billing/redemption',
     checkout: '/v1/installation-billing/checkout', portal: '/v1/installation-billing/portal',
     status: '/v1/installation-billing/status', 'tenant.bind': '/v1/installation-billing/tenants/bind',
     'key.rotate': '/v1/installation-billing/keys/rotate', 'key.revoke': '/v1/installation-billing/keys/revoke',
@@ -86,7 +90,11 @@ export interface Response {
     url: string;
     records: Record[];
     cursor: string;
+ paidStatus?:PaidStatus;
+ activationCode?:string;
 }
+export interface PaidRecord {attemptId:string;planId:string;planVersion:string;subscriptionState:string;paymentState:string;issuanceState:string;state:string;purchaseId:string;licenseId:string;currentLicenseId:string;expiresAt:string;graceEndsAt:string;}
+export interface PaidStatus {records:PaidRecord[];cursor:string;}
 export interface ErrorResponse {
     version: string;
     code: string;
@@ -232,7 +240,7 @@ export function validateIntent(v: unknown): asserts v is Intent {
         ensure(cur < MAX_EPOCH && next === cur + BigInt(1) && point(np) && !same(pub, np));
     else
         ensure(next === BigInt(0) && np.every(x => x === 0));
-    const action = ['checkout', 'portal', 'status'].includes(v.operation);
+    const action = ['checkout', 'portal', 'status', 'paid.status', 'redeem'].includes(v.operation);
     ensure(action !== sd.every(x => x === 0));
     if (v.operation === 'enroll')
         ensure(cur === BigInt(1) && installationID(pub) === v.scope.installation);
@@ -246,6 +254,10 @@ export function validateBody(op: Operation, raw: Uint8Array) {
     ensure(raw.length <= MAX_BODY);
     const b = strictJSON(raw);
     switch (op) {
+        case 'paid.status':
+            object(b,['attemptId','cursor','limit']);string(b.attemptId);if(b.attemptId)validText(b.attemptId,128);string(b.cursor);if(b.cursor)validText(b.cursor,128);ensure(typeof b.limit==='number'&&Number.isInteger(b.limit)&&b.limit>=1&&b.limit<=25);break;
+        case 'redeem':
+            object(b,['attemptId','nonce']);validText(b.attemptId,128);decode(b.nonce,24,true);break;
         case 'checkout':
             object(b, ['attemptId', 'planId', 'planVersion', 'returnRoute']);
             for (const k of ['attemptId', 'planId', 'planVersion'])
@@ -279,13 +291,13 @@ export function parseChallengeRequest(raw: Uint8Array): ChallengeRequest { const
 export function parseRequest(raw: Uint8Array): Request { const v = strictJSON(raw); object(v, ['version', 'algorithm', 'intent', 'body', 'challenge', 'signature', 'nextSignature', 'sessionHandle']); const r = v as unknown as Request; common(r); proofFrame(r); decode(r.signature, 64); if (r.intent.operation === 'key.rotate')
     decode(r.nextSignature, 64);
 else
-    ensure(r.nextSignature === ''); if (['checkout', 'portal', 'status'].includes(r.intent.operation))
+    ensure(r.nextSignature === ''); if (['checkout', 'portal', 'status', 'paid.status', 'redeem'].includes(r.intent.operation))
     decode(r.sessionHandle, 32, true);
 else
     ensure(r.sessionHandle === ''); return r; }
 export function verifyProof(r: Request, now: bigint) { parseRequest(text(JSON.stringify(r))); windowNow(r.challenge.issuedAt, r.challenge.expiresAt, now); const msg = proofFrame(r); const check = (key: string, signature: string) => { const k = decode(key, 32), s = decode(signature, 64); ensure(point(k) && point(s.slice(0, 32))); ensure(ed25519.verify(s, msg, k, { zip215: false })); }; check(r.intent.currentPublicKey, r.signature); if (r.intent.operation === 'key.rotate')
     check(r.intent.nextPublicKey, r.nextSignature); }
-export function sessionFrame(s: Session) { object(s, ['scope', 'currentEpoch', 'currentPublicKey', 'operation', 'handleDigest', 'issuedAt', 'expiresAt']); scope(s.scope); epoch(s.currentEpoch); const pub = decode(s.currentPublicKey, 32, true); ensure(point(pub) && ['checkout', 'portal', 'status'].includes(s.operation)); decode(s.handleDigest, 32, true); window(s.issuedAt, s.expiresAt); return frame('session', [...scopeFields(s.scope), uint(s.currentEpoch), pub, text(s.operation), decode(s.handleDigest, 32), uint(s.issuedAt), uint(s.expiresAt)]); }
+export function sessionFrame(s: Session) { object(s, ['scope', 'currentEpoch', 'currentPublicKey', 'operation', 'handleDigest', 'issuedAt', 'expiresAt']); scope(s.scope); epoch(s.currentEpoch); const pub = decode(s.currentPublicKey, 32, true); ensure(point(pub) && ['checkout', 'portal', 'status', 'paid.status', 'redeem'].includes(s.operation)); decode(s.handleDigest, 32, true); window(s.issuedAt, s.expiresAt); return frame('session', [...scopeFields(s.scope), uint(s.currentEpoch), pub, text(s.operation), decode(s.handleDigest, 32), uint(s.issuedAt), uint(s.expiresAt)]); }
 export function matchSession(r: Request, s: Session, now: bigint) { const f = sessionFrame(s); windowNow(s.issuedAt, s.expiresAt, now); ensure(s.operation === r.intent.operation && s.currentEpoch === r.intent.currentEpoch && s.currentPublicKey === r.intent.currentPublicKey && scopeFields(s.scope).every((b, i) => same(b, scopeFields(r.intent.scope)[i])) && digest(f) === r.intent.sessionDigest && digest(decode(r.sessionHandle, 32, true)) === s.handleDigest); }
 export function validateHTTP(method: string, target: string, encoding: string) { ensure(method === 'POST' && (encoding === '' || encoding === 'identity') && (target === CHALLENGE_PATH || Object.values(ROUTES).some(p => p === target))); }
 export function parseChallengeResponse(raw: Uint8Array) { const r = strictJSON(raw); object(r, ['version', 'algorithm', 'challenge']); ensure(r.version === VERSION && r.algorithm === ALGORITHM); challengeFrame(r.challenge as Challenge); return r as unknown as {
@@ -298,7 +310,8 @@ export function parseError(raw: Uint8Array): ErrorResponse { const r = strictJSO
     decode(r.requestId, 16, true); return r as unknown as ErrorResponse; }
 export function parseResponse(raw: Uint8Array): Response {
     const v = strictJSON(raw);
-    object(v, ['version', 'operation', 'requestId', 'intentDigest', 'state', 'keyEpoch', 'session', 'sessionHandle', 'url', 'records', 'cursor']);
+    const extensionKeys=['paidStatus','activationCode'].filter(k=>Object.hasOwn(v as object,k));
+    object(v, ['version', 'operation', 'requestId', 'intentDigest', 'state', 'keyEpoch', 'session', 'sessionHandle', 'url', 'records', 'cursor',...extensionKeys]);
     const r = v as unknown as Response;
     ensure(r.version === VERSION && Object.hasOwn(ROUTES, r.operation));
     decode(r.requestId, 16, true);
@@ -306,7 +319,7 @@ export function parseResponse(raw: Uint8Array): Response {
     epoch(r.keyEpoch);
     const states: {
         [k: string]: string;
-    } = { enroll: 'registered', 'tenant.bind': 'bound', 'session.checkout': 'ready', 'session.portal': 'ready', 'session.status': 'ready', portal: 'ready', status: 'observed', 'key.rotate': 'rotated', 'key.revoke': 'revoked', 'key.status': 'observed' };
+    } = { enroll: 'registered', 'tenant.bind': 'bound', 'session.checkout': 'ready', 'session.portal': 'ready', 'session.status': 'ready', 'session.paid.status':'ready', 'session.redeem':'ready', 'paid.status':'observed', 'redeem':'redeemed', portal: 'ready', status: 'observed', 'key.rotate': 'rotated', 'key.revoke': 'revoked', 'key.status': 'observed' };
     if (r.operation === 'checkout')
         ensure(['accepted', 'pending', 'ready', 'review_required', 'failed'].includes(r.state));
     else
@@ -347,8 +360,27 @@ export function parseResponse(raw: Uint8Array): Response {
         }
         ensure(['checkout_pending', 'payment_processing', 'paid/issuance_pending', 'activation_required', 'past_due', 'canceled', 'failed'].includes(x.state as string));
     }
+    validatePaidResponse(r);
     return r;
 }
 export function parseVerifiedRequest(raw: Uint8Array, now: bigint): Request { const r = parseRequest(raw); verifyProof(r, now); return r; }
 export function matchResponse(r: Request, v: Response) { ensure(v.operation === r.intent.operation && v.requestId === r.intent.requestId && v.intentDigest === digest(intentFrame(r.intent)) && v.keyEpoch === (v.operation === 'key.rotate' ? r.intent.nextEpoch : r.intent.currentEpoch)); if (v.session)
     ensure(scopeFields(v.session.scope).every((b, i) => same(b, scopeFields(r.intent.scope)[i])) && v.session.currentPublicKey === r.intent.currentPublicKey); }
+
+export function validatePaidStatus(v:unknown): asserts v is PaidStatus {
+ object(v,['records','cursor']);ensure(Array.isArray(v.records)&&v.records.length<=25);string(v.cursor);if(v.cursor)validText(v.cursor,128);const seen=new Set<string>();
+ for(const item of v.records){
+  object(item,['attemptId','planId','planVersion','subscriptionState','paymentState','issuanceState','state','purchaseId','licenseId','currentLicenseId','expiresAt','graceEndsAt']);
+  for(const k of ['attemptId','planId','planVersion','subscriptionState'])validText(item[k],128);
+  const r=item as unknown as PaidRecord;ensure(!seen.has(r.attemptId));seen.add(r.attemptId);
+  for(const k of ['purchaseId','licenseId','currentLicenseId']){string(item[k]);if(item[k])validText(item[k],128);}
+  for(const k of ['expiresAt','graceEndsAt'])ensure(decimal(item[k],true)<=BigInt('253402300799'));
+  ensure(['awaiting_payment','payment_failed','paid','not_charged'].includes(r.paymentState)&&['not_started','issuance_pending','issued'].includes(r.issuanceState)&&['checkout_pending','payment_processing','paid/issuance_pending','activation_required','past_due','canceled','failed'].includes(r.state));
+  if(r.state==='activation_required')ensure(r.paymentState==='paid'&&r.issuanceState==='issued'&&r.licenseId!==''&&r.currentLicenseId===r.licenseId&&r.purchaseId!==''&&r.expiresAt!=='0');
+  if(r.state==='paid/issuance_pending')ensure(r.paymentState==='paid'&&r.issuanceState==='issuance_pending'&&r.purchaseId!==''&&r.licenseId==='');
+ }
+}
+function validatePaidResponse(r:Response){
+ if(r.operation==='paid.status'||r.operation==='redeem'){validatePaidStatus(r.paidStatus)}else ensure(r.paidStatus===undefined);
+ if(r.operation==='redeem'){ensure(r.paidStatus?.records.length===1&&r.paidStatus.cursor===''&&r.paidStatus.records[0].state==='activation_required');string(r.activationCode);ensure(text(r.activationCode).length<=8192&&r.activationCode.startsWith('v1.')&&!/[ \t\r\n]/.test(r.activationCode))}else ensure(r.activationCode===undefined);
+}
