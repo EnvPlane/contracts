@@ -1,6 +1,7 @@
 package installationbilling
 
 import (
+	"encoding/json"
 	"net/url"
 	"strings"
 )
@@ -8,17 +9,19 @@ import (
 // Response is a closed discriminated envelope. Unused values are explicit:
 // session=null, sessionHandle="", url="", records=[], cursor="".
 type Response struct {
-	Version       string   `json:"version"`
-	Operation     string   `json:"operation"`
-	RequestID     string   `json:"requestId"`
-	IntentDigest  string   `json:"intentDigest"`
-	State         string   `json:"state"`
-	KeyEpoch      string   `json:"keyEpoch"`
-	Session       *Session `json:"session"`
-	SessionHandle string   `json:"sessionHandle"`
-	URL           string   `json:"url"`
-	Records       []Record `json:"records"`
-	Cursor        string   `json:"cursor"`
+	Version        string      `json:"version"`
+	Operation      string      `json:"operation"`
+	RequestID      string      `json:"requestId"`
+	IntentDigest   string      `json:"intentDigest"`
+	State          string      `json:"state"`
+	KeyEpoch       string      `json:"keyEpoch"`
+	Session        *Session    `json:"session"`
+	SessionHandle  string      `json:"sessionHandle"`
+	URL            string      `json:"url"`
+	Records        []Record    `json:"records"`
+	Cursor         string      `json:"cursor"`
+	PaidStatus     *PaidStatus `json:"paidStatus,omitempty"`
+	ActivationCode string      `json:"activationCode,omitempty"`
 }
 type Record struct {
 	AttemptID  string `json:"attemptId"`
@@ -88,7 +91,17 @@ func ParseResponse(raw []byte) (Response, error) {
 	if _, e := epoch(r.KeyEpoch); e != nil {
 		return Response{}, ErrInvalid
 	}
-	allowed := map[string]string{"enroll": "registered", "tenant.bind": "bound", "session.checkout": "ready", "session.portal": "ready", "session.status": "ready", "portal": "ready", "status": "observed", "key.rotate": "rotated", "key.revoke": "revoked", "key.status": "observed"}
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil {
+		return Response{}, ErrInvalid
+	}
+	if _, ok := fields["paidStatus"]; ok && r.Operation != "paid.status" && r.Operation != "redeem" {
+		return Response{}, ErrInvalid
+	}
+	if _, ok := fields["activationCode"]; ok && r.Operation != "redeem" {
+		return Response{}, ErrInvalid
+	}
+	allowed := map[string]string{"enroll": "registered", "tenant.bind": "bound", "session.checkout": "ready", "session.portal": "ready", "session.status": "ready", "session.paid.status": "ready", "session.redeem": "ready", "paid.status": "observed", "redeem": "redeemed", "portal": "ready", "status": "observed", "key.rotate": "rotated", "key.revoke": "revoked", "key.status": "observed"}
 	if r.Operation == "checkout" {
 		if r.State != "accepted" && r.State != "pending" && r.State != "ready" && r.State != "review_required" && r.State != "failed" {
 			return Response{}, ErrInvalid
@@ -142,6 +155,9 @@ func ParseResponse(raw []byte) (Response, error) {
 		default:
 			return Response{}, ErrInvalid
 		}
+	}
+	if e := validatePaidResponse(r); e != nil {
+		return Response{}, e
 	}
 	return r, nil
 }

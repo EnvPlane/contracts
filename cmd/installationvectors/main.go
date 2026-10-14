@@ -73,6 +73,9 @@ func main() {
 	handle := bytes.Repeat([]byte{71}, 32)
 	ops := []string{}
 	for op := range ib.Routes() {
+		if op == "paid.status" || op == "redeem" || op == "session.paid.status" || op == "session.redeem" {
+			continue
+		}
 		ops = append(ops, op)
 	}
 	sort.Strings(ops)
