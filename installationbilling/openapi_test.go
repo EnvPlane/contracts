@@ -46,7 +46,7 @@ func TestOpenAPIExactSellerOperationInventory(t *testing.T) {
 		}
 		seen++
 	}
-	if seen != 12 {
+	if seen != len(wanted) {
 		t.Fatal("incomplete routes", seen)
 	}
 	for _, name := range []string{"Scope", "Intent", "Challenge", "Request", "ChallengeRequest", "ChallengeResponse", "Session", "Response", "Record", "Error", "CheckoutBody", "PortalBody", "StatusBody", "KeyStatusBody", "EmptyBody"} {
@@ -57,7 +57,7 @@ func TestOpenAPIExactSellerOperationInventory(t *testing.T) {
 		}
 		raw := d.Components.Schemas["InstallationBilling"+name]
 		var fields map[string]json.RawMessage
-		if json.Unmarshal(raw, &schema) != nil || json.Unmarshal(raw, &fields) != nil || string(fields["additionalProperties"]) != "false" || len(schema.Required) != len(schema.Properties) {
+		if json.Unmarshal(raw, &schema) != nil || json.Unmarshal(raw, &fields) != nil || string(fields["additionalProperties"]) != "false" || (name != "Response" && len(schema.Required) != len(schema.Properties)) || (name == "Response" && len(schema.Required)+2 != len(schema.Properties)) {
 			t.Fatal("open/missing schema", name)
 		}
 	}

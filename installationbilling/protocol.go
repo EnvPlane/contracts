@@ -38,17 +38,21 @@ var ErrInvalid = errors.New("installation billing contract rejected")
 // Routes returns a fresh operation map; changing it cannot alter validation.
 func Routes() map[string]string {
 	return map[string]string{
-		"enroll":           "/v1/installation-billing/enroll",
-		"session.checkout": "/v1/installation-billing/sessions/checkout",
-		"session.portal":   "/v1/installation-billing/sessions/portal",
-		"session.status":   "/v1/installation-billing/sessions/status",
-		"checkout":         "/v1/installation-billing/checkout",
-		"portal":           "/v1/installation-billing/portal",
-		"status":           "/v1/installation-billing/status",
-		"tenant.bind":      "/v1/installation-billing/tenants/bind",
-		"key.rotate":       "/v1/installation-billing/keys/rotate",
-		"key.revoke":       "/v1/installation-billing/keys/revoke",
-		"key.status":       "/v1/installation-billing/keys/status",
+		"enroll":              "/v1/installation-billing/enroll",
+		"session.checkout":    "/v1/installation-billing/sessions/checkout",
+		"session.portal":      "/v1/installation-billing/sessions/portal",
+		"session.status":      "/v1/installation-billing/sessions/status",
+		"session.paid.status": "/v1/installation-billing/sessions/paid-status",
+		"session.redeem":      "/v1/installation-billing/sessions/redemption",
+		"paid.status":         "/v1/installation-billing/paid-status",
+		"redeem":              "/v1/installation-billing/redemption",
+		"checkout":            "/v1/installation-billing/checkout",
+		"portal":              "/v1/installation-billing/portal",
+		"status":              "/v1/installation-billing/status",
+		"tenant.bind":         "/v1/installation-billing/tenants/bind",
+		"key.rotate":          "/v1/installation-billing/keys/rotate",
+		"key.revoke":          "/v1/installation-billing/keys/revoke",
+		"key.status":          "/v1/installation-billing/keys/status",
 	}
 }
 
@@ -272,7 +276,7 @@ func (i Intent) Validate() error {
 	} else if next != 0 || !bytes.Equal(newKey, make([]byte, 32)) {
 		return ErrInvalid
 	}
-	action := i.Operation == "checkout" || i.Operation == "portal" || i.Operation == "status"
+	action := ActionOperation(i.Operation)
 	session, _ := decode(i.SessionDigest, 32, false)
 	if action == bytes.Equal(session, make([]byte, 32)) {
 		return ErrInvalid
@@ -358,7 +362,7 @@ func (s Session) Frame() ([]byte, error) {
 	if e != nil || !point(pub) {
 		return nil, ErrInvalid
 	}
-	if s.Operation != "checkout" && s.Operation != "portal" && s.Operation != "status" {
+	if !ActionOperation(s.Operation) {
 		return nil, ErrInvalid
 	}
 	if _, e = decode(s.HandleDigest, 32, true); e != nil || !validWindow(s.IssuedAt, s.ExpiresAt) {
@@ -391,6 +395,19 @@ func ValidateBody(op string, raw []byte) error {
 		return ErrInvalid
 	}
 	switch op {
+	case "paid.status":
+		var b PaidStatusBody
+		if strict(raw, &b) != nil || (b.AttemptID != "" && !validText(b.AttemptID, 128)) || (b.Cursor != "" && !validText(b.Cursor, 128)) || b.Limit < 1 || b.Limit > 25 {
+			return ErrInvalid
+		}
+	case "redeem":
+		var b RedeemBody
+		if strict(raw, &b) != nil || !validText(b.AttemptID, 128) {
+			return ErrInvalid
+		}
+		if _, e := decode(b.Nonce, 24, true); e != nil {
+			return ErrInvalid
+		}
 	case "checkout":
 		var b CheckoutBody
 		if strict(raw, &b) != nil || !validText(b.AttemptID, 128) || !validText(b.PlanID, 128) || !validText(b.PlanVersion, 128) || b.ReturnRoute != "billing" {
@@ -460,7 +477,7 @@ func ParseRequest(raw []byte) (Request, error) {
 	} else if r.NextSignature != "" {
 		return Request{}, ErrInvalid
 	}
-	action := r.Intent.Operation == "checkout" || r.Intent.Operation == "portal" || r.Intent.Operation == "status"
+	action := ActionOperation(r.Intent.Operation)
 	if action {
 		if _, e := decode(r.SessionHandle, 32, true); e != nil {
 			return Request{}, ErrInvalid
@@ -550,13 +567,16 @@ func shape(v any, t reflect.Type) error {
 		return nil
 	}
 	obj, ok := v.(map[string]any)
-	if !ok || len(obj) != t.NumField() {
+	if !ok || len(obj) > t.NumField() || (t != reflect.TypeOf(Response{}) && len(obj) != t.NumField()) {
 		return ErrInvalid
 	}
 	for n := 0; n < t.NumField(); n++ {
 		f := t.Field(n)
 		key := strings.Split(f.Tag.Get("json"), ",")[0]
 		value, ok := obj[key]
+		if !ok && t == reflect.TypeOf(Response{}) && (key == "paidStatus" || key == "activationCode") {
+			continue
+		}
 		if !ok || shape(value, f.Type) != nil {
 			return ErrInvalid
 		}
