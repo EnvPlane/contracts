@@ -15,8 +15,8 @@ is stateless and cannot replace persisted challenge/key/epoch/session authority.
 Fixtures: 11 positive operations, 41 negative vectors shared byte-for-byte by Go,
 TypeScript and frontend. Generator checks its own negatives and freezes frames,
 digests, signatures, challenge DTOs, response bindings and session descriptors.
-Additional unit cases cover all byte truncation/unknown schema behavior where
-applicable, body/numeric aliases, exact uint64 framing above JavaScript safe integer,
+Additional unit cases cover malformed/bounded JSON, unknown schema/body/numeric
+aliases, exact uint64 framing above JavaScript safe integer,
 expiry/skew/overflow and delayed foreign responses. Existing activation/grant types
 were not changed; full domain compatibility tests pass. Every pre-existing OpenAPI
 path/schema is semantically identical to the source base; original bytes outside
