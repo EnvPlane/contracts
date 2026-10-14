@@ -198,12 +198,24 @@ func validSignature(pub, msg, sig []byte) bool {
 	return ed25519.Verify(pub, msg, sig)
 }
 func frame(domain string, fields ...[]byte) []byte {
+	if len(domain) > 65535 || len(fields) > 65535 {
+		panic("installation frame bounds")
+	}
 	b := bytes.NewBufferString("ENVPLANE-INSTALL-BILL\x00\x01")
-	binary.Write(b, binary.BigEndian, uint16(len(domain)))
+	if err := binary.Write(b, binary.BigEndian, uint16(len(domain))); err != nil { // #nosec G115 -- explicit uint16 bound checked above.
+		panic("installation frame encoding")
+	}
 	b.WriteString(domain)
-	binary.Write(b, binary.BigEndian, uint16(len(fields)))
+	if err := binary.Write(b, binary.BigEndian, uint16(len(fields))); err != nil { // #nosec G115 -- explicit uint16 bound checked above.
+		panic("installation frame encoding")
+	}
 	for _, f := range fields {
-		binary.Write(b, binary.BigEndian, uint32(len(f)))
+		if uint64(len(f)) > 4294967295 {
+			panic("installation frame bounds")
+		}
+		if err := binary.Write(b, binary.BigEndian, uint32(len(f))); err != nil { // #nosec G115 -- explicit uint32 bound checked above.
+			panic("installation frame encoding")
+		}
 		b.Write(f)
 	}
 	return b.Bytes()

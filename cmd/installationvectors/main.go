@@ -271,9 +271,15 @@ func main() {
 		if e != nil || !bytes.Equal(old, b) {
 			panic("vector drift")
 		}
-	} else if e = os.WriteFile(*out, b, 0644); e != nil {
+	} else if e = os.WriteFile(*out, b, 0600); e != nil {
 		panic(e)
 	}
 	fmt.Printf("%d positive, %d negative vectors\n", len(c.Positive), len(c.Negative))
 }
-func bodyOf(raw string) string { var r ib.Request; json.Unmarshal([]byte(raw), &r); return r.Body }
+func bodyOf(raw string) string {
+	var r ib.Request
+	if err := json.Unmarshal([]byte(raw), &r); err != nil {
+		panic(err)
+	}
+	return r.Body
+}
