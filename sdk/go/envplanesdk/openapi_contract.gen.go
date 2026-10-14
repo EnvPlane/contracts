@@ -3,7 +3,7 @@
 package envplanesdk
 
 const CanonicalOpenAPIVersion = "1.0.0"
-const CanonicalOpenAPISHA256 = "613e8aacf64c8b3045f6e99770ce8b8d5934d616ed4889052ec8daf9e97f05fd"
+const CanonicalOpenAPISHA256 = "6a263e6f4202929d95b6a6039d61978bc47ce97992a2219e11a99e3cd95a4c50"
 
 var CanonicalOperations = []string{
 	"DELETE /api/environments/{id}",
@@ -266,6 +266,18 @@ var CanonicalOperations = []string{
 	"POST /api/v1/webhook-receiver/gitlab-command",
 	"POST /auth/logout",
 	"POST /auth/saml/{providerID}/callback",
+	"POST /v1/installation-billing/challenge",
+	"POST /v1/installation-billing/checkout",
+	"POST /v1/installation-billing/enroll",
+	"POST /v1/installation-billing/keys/revoke",
+	"POST /v1/installation-billing/keys/rotate",
+	"POST /v1/installation-billing/keys/status",
+	"POST /v1/installation-billing/portal",
+	"POST /v1/installation-billing/sessions/checkout",
+	"POST /v1/installation-billing/sessions/portal",
+	"POST /v1/installation-billing/sessions/status",
+	"POST /v1/installation-billing/status",
+	"POST /v1/installation-billing/tenants/bind",
 	"PUT /api/projects/{id}/components",
 	"PUT /api/v1/license",
 	"PUT /api/v1/license/activation",

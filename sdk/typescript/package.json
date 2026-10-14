@@ -1,0 +1,16 @@
+{
+  "name": "@envplane/installation-billing-contracts",
+  "version": "0.0.0-local",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test installation-billing.test.ts"
+  },
+  "dependencies": {
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0"
+  }
+}
