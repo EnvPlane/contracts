@@ -12165,13 +12165,15 @@
           "mode": {
             "type": "string",
             "enum": [
-              "test"
+              "test",
+              "live"
             ]
           },
           "audience": {
             "type": "string",
             "enum": [
-              "envplane.install-billing.test.v1"
+              "envplane.install-billing.test.v1",
+              "envplane.install-billing.live.v1"
             ]
           },
           "installation": {
@@ -12187,7 +12189,11 @@
             "x-maxUtf8Bytes": 128,
             "description": "Exact UTF-8, no trim/case/normalization; no controls or leading/trailing Unicode whitespace."
           }
-        }
+        },
+        "oneOf": [
+          {"properties": {"mode": {"enum": ["test"]}, "audience": {"enum": ["envplane.install-billing.test.v1"]}}},
+          {"properties": {"mode": {"enum": ["live"]}, "audience": {"enum": ["envplane.install-billing.live.v1"]}}}
+        ]
       },
       "InstallationBillingIntent": {
         "type": "object",
