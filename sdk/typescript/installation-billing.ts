@@ -335,9 +335,13 @@ export function parseResponse(raw: Uint8Array): Response {
     const needsURL = r.operation === 'portal' || (r.operation === 'checkout' && r.state === 'ready');
     if (needsURL) {
         string(r.url);
-        ensure(text(r.url).length <= 4096 && !/[\r\n\\]/.test(r.url));
+        ensure(text(r.url).length <= 4096 && !/[\x00-\x20\x7f\\]/.test(r.url));
         const u = new URL(r.url);
-        ensure(r.url.startsWith('https://' + (r.operation === 'portal' ? 'billing.stripe.com/' : 'checkout.stripe.com/')) && !r.url.includes('#') && u.protocol === 'https:' && u.host === (r.operation === 'portal' ? 'billing.stripe.com' : 'checkout.stripe.com') && !u.username && !u.password && !u.hash && u.pathname !== '');
+        const fragmentAt = r.url.indexOf('#');
+        ensure(fragmentAt < 0 || !/%(?![0-9a-fA-F]{2})/.test(r.url.slice(fragmentAt + 1)));
+        // Checkout fragments are opaque provider state; retain their exact
+        // bytes. Portal fragments remain forbidden, including an empty '#'.
+        ensure(r.url.startsWith('https://' + (r.operation === 'portal' ? 'billing.stripe.com/' : 'checkout.stripe.com/')) && (r.operation !== 'portal' || !r.url.includes('#')) && u.protocol === 'https:' && u.host === (r.operation === 'portal' ? 'billing.stripe.com' : 'checkout.stripe.com') && !u.username && !u.password && u.pathname !== '');
     }
     else
         ensure(r.url === '');

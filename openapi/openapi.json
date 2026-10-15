@@ -12657,7 +12657,7 @@
           "url": {
             "type": "string",
             "maxLength": 4096,
-            "description": "Empty except ready checkout/portal. Exact https://checkout.stripe.com/ or https://billing.stripe.com/ hosted origin; never arbitrary caller URL."
+            "description": "Empty except ready checkout/portal. Exact https://checkout.stripe.com/ or https://billing.stripe.com/ hosted origin, HTTPS without userinfo, ports, raw whitespace, controls or backslashes, at most 4096 UTF-8 bytes. Checkout may preserve an opaque provider fragment byte-for-byte; portal fragments remain forbidden. Never arbitrary caller or return URL; never log hosted URL fragments."
           },
           "records": {
             "type": "array",
