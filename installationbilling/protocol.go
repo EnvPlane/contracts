@@ -26,6 +26,7 @@ import (
 const Version = "envplane.install-billing.v1"
 const Algorithm = "Ed25519"
 const Audience = "envplane.install-billing.test.v1"
+const LiveAudience = "envplane.install-billing.live.v1"
 const MaxEnvelope = 65536
 const MaxBody = 32768
 const TTL uint64 = 300
@@ -146,7 +147,8 @@ func validText(s string, max int) bool {
 	return true
 }
 func (s Scope) Validate() error {
-	if s.Seller != "issuer-default" || !accountRE.MatchString(s.Merchant) || s.Mode != "test" || s.Audience != Audience || !installationRE.MatchString(s.Installation) || !validText(s.Tenant, 128) {
+	modeAudience := s.Mode == "test" && s.Audience == Audience || s.Mode == "live" && s.Audience == LiveAudience
+	if s.Seller != "issuer-default" || !accountRE.MatchString(s.Merchant) || !modeAudience || !installationRE.MatchString(s.Installation) || !validText(s.Tenant, 128) {
 		return ErrInvalid
 	}
 	return nil

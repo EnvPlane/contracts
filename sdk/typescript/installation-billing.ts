@@ -4,6 +4,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 export const VERSION = 'envplane.install-billing.v1';
 export const ALGORITHM = 'Ed25519';
 export const AUDIENCE = 'envplane.install-billing.test.v1';
+export const LIVE_AUDIENCE = 'envplane.install-billing.live.v1';
 export const MAX_ENVELOPE = 65536;
 export const MAX_BODY = 32768;
 export const TTL = BigInt(300);
@@ -223,7 +224,7 @@ export function frame(domain: string, fields: Uint8Array[]) { const d = text(dom
 } return out; }
 export const digest = (b: Uint8Array) => b64(sha256(b));
 export function installationID(pub: Uint8Array) { ensure(point(pub)); return 'epi1_ed25519_' + Array.from(sha256(frame('genesis', [pub])), c => c.toString(16).padStart(2, '0')).join(''); }
-function scope(v: unknown): asserts v is Scope { object(v, ['seller', 'merchant', 'mode', 'audience', 'installation', 'tenant']); ensure(v.seller === 'issuer-default' && v.mode === 'test' && v.audience === AUDIENCE); validText(v.merchant, 255); string(v.merchant); string(v.installation); ensure(v.installation.length === 77); ensure(/^acct_[A-Za-z0-9_]{1,250}$/.test(v.merchant) && /^epi1_ed25519_[0-9a-f]{64}$/.test(v.installation)); validText(v.tenant, 128); }
+function scope(v: unknown): asserts v is Scope { object(v, ['seller', 'merchant', 'mode', 'audience', 'installation', 'tenant']); ensure(v.seller === 'issuer-default' && ((v.mode === 'test' && v.audience === AUDIENCE) || (v.mode === 'live' && v.audience === LIVE_AUDIENCE))); validText(v.merchant, 255); string(v.merchant); string(v.installation); ensure(v.installation.length === 77); ensure(/^acct_[A-Za-z0-9_]{1,250}$/.test(v.merchant) && /^epi1_ed25519_[0-9a-f]{64}$/.test(v.installation)); validText(v.tenant, 128); }
 function scopeFields(s: Scope) { return [s.seller, s.merchant, s.mode, s.audience, s.installation, s.tenant].map(text); }
 export function validateIntent(v: unknown): asserts v is Intent {
     object(v, ['scope', 'operation', 'method', 'target', 'bodyDigest', 'currentEpoch', 'currentPublicKey', 'nextEpoch', 'nextPublicKey', 'requestId', 'sessionDigest']);
