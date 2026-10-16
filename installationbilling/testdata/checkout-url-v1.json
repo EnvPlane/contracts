@@ -1,0 +1,30 @@
+{
+  "description": "Synthetic hosted URL parser vectors only. No provider token, readback or delivery evidence.",
+  "cases": [
+    {"name":"checkout without fragment","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture","valid":true},
+    {"name":"checkout opaque fragment","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque-fixture","valid":true},
+    {"name":"checkout escaped opaque bytes","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture?locale=auto#fixture%2Fopaque%3D%2B%23%25","valid":true},
+    {"name":"checkout opaque non-UTF8 byte","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#fixture%FF","valid":true},
+    {"name":"checkout empty fragment","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#","valid":true},
+    {"name":"portal without fragment","operation":"portal","url":"https://billing.stripe.com/p/session/offline-fixture","valid":true},
+    {"name":"portal opaque fragment denied","operation":"portal","url":"https://billing.stripe.com/p/session/offline-fixture#opaque-fixture","valid":false},
+    {"name":"portal empty fragment denied","operation":"portal","url":"https://billing.stripe.com/p/session/offline-fixture#","valid":false},
+    {"name":"checkout portal host denied","operation":"checkout","url":"https://billing.stripe.com/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"portal checkout host denied","operation":"portal","url":"https://checkout.stripe.com/p/session/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout foreign host","operation":"checkout","url":"https://foreign.invalid/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout return destination","operation":"checkout","url":"https://seller.invalid/billing#opaque-fixture","valid":false},
+    {"name":"checkout host suffix","operation":"checkout","url":"https://checkout.stripe.com.foreign.invalid/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout user information","operation":"checkout","url":"https://user@checkout.stripe.com/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout explicit port","operation":"checkout","url":"https://checkout.stripe.com:443/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout insecure scheme","operation":"checkout","url":"http://checkout.stripe.com/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout protocol relative","operation":"checkout","url":"//checkout.stripe.com/c/pay/offline-fixture#opaque-fixture","valid":false},
+    {"name":"checkout backslash","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque\\fixture","valid":false},
+    {"name":"checkout fragment newline","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque\nfixture","valid":false},
+    {"name":"checkout fragment tab","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque\tfixture","valid":false},
+    {"name":"checkout fragment zero byte","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque\u0000fixture","valid":false},
+    {"name":"checkout fragment delete byte","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque\u007ffixture","valid":false},
+    {"name":"checkout raw space","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque fixture","valid":false},
+    {"name":"checkout malformed fragment escape","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque%GG","valid":false},
+    {"name":"checkout incomplete fragment escape","operation":"checkout","url":"https://checkout.stripe.com/c/pay/offline-fixture#opaque%","valid":false}
+  ]
+}

@@ -6,6 +6,39 @@ const corpus = JSON.parse(readFileSync(new URL('../../installationbilling/testda
 const raw = (s: string) => new TextEncoder().encode(s);
 const hex = (b: Uint8Array) => Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
+test('synthetic Checkout fragments retain exact bytes with shared Go host negatives', () => {
+    const vectors = JSON.parse(readFileSync(new URL('../../installationbilling/testdata/checkout-url-v1.json', import.meta.url), 'utf8'));
+    assert.equal(vectors.cases.length, 25);
+    for (const vector of vectors.cases) {
+        const p = corpus.positive.find((p: {name: string}) => p.name === vector.operation);
+        assert.ok(p, 'matching proof fixture unavailable');
+        const request = ib.parseVerifiedRequest(raw(p.request), 1800000000n);
+        const response = JSON.parse(p.response);
+        response.url = vector.url;
+        if (vector.valid) {
+            const parsed = ib.parseResponse(raw(JSON.stringify(response)));
+            assert.equal(parsed.url, vector.url, vector.name);
+            ib.matchResponse(request, parsed);
+            parsed.requestId = ib.b64(new Uint8Array(16));
+            assert.throws(() => ib.matchResponse(request, parsed), vector.name);
+        } else assert.throws(() => ib.parseResponse(raw(JSON.stringify(response))), vector.name);
+    }
+    const p = corpus.positive.find((p: {name: string}) => p.name === 'checkout');
+    for (const count of [4096, 4097]) {
+        const response = JSON.parse(p.response);
+        const prefix = 'https://checkout.stripe.com/c/pay/offline-fixture#';
+        response.url = prefix + 'x'.repeat(count - prefix.length);
+        if (count === 4096) ib.parseResponse(raw(JSON.stringify(response)));
+        else assert.throws(() => ib.parseResponse(raw(JSON.stringify(response))));
+    }
+    for (const operation of ['checkout', 'portal'] as const) {
+        const body = operation === 'checkout'
+            ? {attemptId: 'fixture-attempt', planId: 'team', planVersion: 'fixture-version', returnRoute: 'billing'}
+            : {returnRoute: 'billing'};
+        assert.throws(() => ib.validateBody(operation, raw(JSON.stringify({...body, returnURL: 'https://seller.invalid/billing#opaque-fixture'}))));
+        assert.throws(() => ib.validateBody(operation, raw(JSON.stringify({...body, returnRoute: 'billing#opaque-fixture'}))));
+    }
+});
 test('Go/TypeScript positive frames, signatures, DTOs and sessions', () => {
     assert.equal(corpus.positive.length, 11);
     for (const p of corpus.positive) {

@@ -132,7 +132,9 @@ func ParseResponse(raw []byte) (Response, error) {
 		if r.Operation == "portal" {
 			host = "billing.stripe.com"
 		}
-		if e != nil || u.Scheme != "https" || u.Host != host || u.User != nil || u.Fragment != "" || u.Path == "" || !strings.HasPrefix(r.URL, "https://"+host+"/") || strings.Contains(r.URL, "#") || len(r.URL) > 4096 || strings.ContainsAny(r.URL, "\r\n\\") {
+		// Checkout fragments are opaque provider navigation state. Preserve the
+		// entire URL without decoding or logging it; portal fragments stay denied.
+		if e != nil || u.Scheme != "https" || u.Host != host || u.User != nil || (r.Operation == "portal" && strings.Contains(r.URL, "#")) || u.Path == "" || !strings.HasPrefix(r.URL, "https://"+host+"/") || len(r.URL) > 4096 || invalidHostedURLBytes(r.URL) {
 			return Response{}, ErrInvalid
 		}
 	} else if r.URL != "" {
@@ -160,6 +162,15 @@ func ParseResponse(raw []byte) (Response, error) {
 		return Response{}, e
 	}
 	return r, nil
+}
+
+func invalidHostedURLBytes(value string) bool {
+	for i := 0; i < len(value); i++ {
+		if value[i] <= 0x20 || value[i] == 0x7f || value[i] == '\\' {
+			return true
+		}
+	}
+	return false
 }
 
 // MatchResponse prevents applying a delayed/foreign response to another request.
