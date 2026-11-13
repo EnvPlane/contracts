@@ -13662,6 +13662,28 @@
         }
       }
     },
+    "/api/v1/billing/enrollment": {
+      "post": {
+        "operationId": "enrollBillingInstallation",
+        "summary": "Explicitly register the current test installation with its issuer",
+        "description": "Requires billing and settings write permissions. Tenant and installation are derived from the authenticated server context. A retry reuses the same registration intent; no checkout or license activation occurs.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "additionalProperties": false, "maxProperties": 0}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Installation registered", "content": {"application/json": {"schema": {"type": "object", "required": ["status"], "properties": {"status": {"type": "string", "enum": ["registered"]}}}}}},
+          "400": {"description": "Invalid enrollment request"},
+          "403": {"description": "Required permissions or CSRF missing"},
+          "502": {"description": "Issuer outcome unconfirmed; retry the same installation"},
+          "503": {"description": "Test installation enrollment unavailable"}
+        }
+      }
+    },
     "/api/v1/billing/progress": {
       "get": {
         "operationId": "getBillingProgress",
